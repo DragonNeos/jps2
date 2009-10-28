@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>build/classes</name>
+			<type>2</type>
+			<location>/work/bin/jsp2</location>
+		</link>
+	</linkedResources>
 </projectDescription>

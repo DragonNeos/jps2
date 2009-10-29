@@ -2,8 +2,6 @@ package com.jps2.core;
 
 import java.util.Arrays;
 
-import com.jps2.core.cpu.r3000a.R3000a;
-
 public class SIO {
 	// Status Flags
 	private static final int	TX_RDY	       = 0x0001;

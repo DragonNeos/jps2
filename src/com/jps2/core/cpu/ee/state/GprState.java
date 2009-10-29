@@ -1,7 +1,8 @@
-package com.jps2.core.cpu.r5900;
+package com.jps2.core.cpu.ee.state;
 
 import java.math.BigInteger;
 
+import com.jps2.core.cpu.Cpu;
 import com.jps2.core.cpu.ExcCode;
 import com.jps2.core.cpu.registers.GeneralPorpuseRegister64bis;
 import com.jps2.core.cpu.registers.Register64bits;
@@ -11,7 +12,7 @@ import com.jps2.core.cpu.registers.ZeroRegister64bits;
 /**
  * General Purpose Registers, handles integer operations like ALU, shifter, etc. Handles control register too
  */
-public class GprState {
+public abstract class GprState extends Cpu{
 
 	public static final int	ZERO	= 0;
 	public static final int	AT	 = 1;
@@ -45,9 +46,6 @@ public class GprState {
 	public static final int	SP	 = 29;
 	public static final int	FP	 = 30;
 	public static final int	RA	 = 31;
-
-	public int	            pc;
-	public int	            npc;
 
 	public Register64bits[]	gpr;
 
@@ -234,7 +232,7 @@ public class GprState {
 	public final void doSUB(final int rd, final int rs, final int rt, final int inst, final boolean delay) {
 		final BigInteger sub = BigInteger.valueOf(gpr[rs].read32()).subtract(BigInteger.valueOf(gpr[rt].read32()));
 		if (sub.bitCount() > 32) {
-			R5900.getProcessor().psxException(ExcCode.ARITHMETIC_OVERFLOW, inst, delay);
+			processor.processException(ExcCode.ARITHMETIC_OVERFLOW, inst, delay);
 		} else {
 			gpr[rd].write32(sub.intValue());
 		}
@@ -243,7 +241,7 @@ public class GprState {
 	public final void doDSUB(final int rd, final int rs, final int rt, final int inst, final boolean delay) {
 		final BigInteger sub = BigInteger.valueOf(gpr[rs].read64()).subtract(BigInteger.valueOf(gpr[rt].read64()));
 		if (sub.bitCount() > 64) {
-			R5900.getProcessor().psxException(ExcCode.ARITHMETIC_OVERFLOW, inst, delay);
+			processor.processException(ExcCode.ARITHMETIC_OVERFLOW, inst, delay);
 		} else {
 			gpr[rd].write64(sub.longValue());
 		}
@@ -436,7 +434,7 @@ public class GprState {
 	public final void doADD(final int rd, final int rs, final int rt, final int inst, final boolean delay) {
 		final BigInteger sum = BigInteger.valueOf(gpr[rs].read32()).add(BigInteger.valueOf(gpr[rt].read32()));
 		if (sum.bitCount() > 32) {
-			R5900.getProcessor().psxException(ExcCode.ARITHMETIC_OVERFLOW, inst, delay);
+			processor.processException(ExcCode.ARITHMETIC_OVERFLOW, inst, delay);
 		} else {
 			gpr[rd].write32(sum.intValue());
 		}
@@ -445,7 +443,7 @@ public class GprState {
 	public final void doDADD(final int rd, final int rs, final int rt, final int inst, final boolean delay) {
 		final BigInteger sum = BigInteger.valueOf(gpr[rs].read64()).add(BigInteger.valueOf(gpr[rt].read64()));
 		if (sum.bitCount() > 64) {
-			R5900.getProcessor().psxException(ExcCode.ARITHMETIC_OVERFLOW, inst, delay);
+			processor.processException(ExcCode.ARITHMETIC_OVERFLOW, inst, delay);
 		} else {
 			gpr[rd].write64(sum.longValue());
 		}
@@ -472,67 +470,67 @@ public class GprState {
 	public final void doTEQ(final int rs, final int rt, final int inst, final boolean delay) {
 		if (gpr[rs] == gpr[rt]) {
 
-			R5900.getProcessor().psxException(ExcCode.TRAP, inst, delay);
+			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTNE(final int rs, final int rt, final int inst, final boolean delay) {
 		if (gpr[rs] != gpr[rt]) {
-			R5900.getProcessor().psxException(ExcCode.TRAP, inst, delay);
+			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTNEI(final int rs, final short imm16, final int inst, final boolean delay) {
 		if (gpr[rs].read64() != imm16) {
-			R5900.getProcessor().psxException(ExcCode.TRAP, inst, delay);
+			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTGE(final int rs, final int rt, final int inst, final boolean delay) {
 		if (gpr[rs].read64() >= gpr[rt].read64()) {
-			R5900.getProcessor().psxException(ExcCode.TRAP, inst, delay);
+			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTGEI(final int rs, final short imm16, final int inst, final boolean delay) {
 		if (gpr[rs].read64() >= imm16) {
-			R5900.getProcessor().psxException(ExcCode.TRAP, inst, delay);
+			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTGEIU(final int rs, final short imm16, final int inst, final boolean delay) {
 		if (Math.abs(gpr[rs].read64()) >= Math.abs(imm16)) {
-			R5900.getProcessor().psxException(ExcCode.TRAP, inst, delay);
+			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTGEU(final int rs, final int rt, final int inst, final boolean delay) {
 		if (Math.abs(gpr[rs].read64()) >= Math.abs(gpr[rt].read64())) {
-			R5900.getProcessor().psxException(ExcCode.TRAP, inst, delay);
+			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTLT(final int rs, final int rt, final int inst, final boolean delay) {
 		if (gpr[rs].read64() < gpr[rt].read64()) {
-			R5900.getProcessor().psxException(ExcCode.TRAP, inst, delay);
+			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTLTI(final int rs, final short imm16, final int inst, final boolean delay) {
 		if (gpr[rs].read64() < imm16) {
-			R5900.getProcessor().psxException(ExcCode.TRAP, inst, delay);
+			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTLTIU(final int rs, final short imm16, final int inst, final boolean delay) {
 		if (Math.abs(gpr[rs].read64()) < Math.abs(imm16)) {
-			R5900.getProcessor().psxException(ExcCode.TRAP, inst, delay);
+			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTLTU(final int rs, final int rt, final int inst, final boolean delay) {
 		if (Math.abs(gpr[rs].read64()) < Math.abs(gpr[rt].read64())) {
-			R5900.getProcessor().psxException(ExcCode.TRAP, inst, delay);
+			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 }

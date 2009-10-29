@@ -1,10 +1,10 @@
-package com.jps2.core.cpu.r5900;
+package com.jps2.core.cpu.ee;
 
 import com.jps2.core.cpu.Common;
 import com.jps2.core.cpu.Common.Instruction;
 import com.jps2.core.cpu.Common.STUB;
 
-public class Decoder {
+public class EEDecoder {
 
     private static final Instruction opcodeTable[] = {
         new STUB() {
@@ -19,20 +19,20 @@ public class Decoder {
                 return regimmTable[(insn >> 16) & 0x0000001f].instance(insn);
             }
         },
-        Instructions.J,
-        Instructions.JAL,
-        Instructions.BEQ,
-        Instructions.BNE,
-        Instructions.BLEZ,
-        Instructions.BGTZ,
-        Instructions.ADDI,
-        Instructions.ADDIU,
-        Instructions.SLTI,
-        Instructions.SLTIU,
-        Instructions.ANDI,
-        Instructions.ORI,
-        Instructions.XORI,
-        Instructions.LUI,
+        EEInstructions.J,
+        EEInstructions.JAL,
+        EEInstructions.BEQ,
+        EEInstructions.BNE,
+        EEInstructions.BLEZ,
+        EEInstructions.BGTZ,
+        EEInstructions.ADDI,
+        EEInstructions.ADDIU,
+        EEInstructions.SLTI,
+        EEInstructions.SLTIU,
+        EEInstructions.ANDI,
+        EEInstructions.ORI,
+        EEInstructions.XORI,
+        EEInstructions.LUI,
         new STUB() {
             @Override
             public Instruction instance(final int insn) {
@@ -55,15 +55,15 @@ public class Decoder {
 //                } else {
 //                    if ((insn & 0x00000080) == 0x00000000) {
 //                        if ((insn & 0x00800000) == 0x00000000) {
-//                            return Instructions.MFV;
+//                            return EEInstructions.MFV;
 //                        } else {
-//                            return Instructions.MTV;
+//                            return EEInstructions.MTV;
 //                        }
 //                    } else {
 //                        if ((insn & 0x00800000) == 0x00000000) {
-//                            return Instructions.MFVC;
+//                            return EEInstructions.MFVC;
 //                        } else {
-//                            return Instructions.MTVC;
+//                            return EEInstructions.MTVC;
 //                        }
 //                    }
 //                }
@@ -77,10 +77,10 @@ public class Decoder {
                 return cpo1xTable[(insn >> 23) & 0x00000007].instance(insn);
             }
         },
-        Instructions.BEQL,
-        Instructions.BNEL,
-        Instructions.BLEZL,
-        Instructions.BGTZL,
+        EEInstructions.BEQL,
+        EEInstructions.BNEL,
+        EEInstructions.BLEZL,
+        EEInstructions.BGTZL,
         new STUB() {
 
             @Override
@@ -96,19 +96,19 @@ public class Decoder {
             }
         },
         Common.UNK,
-        Instructions.LDR,
+        EEInstructions.LDR,
         new STUB() {
 
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x00000002) == 0x00000000) {
                     if ((insn & 0x00000004) == 0x00000000) {
-                        return Instructions.HALT;
+                        return EEInstructions.HALT;
                     } else {
-                        return Instructions.MFIC;
+                        return EEInstructions.MFIC;
                     }
                 } else {
-                    return Instructions.MTIC;
+                    return EEInstructions.MTIC;
                 }
             }
         },
@@ -121,50 +121,50 @@ public class Decoder {
                 if ((insn & 0x00000021) == 0x00000020) {
                     if ((insn & 0x00000080) == 0x00000000) {
                         if ((insn & 0x00000100) == 0x00000000) {
-                            return Instructions.SEH;
+                            return EEInstructions.SEH;
                         } else {
-                            return Instructions.BITREV;
+                            return EEInstructions.BITREV;
                         }
                     } else {
                         if ((insn & 0x00000040) == 0x00000000) {
-                            return Instructions.WSBH;
+                            return EEInstructions.WSBH;
                         } else {
-                            return Instructions.WSBW;
+                            return EEInstructions.WSBW;
                         }
                     }
                 } else {
                     if ((insn & 0x00000001) == 0x00000000) {
                         if ((insn & 0x00000004) == 0x00000000) {
-                            return Instructions.EXT;
+                            return EEInstructions.EXT;
                         } else {
-                            return Instructions.INS;
+                            return EEInstructions.INS;
                         }
                     } else {
-                        return Instructions.SEB;
+                        return EEInstructions.SEB;
                     }
                 }
             }
         },
-        Instructions.LB,
-        Instructions.LH,
-        Instructions.LWL,
-        Instructions.LW,
-        Instructions.LBU,
-        Instructions.LHU,
-        Instructions.LWR,
+        EEInstructions.LB,
+        EEInstructions.LH,
+        EEInstructions.LWL,
+        EEInstructions.LW,
+        EEInstructions.LBU,
+        EEInstructions.LHU,
+        EEInstructions.LWR,
         Common.UNK,
-        Instructions.SB,
-        Instructions.SH,
-        Instructions.SWL,
-        Instructions.SW,
+        EEInstructions.SB,
+        EEInstructions.SH,
+        EEInstructions.SWL,
+        EEInstructions.SW,
         Common.UNK,
         Common.UNK,
-        Instructions.SWR,
+        EEInstructions.SWR,
         Common.UNK,
-        Instructions.LL,
-        Instructions.LWC1,
-        Instructions.LVS,
-        Instructions.PREF,
+        EEInstructions.LL,
+        EEInstructions.LWC1,
+        EEInstructions.LVS,
+        EEInstructions.PREF,
         new STUB() {
 
             @Override
@@ -177,13 +177,13 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x00000002) == 0x00000000) {
-                    return Instructions.LVLQ;
+                    return EEInstructions.LVLQ;
                 } else {
-                    return Instructions.LVRQ;
+                    return EEInstructions.LVRQ;
                 }
             }
         },
-        Instructions.LVQ,
+        EEInstructions.LVQ,
         new STUB() {
 
             @Override
@@ -191,9 +191,9 @@ public class Decoder {
                 return table_13[(insn >> 24) & 0x00000003].instance(insn);
             }
         },
-        Instructions.SC,
-        Instructions.SWC1,
-        Instructions.SVS,
+        EEInstructions.SC,
+        EEInstructions.SWC1,
+        EEInstructions.SVS,
         Common.UNK,
         new STUB() {
 
@@ -207,9 +207,9 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x00000002) == 0x00000000) {
-                    return Instructions.SVLQ;
+                    return EEInstructions.SVLQ;
                 } else {
-                    return Instructions.SVRQ;
+                    return EEInstructions.SVRQ;
                 }
             }
         },
@@ -218,9 +218,9 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x00000002) == 0x00000000) {
-                    return Instructions.SVQ;
+                    return EEInstructions.SVQ;
                 } else {
-                    return Instructions.SWB;
+                    return EEInstructions.SWB;
                 }
             }
         },
@@ -230,12 +230,12 @@ public class Decoder {
             public Instruction instance(final int insn) {
                 if ((insn & 0x00000001) == 0x00000000) {
                     if ((insn & 0x00000020) == 0x00000000) {
-                        return Instructions.VNOP;
+                        return EEInstructions.VNOP;
                     } else {
-                        return Instructions.VSYNC;
+                        return EEInstructions.VSYNC;
                     }
                 } else {
-                    return Instructions.VFLUSH;
+                    return EEInstructions.VFLUSH;
                 }
             }
         },
@@ -246,9 +246,9 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x001fffc0) == 0x00000000) {
-                    return Instructions.NOP;
+                    return EEInstructions.NOP;
                 } else {
-                    return Instructions.SLL;
+                    return EEInstructions.SLL;
                 }
             }
         },
@@ -257,95 +257,95 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
             	if ((insn & 0x10000) == 0x10000){
-            		return Instructions.MOVT;
+            		return EEInstructions.MOVT;
             	}else{
-            		return Instructions.MOVF;
+            		return EEInstructions.MOVF;
             	}
             }
         },
-        Instructions.SRL,
-        Instructions.SRA,
-        Instructions.SLLV,
+        EEInstructions.SRL,
+        EEInstructions.SRA,
+        EEInstructions.SLLV,
         Common.UNK,
-        Instructions.SRLV,
-        Instructions.SRAV,
-        Instructions.JR,
-        Instructions.JALR,
-        Instructions.MOVZ,
-        Instructions.MOVN,
-        Instructions.SYSCALL,
-        Instructions.BREAK,
+        EEInstructions.SRLV,
+        EEInstructions.SRAV,
+        EEInstructions.JR,
+        EEInstructions.JALR,
+        EEInstructions.MOVZ,
+        EEInstructions.MOVN,
+        EEInstructions.SYSCALL,
+        EEInstructions.BREAK,
         Common.UNK,
-        Instructions.SYNC,
-        Instructions.MFHI,
-        Instructions.MTHI,
-        Instructions.MFLO,
-        Instructions.MTLO,
-        Instructions.DSLLV,
+        EEInstructions.SYNC,
+        EEInstructions.MFHI,
+        EEInstructions.MTHI,
+        EEInstructions.MFLO,
+        EEInstructions.MTLO,
+        EEInstructions.DSLLV,
         Common.UNK,
-        Instructions.DSRLV,
-        Instructions.DSRAV,
-        Instructions.MULT,
-        Instructions.MULTU,
-        Instructions.DIV,
-        Instructions.DIVU,
-        Instructions.DMULT,
-        Instructions.DMULTU,
-        Instructions.DDIV,
-        Instructions.DDIVU,
-        Instructions.ADD,
-        Instructions.ADDU,
-        Instructions.SUB,
-        Instructions.SUBU,
-        Instructions.AND,
-        Instructions.OR,
-        Instructions.XOR,
-        Instructions.NOR,
-        Instructions.MFSA,
+        EEInstructions.DSRLV,
+        EEInstructions.DSRAV,
+        EEInstructions.MULT,
+        EEInstructions.MULTU,
+        EEInstructions.DIV,
+        EEInstructions.DIVU,
+        EEInstructions.DMULT,
+        EEInstructions.DMULTU,
+        EEInstructions.DDIV,
+        EEInstructions.DDIVU,
+        EEInstructions.ADD,
+        EEInstructions.ADDU,
+        EEInstructions.SUB,
+        EEInstructions.SUBU,
+        EEInstructions.AND,
+        EEInstructions.OR,
+        EEInstructions.XOR,
+        EEInstructions.NOR,
+        EEInstructions.MFSA,
         Common.UNK,
-        Instructions.SLT,
-        Instructions.SLTU,
-        Instructions.DADD,
-        Instructions.DADDU,
-        Instructions.DSUB,
-        Instructions.DSUBU,
-        Instructions.TGE,
-        Instructions.TGEU,
-        Instructions.TLT,
-        Instructions.TLTU,
-        Instructions.TEQ,
+        EEInstructions.SLT,
+        EEInstructions.SLTU,
+        EEInstructions.DADD,
+        EEInstructions.DADDU,
+        EEInstructions.DSUB,
+        EEInstructions.DSUBU,
+        EEInstructions.TGE,
+        EEInstructions.TGEU,
+        EEInstructions.TLT,
+        EEInstructions.TLTU,
+        EEInstructions.TEQ,
         Common.UNK,
-        Instructions.TNE,
+        EEInstructions.TNE,
         Common.UNK,
-        Instructions.DSLL,
+        EEInstructions.DSLL,
         Common.UNK,
-        Instructions.DSRL,
-        Instructions.DSRA,
-        Instructions.DSLL32,
+        EEInstructions.DSRL,
+        EEInstructions.DSRA,
+        EEInstructions.DSLL32,
         Common.UNK,
-        Instructions.DSRL32,
-        Instructions.DSRA32,
+        EEInstructions.DSRL32,
+        EEInstructions.DSRA32,
     };
     public static final Instruction regimmTable[] = {
-        Instructions.BLTZ,
-        Instructions.BGEZ,
-        Instructions.BLTZL,
-        Instructions.BGEZL,
+        EEInstructions.BLTZ,
+        EEInstructions.BGEZ,
+        EEInstructions.BLTZL,
+        EEInstructions.BGEZL,
         Common.UNK,
         Common.UNK,
         Common.UNK,
         Common.UNK,
-        Instructions.TGEI,
-        Instructions.TGEIU,
-        Instructions.TLTI,
-        Instructions.TLTIU,
+        EEInstructions.TGEI,
+        EEInstructions.TGEIU,
+        EEInstructions.TLTI,
+        EEInstructions.TLTIU,
         Common.UNK,
-        Instructions.TNEI,
+        EEInstructions.TNEI,
         Common.UNK,
-        Instructions.BLTZAL,
-        Instructions.BGEZAL,
-        Instructions.BLTZALL,
-        Instructions.BGEZALL,
+        EEInstructions.BLTZAL,
+        EEInstructions.BGEZAL,
+        EEInstructions.BLTZALL,
+        EEInstructions.BGEZALL,
         Common.UNK,
         Common.UNK,
         Common.UNK,
@@ -366,12 +366,12 @@ public class Decoder {
         }
     };
     private static final Instruction cpo0Table[] = {
-        Instructions.MFC0,
-        Instructions.DMFC0,
+        EEInstructions.MFC0,
+        EEInstructions.DMFC0,
         Common.UNK,
         Common.UNK,
-        Instructions.MTC0,
-        Instructions.DMTC0,
+        EEInstructions.MTC0,
+        EEInstructions.DMTC0,
         Common.UNK,
         Common.UNK,
         Common.UNK,
@@ -402,18 +402,14 @@ public class Decoder {
     
     public static final Instruction coTable[] = {
     	Common.UNK,
-    	Instructions.TLBR,
-    	Instructions.TLBWI,
+    	EEInstructions.TLBR,
+    	EEInstructions.TLBWI,
     	Common.UNK,
     	Common.UNK,
     	Common.UNK,
-    	Instructions.TLBWR,
+    	EEInstructions.TLBWR,
     	Common.UNK,
-    	Instructions.TLBP,
-    	Common.UNK,
-    	Common.UNK,
-    	Common.UNK,
-    	Common.UNK,
+    	EEInstructions.TLBP,
     	Common.UNK,
     	Common.UNK,
     	Common.UNK,
@@ -425,15 +421,19 @@ public class Decoder {
     	Common.UNK,
     	Common.UNK,
     	Common.UNK,
-    	Instructions.ERET,
+    	Common.UNK,
+    	Common.UNK,
+    	Common.UNK,
+    	Common.UNK,
+    	EEInstructions.ERET,
     	Common.UNK,
     	Common.UNK,
     	Common.UNK,
     	Common.UNK,
     	Common.UNK,
     	Common.UNK,
-    	Instructions.DERET,
-    	Instructions.WAIT,
+    	EEInstructions.DERET,
+    	EEInstructions.WAIT,
     	Common.UNK,
     	Common.UNK,
     	Common.UNK,
@@ -468,13 +468,13 @@ public class Decoder {
     };
    
     public static final Instruction cpo1Table[] = {
-        Instructions.MFC1,
-        Instructions.DMFC1,
-        Instructions.CFC1,
+        EEInstructions.MFC1,
+        EEInstructions.DMFC1,
+        EEInstructions.CFC1,
         Common.UNK,
-        Instructions.MTC1,
-        Instructions.DMTC1,
-        Instructions.CTC1,
+        EEInstructions.MTC1,
+        EEInstructions.DMTC1,
+        EEInstructions.CTC1,
         Common.UNK,
         new STUB() {
 
@@ -532,14 +532,14 @@ public class Decoder {
         Common.UNK
     };
     public static final Instruction bc1Table[] = {
-        Instructions.BC1F,
-        Instructions.BC1T,
-        Instructions.BC1FL,
-        Instructions.BC1TL,
+        EEInstructions.BC1F,
+        EEInstructions.BC1T,
+        EEInstructions.BC1FL,
+        EEInstructions.BC1TL,
     };
     
     public static final Instruction cpo1xTable[] = {
-    	Instructions.LWXC1,
+    	EEInstructions.LWXC1,
         Common.UNK,
         Common.UNK,
         Common.UNK,
@@ -606,79 +606,79 @@ public class Decoder {
     };
     
     public static final Instruction table_6[] = {
-        Instructions.ADD_S,
-        Instructions.SUB_S,
-        Instructions.MUL_S,
-        Instructions.DIV_S,
+        EEInstructions.ADD_S,
+        EEInstructions.SUB_S,
+        EEInstructions.MUL_S,
+        EEInstructions.DIV_S,
         new STUB() {
 
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x00000020) == 0x00000000) {
-                    return Instructions.SQRT_S;
+                    return EEInstructions.SQRT_S;
                 } else {
-                    return Instructions.CVT_W_S;
+                    return EEInstructions.CVT_W_S;
                 }
             }
         },
-        Instructions.ABS_S,
-        Instructions.MOV_S,
-        Instructions.NEG_S,
+        EEInstructions.ABS_S,
+        EEInstructions.MOV_S,
+        EEInstructions.NEG_S,
         Common.UNK,
         Common.UNK,
         Common.UNK,
         Common.UNK,
-        Instructions.ROUND_W_S,
-        Instructions.TRUNC_W_S,
-        Instructions.CEIL_W_S,
-        Instructions.FLOOR_W_S,
-        Instructions.C_COND_S,
-        Instructions.C_COND_S,
-        Instructions.C_COND_S,
-        Instructions.C_COND_S,
-        Instructions.C_COND_S,
-        Instructions.C_COND_S,
-        Instructions.C_COND_S,
-        Instructions.C_COND_S,
-        Instructions.C_COND_S,
-        Instructions.C_COND_S,
-        Instructions.C_COND_S,
-        Instructions.C_COND_S,
-        Instructions.C_COND_S,
-        Instructions.C_COND_S,
-        Instructions.C_COND_S,
-        Instructions.C_COND_S,
+        EEInstructions.ROUND_W_S,
+        EEInstructions.TRUNC_W_S,
+        EEInstructions.CEIL_W_S,
+        EEInstructions.FLOOR_W_S,
+        EEInstructions.C_COND_S,
+        EEInstructions.C_COND_S,
+        EEInstructions.C_COND_S,
+        EEInstructions.C_COND_S,
+        EEInstructions.C_COND_S,
+        EEInstructions.C_COND_S,
+        EEInstructions.C_COND_S,
+        EEInstructions.C_COND_S,
+        EEInstructions.C_COND_S,
+        EEInstructions.C_COND_S,
+        EEInstructions.C_COND_S,
+        EEInstructions.C_COND_S,
+        EEInstructions.C_COND_S,
+        EEInstructions.C_COND_S,
+        EEInstructions.C_COND_S,
+        EEInstructions.C_COND_S,
     };
     public static final Instruction table_7[] = {
-        Instructions.BVF,
-        Instructions.BVT,
-        Instructions.BVFL,
-        Instructions.BVTL,
+        EEInstructions.BVF,
+        EEInstructions.BVT,
+        EEInstructions.BVFL,
+        EEInstructions.BVTL,
     };
     public static final Instruction table_8[] = {
-        Instructions.VADD,
-        Instructions.VSUB,
-        Instructions.VSBN,
-        Instructions.VDIV,
+        EEInstructions.VADD,
+        EEInstructions.VSUB,
+        EEInstructions.VSBN,
+        EEInstructions.VDIV,
     };
     public static final Instruction table_9[] = {
-        Instructions.VMUL,
-        Instructions.VDOT,
-        Instructions.VSCL,
+        EEInstructions.VMUL,
+        EEInstructions.VDOT,
+        EEInstructions.VSCL,
         Common.UNK,
-        Instructions.VHDP,
-        Instructions.VDET,
-        Instructions.VCRS,
+        EEInstructions.VHDP,
+        EEInstructions.VDET,
+        EEInstructions.VCRS,
         Common.UNK,
     };
     public static final Instruction table_10[] = {
-        Instructions.VCMP,
+        EEInstructions.VCMP,
         Common.UNK,
-        Instructions.VMIN,
-        Instructions.VMAX,
-        Instructions.VSLT,
-        Instructions.VSCMP,
-        Instructions.VSGE,
+        EEInstructions.VMIN,
+        EEInstructions.VMAX,
+        EEInstructions.VSLT,
+        EEInstructions.VSCMP,
+        EEInstructions.VSGE,
         Common.UNK,
     };
     public static final Instruction table_12[] = {
@@ -688,24 +688,24 @@ public class Decoder {
             public Instruction instance(final int insn) {
                 if ((insn & 0x02010000) == 0x00000000) {
                     if ((insn & 0x00020000) == 0x00000000) {
-                        return Instructions.VMOV;
+                        return EEInstructions.VMOV;
                     } else {
-                        return Instructions.VNEG;
+                        return EEInstructions.VNEG;
                     }
                 } else {
                     if ((insn & 0x02020000) == 0x00000000) {
-                        return Instructions.VABS;
+                        return EEInstructions.VABS;
                     } else {
                         if ((insn & 0x02000000) == 0x00000000) {
-                            return Instructions.VIDT;
+                            return EEInstructions.VIDT;
                         } else {
                             if ((insn & 0x01800000) == 0x00000000) {
-                                return Instructions.VF2IN;
+                                return EEInstructions.VF2IN;
                             } else {
                                 if ((insn & 0x01000000) == 0x00000000) {
-                                    return Instructions.VI2F;
+                                    return EEInstructions.VI2F;
                                 } else {
-                                    return Instructions.VWBN;
+                                    return EEInstructions.VWBN;
                                 }
                             }
                         }
@@ -719,24 +719,24 @@ public class Decoder {
             public Instruction instance(final int insn) {
                 if ((insn & 0x02010000) == 0x00000000) {
                     if ((insn & 0x00020000) == 0x00000000) {
-                        return Instructions.VSAT0;
+                        return EEInstructions.VSAT0;
                     } else {
-                        return Instructions.VZERO;
+                        return EEInstructions.VZERO;
                     }
                 } else {
                     if ((insn & 0x02020000) == 0x00000000) {
-                        return Instructions.VSAT1;
+                        return EEInstructions.VSAT1;
                     } else {
                         if ((insn & 0x02000000) == 0x00000000) {
-                            return Instructions.VONE;
+                            return EEInstructions.VONE;
                         } else {
                             if ((insn & 0x01800000) == 0x00000000) {
-                                return Instructions.VF2IN;
+                                return EEInstructions.VF2IN;
                             } else {
                                 if ((insn & 0x01000000) == 0x00000000) {
-                                    return Instructions.VI2F;
+                                    return EEInstructions.VI2F;
                                 } else {
-                                    return Instructions.VWBN;
+                                    return EEInstructions.VWBN;
                                 }
                             }
                         }
@@ -749,12 +749,12 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x01800000) == 0x00000000) {
-                    return Instructions.VF2IN;
+                    return EEInstructions.VF2IN;
                 } else {
                     if ((insn & 0x01000000) == 0x00000000) {
-                        return Instructions.VI2F;
+                        return EEInstructions.VI2F;
                     } else {
-                        return Instructions.VWBN;
+                        return EEInstructions.VWBN;
                     }
                 }
             }
@@ -764,12 +764,12 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x01800000) == 0x00000000) {
-                    return Instructions.VF2IN;
+                    return EEInstructions.VF2IN;
                 } else {
                     if ((insn & 0x01000000) == 0x00000000) {
-                        return Instructions.VI2F;
+                        return EEInstructions.VI2F;
                     } else {
-                        return Instructions.VWBN;
+                        return EEInstructions.VWBN;
                     }
                 }
             }
@@ -780,24 +780,24 @@ public class Decoder {
             public Instruction instance(final int insn) {
                 if ((insn & 0x02010000) == 0x00000000) {
                     if ((insn & 0x00020000) == 0x00000000) {
-                        return Instructions.VRCP;
+                        return EEInstructions.VRCP;
                     } else {
-                        return Instructions.VSIN;
+                        return EEInstructions.VSIN;
                     }
                 } else {
                     if ((insn & 0x02020000) == 0x00000000) {
-                        return Instructions.VRSQ;
+                        return EEInstructions.VRSQ;
                     } else {
                         if ((insn & 0x02000000) == 0x00000000) {
-                            return Instructions.VCOS;
+                            return EEInstructions.VCOS;
                         } else {
                             if ((insn & 0x01800000) == 0x00000000) {
-                                return Instructions.VF2IN;
+                                return EEInstructions.VF2IN;
                             } else {
                                 if ((insn & 0x01000000) == 0x00000000) {
-                                    return Instructions.VI2F;
+                                    return EEInstructions.VI2F;
                                 } else {
-                                    return Instructions.VWBN;
+                                    return EEInstructions.VWBN;
                                 }
                             }
                         }
@@ -811,24 +811,24 @@ public class Decoder {
             public Instruction instance(final int insn) {
                 if ((insn & 0x02010000) == 0x00000000) {
                     if ((insn & 0x00020000) == 0x00000000) {
-                        return Instructions.VEXP2;
+                        return EEInstructions.VEXP2;
                     } else {
-                        return Instructions.VSQRT;
+                        return EEInstructions.VSQRT;
                     }
                 } else {
                     if ((insn & 0x02020000) == 0x00000000) {
-                        return Instructions.VLOG2;
+                        return EEInstructions.VLOG2;
                     } else {
                         if ((insn & 0x02000000) == 0x00000000) {
-                            return Instructions.VASIN;
+                            return EEInstructions.VASIN;
                         } else {
                             if ((insn & 0x01800000) == 0x00000000) {
-                                return Instructions.VF2IN;
+                                return EEInstructions.VF2IN;
                             } else {
                                 if ((insn & 0x01000000) == 0x00000000) {
-                                    return Instructions.VI2F;
+                                    return EEInstructions.VI2F;
                                 } else {
-                                    return Instructions.VWBN;
+                                    return EEInstructions.VWBN;
                                 }
                             }
                         }
@@ -841,18 +841,18 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x02020000) == 0x00000000) {
-                    return Instructions.VNRCP;
+                    return EEInstructions.VNRCP;
                 } else {
                     if ((insn & 0x02000000) == 0x00000000) {
-                        return Instructions.VNSIN;
+                        return EEInstructions.VNSIN;
                     } else {
                         if ((insn & 0x01800000) == 0x00000000) {
-                            return Instructions.VF2IN;
+                            return EEInstructions.VF2IN;
                         } else {
                             if ((insn & 0x01000000) == 0x00000000) {
-                                return Instructions.VI2F;
+                                return EEInstructions.VI2F;
                             } else {
-                                return Instructions.VWBN;
+                                return EEInstructions.VWBN;
                             }
                         }
                     }
@@ -864,15 +864,15 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x02000000) == 0x00000000) {
-                    return Instructions.VREXP2;
+                    return EEInstructions.VREXP2;
                 } else {
                     if ((insn & 0x01800000) == 0x00000000) {
-                        return Instructions.VF2IN;
+                        return EEInstructions.VF2IN;
                     } else {
                         if ((insn & 0x01000000) == 0x00000000) {
-                            return Instructions.VI2F;
+                            return EEInstructions.VI2F;
                         } else {
-                            return Instructions.VWBN;
+                            return EEInstructions.VWBN;
                         }
                     }
                 }
@@ -884,24 +884,24 @@ public class Decoder {
             public Instruction instance(final int insn) {
                 if ((insn & 0x02010000) == 0x00000000) {
                     if ((insn & 0x00020000) == 0x00000000) {
-                        return Instructions.VRNDS;
+                        return EEInstructions.VRNDS;
                     } else {
-                        return Instructions.VRNDF1;
+                        return EEInstructions.VRNDF1;
                     }
                 } else {
                     if ((insn & 0x02020000) == 0x00000000) {
-                        return Instructions.VRNDI;
+                        return EEInstructions.VRNDI;
                     } else {
                         if ((insn & 0x02000000) == 0x00000000) {
-                            return Instructions.VRNDF2;
+                            return EEInstructions.VRNDF2;
                         } else {
                             if ((insn & 0x01800000) == 0x00800000) {
-                                return Instructions.VCMOVT;
+                                return EEInstructions.VCMOVT;
                             } else {
                                 if ((insn & 0x01000000) == 0x00000000) {
-                                    return Instructions.VF2IZ;
+                                    return EEInstructions.VF2IZ;
                                 } else {
-                                    return Instructions.VWBN;
+                                    return EEInstructions.VWBN;
                                 }
                             }
                         }
@@ -914,12 +914,12 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x01800000) == 0x00800000) {
-                    return Instructions.VCMOVT;
+                    return EEInstructions.VCMOVT;
                 } else {
                     if ((insn & 0x01000000) == 0x00000000) {
-                        return Instructions.VF2IZ;
+                        return EEInstructions.VF2IZ;
                     } else {
-                        return Instructions.VWBN;
+                        return EEInstructions.VWBN;
                     }
                 }
             }
@@ -929,12 +929,12 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x01800000) == 0x00800000) {
-                    return Instructions.VCMOVF;
+                    return EEInstructions.VCMOVF;
                 } else {
                     if ((insn & 0x01000000) == 0x00000000) {
-                        return Instructions.VF2IZ;
+                        return EEInstructions.VF2IZ;
                     } else {
-                        return Instructions.VWBN;
+                        return EEInstructions.VWBN;
                     }
                 }
             }
@@ -944,12 +944,12 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x01800000) == 0x00800000) {
-                    return Instructions.VCMOVF;
+                    return EEInstructions.VCMOVF;
                 } else {
                     if ((insn & 0x01000000) == 0x00000000) {
-                        return Instructions.VF2IZ;
+                        return EEInstructions.VF2IZ;
                     } else {
-                        return Instructions.VWBN;
+                        return EEInstructions.VWBN;
                     }
                 }
             }
@@ -959,15 +959,15 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x02010000) == 0x00000000) {
-                    return Instructions.VF2H;
+                    return EEInstructions.VF2H;
                 } else {
                     if ((insn & 0x02000000) == 0x00000000) {
-                        return Instructions.VH2F;
+                        return EEInstructions.VH2F;
                     } else {
                         if ((insn & 0x01000000) == 0x00000000) {
-                            return Instructions.VF2IZ;
+                            return EEInstructions.VF2IZ;
                         } else {
-                            return Instructions.VWBN;
+                            return EEInstructions.VWBN;
                         }
                     }
                 }
@@ -978,15 +978,15 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x02010000) == 0x00000000) {
-                    return Instructions.VSBZ;
+                    return EEInstructions.VSBZ;
                 } else {
                     if ((insn & 0x02000000) == 0x00000000) {
-                        return Instructions.VLGB;
+                        return EEInstructions.VLGB;
                     } else {
                         if ((insn & 0x01000000) == 0x00000000) {
-                            return Instructions.VF2IZ;
+                            return EEInstructions.VF2IZ;
                         } else {
-                            return Instructions.VWBN;
+                            return EEInstructions.VWBN;
                         }
                     }
                 }
@@ -998,21 +998,21 @@ public class Decoder {
             public Instruction instance(final int insn) {
                 if ((insn & 0x02010000) == 0x00000000) {
                     if ((insn & 0x00020000) == 0x00000000) {
-                        return Instructions.VUC2I;
+                        return EEInstructions.VUC2I;
                     } else {
-                        return Instructions.VUS2I;
+                        return EEInstructions.VUS2I;
                     }
                 } else {
                     if ((insn & 0x02020000) == 0x00000000) {
-                        return Instructions.VC2I;
+                        return EEInstructions.VC2I;
                     } else {
                         if ((insn & 0x02000000) == 0x00000000) {
-                            return Instructions.VS2I;
+                            return EEInstructions.VS2I;
                         } else {
                             if ((insn & 0x01000000) == 0x00000000) {
-                                return Instructions.VF2IZ;
+                                return EEInstructions.VF2IZ;
                             } else {
-                                return Instructions.VWBN;
+                                return EEInstructions.VWBN;
                             }
                         }
                     }
@@ -1025,21 +1025,21 @@ public class Decoder {
             public Instruction instance(final int insn) {
                 if ((insn & 0x02010000) == 0x00000000) {
                     if ((insn & 0x00020000) == 0x00000000) {
-                        return Instructions.VI2UC;
+                        return EEInstructions.VI2UC;
                     } else {
-                        return Instructions.VI2US;
+                        return EEInstructions.VI2US;
                     }
                 } else {
                     if ((insn & 0x02020000) == 0x00000000) {
-                        return Instructions.VI2C;
+                        return EEInstructions.VI2C;
                     } else {
                         if ((insn & 0x02000000) == 0x00000000) {
-                            return Instructions.VI2S;
+                            return EEInstructions.VI2S;
                         } else {
                             if ((insn & 0x01000000) == 0x00000000) {
-                                return Instructions.VF2IZ;
+                                return EEInstructions.VF2IZ;
                             } else {
-                                return Instructions.VWBN;
+                                return EEInstructions.VWBN;
                             }
                         }
                     }
@@ -1052,21 +1052,21 @@ public class Decoder {
             public Instruction instance(final int insn) {
                 if ((insn & 0x02010000) == 0x00000000) {
                     if ((insn & 0x00020000) == 0x00000000) {
-                        return Instructions.VSRT1;
+                        return EEInstructions.VSRT1;
                     } else {
-                        return Instructions.VBFY1;
+                        return EEInstructions.VBFY1;
                     }
                 } else {
                     if ((insn & 0x02020000) == 0x00000000) {
-                        return Instructions.VSRT2;
+                        return EEInstructions.VSRT2;
                     } else {
                         if ((insn & 0x02000000) == 0x00000000) {
-                            return Instructions.VBFY2;
+                            return EEInstructions.VBFY2;
                         } else {
                             if ((insn & 0x01000000) == 0x00000000) {
-                                return Instructions.VF2IU;
+                                return EEInstructions.VF2IU;
                             } else {
-                                return Instructions.VWBN;
+                                return EEInstructions.VWBN;
                             }
                         }
                     }
@@ -1079,21 +1079,21 @@ public class Decoder {
             public Instruction instance(final int insn) {
                 if ((insn & 0x02010000) == 0x00000000) {
                     if ((insn & 0x00020000) == 0x00000000) {
-                        return Instructions.VOCP;
+                        return EEInstructions.VOCP;
                     } else {
-                        return Instructions.VFAD;
+                        return EEInstructions.VFAD;
                     }
                 } else {
                     if ((insn & 0x02020000) == 0x00000000) {
-                        return Instructions.VSOCP;
+                        return EEInstructions.VSOCP;
                     } else {
                         if ((insn & 0x02000000) == 0x00000000) {
-                            return Instructions.VAVG;
+                            return EEInstructions.VAVG;
                         } else {
                             if ((insn & 0x01000000) == 0x00000000) {
-                                return Instructions.VF2IU;
+                                return EEInstructions.VF2IU;
                             } else {
-                                return Instructions.VWBN;
+                                return EEInstructions.VWBN;
                             }
                         }
                     }
@@ -1105,15 +1105,15 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x02010000) == 0x00000000) {
-                    return Instructions.VSRT3;
+                    return EEInstructions.VSRT3;
                 } else {
                     if ((insn & 0x02000000) == 0x00000000) {
-                        return Instructions.VSRT4;
+                        return EEInstructions.VSRT4;
                     } else {
                         if ((insn & 0x01000000) == 0x00000000) {
-                            return Instructions.VF2IU;
+                            return EEInstructions.VF2IU;
                         } else {
-                            return Instructions.VWBN;
+                            return EEInstructions.VWBN;
                         }
                     }
                 }
@@ -1124,9 +1124,9 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x01000000) == 0x00000000) {
-                    return Instructions.VF2IU;
+                    return EEInstructions.VF2IU;
                 } else {
-                    return Instructions.VWBN;
+                    return EEInstructions.VWBN;
                 }
             }
         },
@@ -1135,15 +1135,15 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x02000080) == 0x00000000) {
-                    return Instructions.VMFVC;
+                    return EEInstructions.VMFVC;
                 } else {
                     if ((insn & 0x02000000) == 0x00000000) {
-                        return Instructions.VMTVC;
+                        return EEInstructions.VMTVC;
                     } else {
                         if ((insn & 0x01000000) == 0x00000000) {
-                            return Instructions.VF2IU;
+                            return EEInstructions.VF2IU;
                         } else {
-                            return Instructions.VWBN;
+                            return EEInstructions.VWBN;
                         }
                     }
                 }
@@ -1154,9 +1154,9 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x01000000) == 0x00000000) {
-                    return Instructions.VF2IU;
+                    return EEInstructions.VF2IU;
                 } else {
-                    return Instructions.VWBN;
+                    return EEInstructions.VWBN;
                 }
             }
         },
@@ -1166,18 +1166,18 @@ public class Decoder {
             public Instruction instance(final int insn) {
                 if ((insn & 0x02010000) == 0x00010000) {
                     if ((insn & 0x00020000) == 0x00000000) {
-                        return Instructions.VT4444;
+                        return EEInstructions.VT4444;
                     } else {
-                        return Instructions.VT5650;
+                        return EEInstructions.VT5650;
                     }
                 } else {
                     if ((insn & 0x02000000) == 0x00000000) {
-                        return Instructions.VT5551;
+                        return EEInstructions.VT5551;
                     } else {
                         if ((insn & 0x01000000) == 0x00000000) {
-                            return Instructions.VF2IU;
+                            return EEInstructions.VF2IU;
                         } else {
-                            return Instructions.VWBN;
+                            return EEInstructions.VWBN;
                         }
                     }
                 }
@@ -1188,9 +1188,9 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x01000000) == 0x00000000) {
-                    return Instructions.VF2IU;
+                    return EEInstructions.VF2IU;
                 } else {
-                    return Instructions.VWBN;
+                    return EEInstructions.VWBN;
                 }
             }
         },
@@ -1199,12 +1199,12 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x02000000) == 0x00000000) {
-                    return Instructions.VCST;
+                    return EEInstructions.VCST;
                 } else {
                     if ((insn & 0x01000000) == 0x00000000) {
-                        return Instructions.VF2ID;
+                        return EEInstructions.VF2ID;
                     } else {
-                        return Instructions.VWBN;
+                        return EEInstructions.VWBN;
                     }
                 }
             }
@@ -1214,12 +1214,12 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x02000000) == 0x00000000) {
-                    return Instructions.VCST;
+                    return EEInstructions.VCST;
                 } else {
                     if ((insn & 0x01000000) == 0x00000000) {
-                        return Instructions.VF2ID;
+                        return EEInstructions.VF2ID;
                     } else {
-                        return Instructions.VWBN;
+                        return EEInstructions.VWBN;
                     }
                 }
             }
@@ -1229,12 +1229,12 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x02000000) == 0x00000000) {
-                    return Instructions.VCST;
+                    return EEInstructions.VCST;
                 } else {
                     if ((insn & 0x01000000) == 0x00000000) {
-                        return Instructions.VF2ID;
+                        return EEInstructions.VF2ID;
                     } else {
-                        return Instructions.VWBN;
+                        return EEInstructions.VWBN;
                     }
                 }
             }
@@ -1244,12 +1244,12 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x02000000) == 0x00000000) {
-                    return Instructions.VCST;
+                    return EEInstructions.VCST;
                 } else {
                     if ((insn & 0x01000000) == 0x00000000) {
-                        return Instructions.VF2ID;
+                        return EEInstructions.VF2ID;
                     } else {
-                        return Instructions.VWBN;
+                        return EEInstructions.VWBN;
                     }
                 }
             }
@@ -1259,12 +1259,12 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x02000000) == 0x00000000) {
-                    return Instructions.VCST;
+                    return EEInstructions.VCST;
                 } else {
                     if ((insn & 0x01000000) == 0x00000000) {
-                        return Instructions.VF2ID;
+                        return EEInstructions.VF2ID;
                     } else {
-                        return Instructions.VWBN;
+                        return EEInstructions.VWBN;
                     }
                 }
             }
@@ -1274,12 +1274,12 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x02000000) == 0x00000000) {
-                    return Instructions.VCST;
+                    return EEInstructions.VCST;
                 } else {
                     if ((insn & 0x01000000) == 0x00000000) {
-                        return Instructions.VF2ID;
+                        return EEInstructions.VF2ID;
                     } else {
-                        return Instructions.VWBN;
+                        return EEInstructions.VWBN;
                     }
                 }
             }
@@ -1289,12 +1289,12 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x02000000) == 0x00000000) {
-                    return Instructions.VCST;
+                    return EEInstructions.VCST;
                 } else {
                     if ((insn & 0x01000000) == 0x00000000) {
-                        return Instructions.VF2ID;
+                        return EEInstructions.VF2ID;
                     } else {
-                        return Instructions.VWBN;
+                        return EEInstructions.VWBN;
                     }
                 }
             }
@@ -1304,43 +1304,43 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x02000000) == 0x00000000) {
-                    return Instructions.VCST;
+                    return EEInstructions.VCST;
                 } else {
                     if ((insn & 0x01000000) == 0x00000000) {
-                        return Instructions.VF2ID;
+                        return EEInstructions.VF2ID;
                     } else {
-                        return Instructions.VWBN;
+                        return EEInstructions.VWBN;
                     }
                 }
             }
         },
     };
     public static final Instruction table_13[] = {
-        Instructions.VPFXS,
-        Instructions.VPFXT,
-        Instructions.VPFXD,
+        EEInstructions.VPFXS,
+        EEInstructions.VPFXT,
+        EEInstructions.VPFXD,
         new STUB() {
 
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x00800000) == 0x00000000) {
-                    return Instructions.VIIM;
+                    return EEInstructions.VIIM;
                 } else {
-                    return Instructions.VFIM;
+                    return EEInstructions.VFIM;
                 }
             }
         },
     };
     public static final Instruction table_14[] = {
-        Instructions.VMMUL,
+        EEInstructions.VMMUL,
         new STUB() {
 
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x00000080) == 0x00000000) {
-                    return Instructions.VHTFM2;
+                    return EEInstructions.VHTFM2;
                 } else {
-                    return Instructions.VTFM2;
+                    return EEInstructions.VTFM2;
                 }
             }
         },
@@ -1349,9 +1349,9 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x00000080) == 0x00000000) {
-                    return Instructions.VTFM3;
+                    return EEInstructions.VTFM3;
                 } else {
-                    return Instructions.VHTFM3;
+                    return EEInstructions.VHTFM3;
                 }
             }
         },
@@ -1360,14 +1360,14 @@ public class Decoder {
             @Override
             public Instruction instance(final int insn) {
                 if ((insn & 0x00000080) == 0x00000000) {
-                    return Instructions.VHTFM4;
+                    return EEInstructions.VHTFM4;
                 } else {
-                    return Instructions.VTFM4;
+                    return EEInstructions.VTFM4;
                 }
             }
         },
-        Instructions.VMSCL,
-        Instructions.VQMUL,
+        EEInstructions.VMSCL,
+        EEInstructions.VQMUL,
         Common.UNK,
         new STUB() {
 
@@ -1375,19 +1375,19 @@ public class Decoder {
             public Instruction instance(final int insn) {
                 if ((insn & 0x00210000) == 0x00000000) {
                     if ((insn & 0x00020000) == 0x00000000) {
-                        return Instructions.VMMOV;
+                        return EEInstructions.VMMOV;
                     } else {
-                        return Instructions.VMZERO;
+                        return EEInstructions.VMZERO;
                     }
                 } else {
                     if ((insn & 0x00200000) == 0x00000000) {
                         if ((insn & 0x00040000) == 0x00000000) {
-                            return Instructions.VMIDT;
+                            return EEInstructions.VMIDT;
                         } else {
-                            return Instructions.VMONE;
+                            return EEInstructions.VMONE;
                         }
                     } else {
-                        return Instructions.VROT;
+                        return EEInstructions.VROT;
                     }
                 }
             }

@@ -1,4 +1,4 @@
-package com.jps2.core.cpu.r5900;
+package com.jps2.core.cpu.ee.state;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -8,7 +8,7 @@ import java.util.Random;
  * 
  * @author hli
  */
-public class VfpuState extends FpuState {
+public abstract class VfpuState extends FpuState {
 
 	public float[][][]	       vpr;	            // mtx, fsl, idx
 	private static final float	floatConstants[]	= { 0.0f, Float.MAX_VALUE, (float) Math.sqrt(2.0f), (float) Math.sqrt(0.5f), 2.0f / (float) Math.sqrt(Math.PI), 2.0f / (float) Math.PI,
@@ -1978,7 +1978,7 @@ public class VfpuState extends FpuState {
 		final int m = (vt >> 2) & 7;
 		final int i = (vt >> 0) & 3;
 
-		vpr[m][i][s] = Float.intBitsToFloat(memory.read32(gpr[rs].read32() + simm14_a16));
+		vpr[m][i][s] = Float.intBitsToFloat(processor.memory.read32(gpr[rs].read32() + simm14_a16));
 	}
 
 	// LSU:SVS
@@ -1994,7 +1994,7 @@ public class VfpuState extends FpuState {
 			}
 		}
 
-		memory.write32(gpr[rs].read32() + simm14_a16, Float.floatToRawIntBits(vpr[m][i][s]));
+		processor.memory.write32(gpr[rs].read32() + simm14_a16, Float.floatToRawIntBits(vpr[m][i][s]));
 	}
 
 	// LSU:LVQ
@@ -2012,11 +2012,11 @@ public class VfpuState extends FpuState {
 
 		if ((vt & 32) != 0) {
 			for (int j = 0; j < 4; ++j) {
-				vpr[m][j][i] = Float.intBitsToFloat(memory.read32(address + j * 4));
+				vpr[m][j][i] = Float.intBitsToFloat(processor.memory.read32(address + j * 4));
 			}
 		} else {
 			for (int j = 0; j < 4; ++j) {
-				vpr[m][i][j] = Float.intBitsToFloat(memory.read32(address + j * 4));
+				vpr[m][i][j] = Float.intBitsToFloat(processor.memory.read32(address + j * 4));
 			}
 		}
 	}
@@ -2045,12 +2045,12 @@ public class VfpuState extends FpuState {
 
 		if ((vt & 32) != 0) {
 			for (int j = 0; j < k; ++j) {
-				vpr[m][j][i] = Float.intBitsToFloat(memory.read32(address));
+				vpr[m][j][i] = Float.intBitsToFloat(processor.memory.read32(address));
 				address += 4;
 			}
 		} else {
 			for (int j = 0; j < k; ++j) {
-				vpr[m][i][j] = Float.intBitsToFloat(memory.read32(address));
+				vpr[m][i][j] = Float.intBitsToFloat(processor.memory.read32(address));
 				address += 4;
 			}
 		}
@@ -2080,12 +2080,12 @@ public class VfpuState extends FpuState {
 		address += (4 - k) << 2;
 		if ((vt & 32) != 0) {
 			for (int j = 4 - k; j < 4; ++j) {
-				vpr[m][j][i] = Float.intBitsToFloat(memory.read32(address));
+				vpr[m][j][i] = Float.intBitsToFloat(processor.memory.read32(address));
 				address += 4;
 			}
 		} else {
 			for (int j = 4 - k; j < 4; ++j) {
-				vpr[m][i][j] = Float.intBitsToFloat(memory.read32(address));
+				vpr[m][i][j] = Float.intBitsToFloat(processor.memory.read32(address));
 				address += 4;
 			}
 		}
@@ -2106,11 +2106,11 @@ public class VfpuState extends FpuState {
 
 		if ((vt & 32) != 0) {
 			for (int j = 0; j < 4; ++j) {
-				memory.write32((address + j * 4), Float.floatToRawIntBits(vpr[m][j][i]));
+				processor.memory.write32((address + j * 4), Float.floatToRawIntBits(vpr[m][j][i]));
 			}
 		} else {
 			for (int j = 0; j < 4; ++j) {
-				memory.write32((address + j * 4), Float.floatToRawIntBits(vpr[m][i][j]));
+				processor.memory.write32((address + j * 4), Float.floatToRawIntBits(vpr[m][i][j]));
 			}
 		}
 	}
@@ -2132,12 +2132,12 @@ public class VfpuState extends FpuState {
 
 		if ((vt & 32) != 0) {
 			for (int j = 0; j < k; ++j) {
-				memory.write32((address), Float.floatToRawIntBits(vpr[m][j][i]));
+				processor.memory.write32((address), Float.floatToRawIntBits(vpr[m][j][i]));
 				address += 4;
 			}
 		} else {
 			for (int j = 0; j < k; ++j) {
-				memory.write32((address), Float.floatToRawIntBits(vpr[m][i][j]));
+				processor.memory.write32((address), Float.floatToRawIntBits(vpr[m][i][j]));
 				address += 4;
 			}
 		}
@@ -2160,12 +2160,12 @@ public class VfpuState extends FpuState {
 		address += (4 - k) << 2;
 		if ((vt & 32) != 0) {
 			for (int j = 4 - k; j < 4; ++j) {
-				memory.write32((address), Float.floatToRawIntBits(vpr[m][j][i]));
+				processor.memory.write32((address), Float.floatToRawIntBits(vpr[m][j][i]));
 				address += 4;
 			}
 		} else {
 			for (int j = 4 - k; j < 4; ++j) {
-				memory.write32((address), Float.floatToRawIntBits(vpr[m][i][j]));
+				processor.memory.write32((address), Float.floatToRawIntBits(vpr[m][i][j]));
 				address += 4;
 			}
 		}

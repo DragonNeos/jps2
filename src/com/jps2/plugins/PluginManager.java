@@ -7,9 +7,16 @@ public abstract class PluginManager {
 	private static AbstractFirewirePlugin	firewirePlugin;
 
 	private static AbstractSpu2Plugin	  spu2Plugin;
-	
-	public static final void initialize(){
+
+	public static final void initialize() {
 		spu2Plugin = new NullSpu2();
+	}
+
+	public static final void closeAll() {
+		if (spu2Plugin != null) {
+			spu2Plugin.close();
+			spu2Plugin = null;
+		}
 	}
 
 	public static final AbstractUsbPlugin getUsbPlugin() {

@@ -1,12 +1,8 @@
-package com.jps2.core.cpu.r5900;
+package com.jps2.core.cpu.ee.state;
 
-import com.jps2.JPS2;
-import com.jps2.core.memory.MemoryManager;
+public abstract class LsuState extends MduState {
 
-public class LsuState extends MduState {
-
-	public static final MemoryManager	memory	      = JPS2.getMemoryManager();
-	protected static final boolean	  CHECK_ALIGNMENT	= false;
+	protected static final boolean	CHECK_ALIGNMENT	= true;
 
 	@Override
 	public void reset() {
@@ -29,14 +25,14 @@ public class LsuState extends MduState {
 	}
 
 	public void doLB(final int rt, final int rs, final int simm16) {
-		final int word = (byte) memory.read8(gpr[rs].read32() + simm16);
+		final int word = (byte) processor.memory.read8(gpr[rs].read32() + simm16);
 		if (rt != 0) {
 			gpr[rt].write32(word);
 		}
 	}
 
 	public void doLBU(final int rt, final int rs, final int simm16) {
-		final int word = memory.read8(gpr[rs].read32() + simm16) & 0xff;
+		final int word = processor.memory.read8(gpr[rs].read32() + simm16) & 0xff;
 		if (rt != 0) {
 			gpr[rt].write32(word);
 		}
@@ -50,7 +46,7 @@ public class LsuState extends MduState {
 			}
 		}
 
-		final int word = (short) memory.read16(gpr[rs].read32() + simm16);
+		final int word = (short) processor.memory.read16(gpr[rs].read32() + simm16);
 		if (rt != 0) {
 			gpr[rt].write32(word);
 		}
@@ -64,7 +60,7 @@ public class LsuState extends MduState {
 			}
 		}
 
-		final int word = memory.read16(gpr[rs].read32() + simm16) & 0xffff;
+		final int word = processor.memory.read16(gpr[rs].read32() + simm16) & 0xffff;
 		if (rt != 0) {
 			gpr[rt].write32(word);
 		}
@@ -78,7 +74,7 @@ public class LsuState extends MduState {
 		final int offset = address & 0x3;
 		final int value = gpr[rt].read32();
 
-		final int data = memory.read32(address & 0xfffffffc);
+		final int data = processor.memory.read32(address & 0xfffffffc);
 		if (rt != 0) {
 			gpr[rt].write32((data << lwlShift[offset]) | (value & lwlMask[offset]));
 		}
@@ -92,7 +88,7 @@ public class LsuState extends MduState {
 			}
 		}
 
-		final int word = memory.read32(gpr[rs].read32() + simm16);
+		final int word = processor.memory.read32(gpr[rs].read32() + simm16);
 		if (rt != 0) {
 			gpr[rt].write32(word);
 		}
@@ -106,29 +102,29 @@ public class LsuState extends MduState {
 		final int offset = address & 0x3;
 		final int value = gpr[rt].read32();
 
-		final int data = memory.read32(address & 0xfffffffc);
+		final int data = processor.memory.read32(address & 0xfffffffc);
 		if (rt != 0) {
 			gpr[rt].write32((data >>> lwrShift[offset]) | (value & lwrMask[offset]));
 		}
 	}
-	
-	private static final long[] ldrMask = new long[] { 0x0000000000000000L, 0xff00000000000000L, 0xffff000000000000L, 0xffffff0000000000L, 0xffffffff00000000L, 0xffffffffff000000L,
+
+	private static final long[]	ldrMask	 = new long[] { 0x0000000000000000L, 0xff00000000000000L, 0xffff000000000000L, 0xffffff0000000000L, 0xffffffff00000000L, 0xffffffffff000000L,
 	        0xffffffffffff0000L, 0xffffffffffffff00L };
-	private static final int[] ldrShift = new int[] { 0, 8, 16, 24, 32, 40, 48, 56 };
+	private static final int[]	ldrShift	= new int[] { 0, 8, 16, 24, 32, 40, 48, 56 };
 
 	public void doLDR(final int rt, final int rs, final int simm16) {
 		final int address = gpr[rs].read32() + simm16;
 		final int offset = (address & 0x7);
 		final long value = gpr[rt].read64();
 
-		final long data = memory.read64(address & 0xfffffffc);
+		final long data = processor.memory.read64(address & 0xfffffffc);
 		if (rt != 0) {
 			gpr[rt].write64((data >>> ldrShift[offset]) | (value & ldrMask[offset]));
 		}
 	}
 
 	public void doSB(final int rt, final int rs, final int simm16) {
-		memory.write8(gpr[rs].read32() + simm16, gpr[rt].read8());
+		processor.memory.write8(gpr[rs].read32() + simm16, gpr[rt].read8());
 	}
 
 	public void doSH(final int rt, final int rs, final int simm16) {
@@ -139,7 +135,7 @@ public class LsuState extends MduState {
 			}
 		}
 
-		memory.write16(gpr[rs].read32() + simm16, (short) (gpr[rt].read32() & 0xFFFF));
+		processor.memory.write16(gpr[rs].read32() + simm16, (short) (gpr[rt].read32() & 0xFFFF));
 	}
 
 	private static final int[]	swlMask	 = { 0xffffff00, 0xffff0000, 0xff000000, 0 };
@@ -149,11 +145,11 @@ public class LsuState extends MduState {
 		final int address = gpr[rs].read32() + simm16;
 		final int offset = address & 0x3;
 		final int value = gpr[rt].read32();
-		int data = memory.read32(address & 0xfffffffc);
+		int data = processor.memory.read32(address & 0xfffffffc);
 
 		data = (value >>> swlShift[offset]) | (data & swlMask[offset]);
 
-		memory.write32(address & 0xfffffffc, data);
+		processor.memory.write32(address & 0xfffffffc, data);
 	}
 
 	public void doSW(final int rt, final int rs, final int simm16) {
@@ -163,7 +159,7 @@ public class LsuState extends MduState {
 			throw new RuntimeException(String.format("SW unaligned addr:0x%08x pc:0x%08x", address, pc));
 		}
 
-		memory.write32(address, gpr[rt].read32());
+		processor.memory.write32(address, gpr[rt].read32());
 	}
 
 	private static final int[]	swrMask	 = { 0, 0xff, 0xffff, 0xffffff };
@@ -173,15 +169,15 @@ public class LsuState extends MduState {
 		final int address = gpr[rs].read32() + simm16;
 		final int offset = address & 0x3;
 		final int value = gpr[rt].read32();
-		int data = memory.read32(address & 0xfffffffc);
+		int data = processor.memory.read32(address & 0xfffffffc);
 
 		data = (value << swrShift[offset]) | (data & swrMask[offset]);
 
-		memory.write32(address & 0xfffffffc, data);
+		processor.memory.write32(address & 0xfffffffc, data);
 	}
 
 	public void doLL(final int rt, final int rs, final int simm16) {
-		final int word = memory.read32(gpr[rs].read32() + simm16);
+		final int word = processor.memory.read32(gpr[rs].read32() + simm16);
 		if (rt != 0) {
 			gpr[rt].write32(word);
 		}
@@ -189,7 +185,7 @@ public class LsuState extends MduState {
 	}
 
 	public void doSC(final int rt, final int rs, final int simm16) {
-		memory.write32(gpr[rs].read32() + simm16, gpr[rt].read32());
+		processor.memory.write32(gpr[rs].read32() + simm16, gpr[rt].read32());
 		if (rt != 0) {
 			gpr[rt].write32(1); // = ll_bit;
 		}

@@ -1,4 +1,4 @@
-package com.jps2;
+package com.jps2.util;
 
 import java.util.Locale;
 import java.util.ResourceBundle;

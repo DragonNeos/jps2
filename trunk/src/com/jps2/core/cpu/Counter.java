@@ -1,4 +1,4 @@
-package com.jps2.core.cpu.r3000a;
+package com.jps2.core.cpu;
 
 public class Counter {
 	public long	count;
@@ -8,10 +8,10 @@ public class Counter {
 	public int	interrupt;
 	public int	cycleT;
 
-	public void reset() {
+	public void reset(int cycle) {
 		count = 0;
 		mode &= ~0x18301C00;
-		cycleT = R3000a.getProcessor().cpu.cycle;
+		cycleT = cycle;
 	}
 
 }

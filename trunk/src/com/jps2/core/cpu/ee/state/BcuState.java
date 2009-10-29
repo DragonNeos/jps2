@@ -1,7 +1,5 @@
-package com.jps2.core.cpu.r5900;
+package com.jps2.core.cpu.ee.state;
 
-import java.math.BigInteger;
-import java.text.DecimalFormat;
 
 /**
  * Branch Control Unit, handles branching and jumping operations
@@ -9,7 +7,7 @@ import java.text.DecimalFormat;
  * @author hli
  * 
  */
-public class BcuState extends LsuState {
+public abstract class BcuState extends LsuState {
 	@Override
 	public void reset() {
 		pc = 0xBFC00000;
@@ -48,15 +46,10 @@ public class BcuState extends LsuState {
 		return (npc & 0xf0000000) | (uimm26 << 2);
 	}
 
-	final DecimalFormat	format	= new DecimalFormat("00000000000000000000000000000000");
-
 	public int fetchOpcode() {
 		npc = pc + 4;
 
-		final int opcode = memory.read32(pc);
-		if (R5900.ENABLE_STEP_TRACE) {
-			System.err.println(format.format(new BigInteger(Integer.toBinaryString(opcode))));
-		}
+		final int opcode = processor.memory.read32(pc);
 
 		// by default, the next instruction to emulate is at the next address
 		pc = npc;
@@ -64,8 +57,9 @@ public class BcuState extends LsuState {
 		return opcode;
 	}
 
+	@Override
 	public int nextOpcode() {
-		final int opcode = memory.read32(pc);
+		final int opcode = processor.memory.read32(pc);
 
 		// by default, the next instruction to emulate is at the next address
 		pc += 4;
@@ -73,6 +67,7 @@ public class BcuState extends LsuState {
 		return opcode;
 	}
 
+	@Override
 	public void nextPc() {
 		pc = npc;
 		npc = pc + 4;

@@ -1,4 +1,4 @@
-package com.jps2.core.cpu.r5900;
+package com.jps2.core.cpu.ee;
 
 import static com.jps2.core.cpu.Common.Instruction.FLAGS_BRANCH_INSTRUCTION;
 import static com.jps2.core.cpu.Common.Instruction.FLAGS_LINK_INSTRUCTION;
@@ -10,11 +10,11 @@ import static com.jps2.core.cpu.Common.Instruction.FLAG_IS_CONDITIONAL;
 import static com.jps2.core.cpu.Common.Instruction.FLAG_IS_JUMPING;
 import static com.jps2.core.cpu.Common.Instruction.NO_FLAGS;
 
-import com.jps2.core.cpu.Common;
 import com.jps2.core.cpu.ExcCode;
 import com.jps2.core.cpu.Common.Instruction;
+import com.jps2.core.cpu.ee.state.CpuState;
 
-public class Instructions {
+public class EEInstructions {
 
 	public static final Instruction	PREF	  = new Instruction(NO_FLAGS) {
 
@@ -66,8 +66,8 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          R5900.getProcessor().cpu.pc -= 4;
-			                                          R5900.getProcessor().psxException(ExcCode.SYSCALL, insn, delay);
+			                                          cpu.pc -= 4;
+			                                          cpu.processor.processException(ExcCode.SYSCALL, insn, delay);
 		                                          }
 
 	                                          };
@@ -219,11 +219,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doADD(rd, rs, rt, insn, delay);
+			                                          cpu.doADD(rd, rs, rt, insn, delay);
 		                                          }
 
 	                                          };
@@ -241,12 +240,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
 			                                          // just ignore overflow exception as it is useless
-			                                          R5900.getProcessor().cpu.doDADD(rd, rs, rt, insn, delay);
+			                                          cpu.doDADD(rd, rs, rt, insn, delay);
 		                                          }
 
 	                                          };
@@ -264,11 +261,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doADDU(rd, rs, rt);
+			                                          cpu.doADDU(rd, rs, rt);
 
 		                                          }
 
@@ -287,11 +282,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doDADDU(rd, rs, rt);
+			                                          cpu.doDADDU(rd, rs, rt);
 
 		                                          }
 
@@ -310,12 +303,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
 			                                          // just ignore overflow exception as it is useless
-			                                          R5900.getProcessor().cpu.doADDIU(rt, rs, (short) imm16);
+			                                          cpu.doADDIU(rt, rs, (short) imm16);
 
 		                                          }
 
@@ -334,11 +325,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doADDIU(rt, rs, (short) imm16);
+			                                          cpu.doADDIU(rt, rs, (short) imm16);
 
 		                                          }
 
@@ -357,11 +346,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doAND(rd, rs, rt);
+			                                          cpu.doAND(rd, rs, rt);
 
 		                                          }
 
@@ -380,11 +367,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doANDI(rt, rs, imm16);
+			                                          cpu.doANDI(rt, rs, imm16);
 
 		                                          }
 
@@ -403,11 +388,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doNOR(rd, rs, rt);
+			                                          cpu.doNOR(rd, rs, rt);
 
 		                                          }
 
@@ -426,11 +409,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doOR(rd, rs, rt);
+			                                          cpu.doOR(rd, rs, rt);
 
 		                                          }
 
@@ -449,11 +430,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doORI(rt, rs, imm16);
+			                                          cpu.doORI(rt, rs, imm16);
 
 		                                          }
 
@@ -472,11 +451,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doXOR(rd, rs, rt);
+			                                          cpu.doXOR(rd, rs, rt);
 
 		                                          }
 
@@ -495,11 +472,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doXORI(rt, rs, imm16);
+			                                          cpu.doXORI(rt, rs, imm16);
 
 		                                          }
 
@@ -518,11 +493,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int sa = (insn >> 6) & 31;
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
+			                                          decodeRtRdSa(insn);
 
-			                                          R5900.getProcessor().cpu.doSLL(rd, rt, sa);
+			                                          cpu.doSLL(rd, rt, sa);
 
 		                                          }
 
@@ -541,11 +514,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int sa = (insn >> 6) & 31;
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
+			                                          decodeRtRdSa(insn);
 
-			                                          R5900.getProcessor().cpu.doDSLL(rd, rt, sa);
+			                                          cpu.doDSLL(rd, rt, sa);
 
 		                                          }
 
@@ -564,11 +535,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int sa = (insn >> 6) & 31;
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
+			                                          decodeRtRdSa(insn);
 
-			                                          R5900.getProcessor().cpu.doDSLL32(rd, rt, sa);
+			                                          cpu.doDSLL32(rd, rt, sa);
 
 		                                          }
 
@@ -587,11 +556,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doSLLV(rd, rt, rs);
+			                                          cpu.doSLLV(rd, rt, rs);
 
 		                                          }
 
@@ -610,11 +577,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doDSLLV(rd, rt, rs);
+			                                          cpu.doDSLLV(rd, rt, rs);
 
 		                                          }
 
@@ -633,11 +598,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int sa = (insn >> 6) & 31;
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
+			                                          decodeRtRdSa(insn);
 
-			                                          R5900.getProcessor().cpu.doSRA(rd, rt, sa);
+			                                          cpu.doSRA(rd, rt, sa);
 
 		                                          }
 
@@ -656,11 +619,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int sa = (insn >> 6) & 31;
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
+			                                          decodeRtRdSa(insn);
 
-			                                          R5900.getProcessor().cpu.doDSRA(rd, rt, sa);
+			                                          cpu.doDSRA(rd, rt, sa);
 
 		                                          }
 
@@ -679,11 +640,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int sa = (insn >> 6) & 31;
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
+			                                          decodeRtRdSa(insn);
 
-			                                          R5900.getProcessor().cpu.doDSRA32(rd, rt, sa);
+			                                          cpu.doDSRA32(rd, rt, sa);
 
 		                                          }
 
@@ -702,11 +661,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doSRAV(rd, rt, rs);
+			                                          cpu.doSRAV(rd, rt, rs);
 
 		                                          }
 
@@ -726,11 +683,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doDSRAV(rd, rt, rs);
+			                                          cpu.doDSRAV(rd, rt, rs);
 
 		                                          }
 
@@ -749,11 +704,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int sa = (insn >> 6) & 31;
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
+			                                          decodeRtRdSa(insn);
 
-			                                          R5900.getProcessor().cpu.doSRL(rd, rt, sa);
+			                                          cpu.doSRL(rd, rt, sa);
 
 		                                          }
 
@@ -772,11 +725,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int sa = (insn >> 6) & 31;
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
+			                                          decodeRtRdSa(insn);
 
-			                                          R5900.getProcessor().cpu.doDSRL(rd, rt, sa);
+			                                          cpu.doDSRL(rd, rt, sa);
 
 		                                          }
 
@@ -796,11 +747,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int sa = (insn >> 6) & 31;
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
+			                                          decodeRtRdSa(insn);
 
-			                                          R5900.getProcessor().cpu.doDSRL32(rd, rt, sa);
+			                                          cpu.doDSRL32(rd, rt, sa);
 
 		                                          }
 
@@ -819,11 +768,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doSRLV(rd, rt, rs);
+			                                          cpu.doSRLV(rd, rt, rs);
 
 		                                          }
 
@@ -843,11 +790,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doDSRLV(rd, rt, rs);
+			                                          cpu.doDSRLV(rd, rt, rs);
 
 		                                          }
 
@@ -867,11 +812,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doSLT(rd, rs, rt);
+			                                          cpu.doSLT(rd, rs, rt);
 
 		                                          }
 
@@ -890,11 +833,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doSLTI(rt, rs, (short) imm16);
+			                                          cpu.doSLTI(rt, rs, (short) imm16);
 
 		                                          }
 
@@ -913,11 +854,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doSLTU(rd, rs, rt);
+			                                          cpu.doSLTU(rd, rs, rt);
 
 		                                          }
 
@@ -939,7 +878,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doTEQ(rs, rt, insn, delay);
+			                                          cpu.doTEQ(rs, rt, insn, delay);
 
 		                                          }
 
@@ -961,7 +900,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doTNE(rs, rt, insn, delay);
+			                                          cpu.doTNE(rs, rt, insn, delay);
 
 		                                          }
 
@@ -984,7 +923,7 @@ public class Instructions {
 			                                          final short imm16 = (short) ((insn >> 0) & 65535);
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doTNEI(rs, imm16, insn, delay);
+			                                          cpu.doTNEI(rs, imm16, insn, delay);
 
 		                                          }
 
@@ -1006,7 +945,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doTGE(rs, rt, insn, delay);
+			                                          cpu.doTGE(rs, rt, insn, delay);
 
 		                                          }
 
@@ -1029,7 +968,7 @@ public class Instructions {
 			                                          final short imm16 = (short) ((insn >> 0) & 65535);
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doTGEI(rs, imm16, insn, delay);
+			                                          cpu.doTGEI(rs, imm16, insn, delay);
 
 		                                          }
 
@@ -1052,7 +991,7 @@ public class Instructions {
 			                                          final short imm16 = (short) ((insn >> 0) & 65535);
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doTGEIU(rs, imm16, insn, delay);
+			                                          cpu.doTGEIU(rs, imm16, insn, delay);
 
 		                                          }
 
@@ -1075,7 +1014,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doTGEU(rs, rt, insn, delay);
+			                                          cpu.doTGEU(rs, rt, insn, delay);
 
 		                                          }
 
@@ -1098,7 +1037,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doTLT(rs, rt, insn, delay);
+			                                          cpu.doTLT(rs, rt, insn, delay);
 		                                          }
 	                                          };
 
@@ -1119,7 +1058,7 @@ public class Instructions {
 			                                          final short imm16 = (short) ((insn >> 0) & 65535);
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doTLTI(rs, imm16, insn, delay);
+			                                          cpu.doTLTI(rs, imm16, insn, delay);
 		                                          }
 	                                          };
 
@@ -1140,7 +1079,7 @@ public class Instructions {
 			                                          final short imm16 = (short) ((insn >> 0) & 65535);
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doTLTIU(rs, imm16, insn, delay);
+			                                          cpu.doTLTIU(rs, imm16, insn, delay);
 		                                          }
 	                                          };
 
@@ -1161,7 +1100,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doTLTU(rs, rt, insn, delay);
+			                                          cpu.doTLTU(rs, rt, insn, delay);
 		                                          }
 	                                          };
 
@@ -1179,11 +1118,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doSLTIU(rt, rs, (short) imm16);
+			                                          cpu.doSLTIU(rt, rs, (short) imm16);
 
 		                                          }
 
@@ -1202,11 +1139,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doSUB(rd, rs, rt, insn, delay);
+			                                          cpu.doSUB(rd, rs, rt, insn, delay);
 
 		                                          }
 
@@ -1225,12 +1160,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
 			                                          // just ignore overflow exception as it is useless
-			                                          R5900.getProcessor().cpu.doDSUB(rd, rs, rt, insn, delay);
+			                                          cpu.doDSUB(rd, rs, rt, insn, delay);
 		                                          }
 
 	                                          };
@@ -1248,10 +1181,8 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
-			                                          R5900.getProcessor().cpu.doSUBU(rd, rs, rt, insn, delay);
+			                                          decodeRsRtRd(insn);
+			                                          cpu.doSUBU(rd, rs, rt, insn, delay);
 		                                          }
 	                                          };
 	public static final Instruction	DSUBU	  = new Instruction(NO_FLAGS) {
@@ -1268,11 +1199,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doDSUBU(rd, rs, rt);
+			                                          cpu.doDSUBU(rd, rs, rt);
 
 		                                          }
 
@@ -1294,7 +1223,7 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int rt = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doLUI(rt, imm16);
+			                                          cpu.doLUI(rt, imm16);
 
 		                                          }
 
@@ -1316,7 +1245,7 @@ public class Instructions {
 			                                          final int rd = (insn >> 11) & 31;
 			                                          final int rt = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doSEB(rd, rt);
+			                                          cpu.doSEB(rd, rt);
 
 		                                          }
 
@@ -1338,7 +1267,7 @@ public class Instructions {
 			                                          final int rd = (insn >> 11) & 31;
 			                                          final int rt = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doSEH(rd, rt);
+			                                          cpu.doSEH(rd, rt);
 
 		                                          }
 
@@ -1360,7 +1289,7 @@ public class Instructions {
 			                                          final int rd = (insn >> 11) & 31;
 			                                          final int rt = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doBITREV(rd, rt);
+			                                          cpu.doBITREV(rd, rt);
 
 		                                          }
 
@@ -1382,7 +1311,7 @@ public class Instructions {
 			                                          final int rd = (insn >> 11) & 31;
 			                                          final int rt = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doWSBH(rd, rt);
+			                                          cpu.doWSBH(rd, rt);
 
 		                                          }
 
@@ -1404,7 +1333,7 @@ public class Instructions {
 			                                          final int rd = (insn >> 11) & 31;
 			                                          final int rt = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doWSBW(rd, rt);
+			                                          cpu.doWSBW(rd, rt);
 
 		                                          }
 
@@ -1423,10 +1352,8 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
-			                                          R5900.getProcessor().cpu.doMOVZ(rd, rs, rt);
+			                                          decodeRsRtRd(insn);
+			                                          cpu.doMOVZ(rd, rs, rt);
 		                                          }
 	                                          };
 	public static final Instruction	MOVT	  = new Instruction(NO_FLAGS) {
@@ -1446,7 +1373,7 @@ public class Instructions {
 			                                          final int rd = (insn >> 11) & 31;
 			                                          final int cc = (insn >> 18) & 7;
 			                                          final int rs = (insn >> 21) & 31;
-			                                          R5900.getProcessor().cpu.doMOVT(rd, rs, cc);
+			                                          cpu.doMOVT(rd, rs, cc);
 		                                          }
 	                                          };
 	public static final Instruction	MOVF	  = new Instruction(NO_FLAGS) {
@@ -1466,7 +1393,7 @@ public class Instructions {
 			                                          final int rd = (insn >> 11) & 31;
 			                                          final int cc = (insn >> 18) & 7;
 			                                          final int rs = (insn >> 21) & 31;
-			                                          R5900.getProcessor().cpu.doMOVF(rd, rs, cc);
+			                                          cpu.doMOVF(rd, rs, cc);
 		                                          }
 	                                          };
 	public static final Instruction	MOVN	  = new Instruction(NO_FLAGS) {
@@ -1483,11 +1410,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doMOVN(rd, rs, rt);
+			                                          cpu.doMOVN(rd, rs, rt);
 
 		                                          }
 
@@ -1506,11 +1431,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doMAX(rd, rs, rt);
+			                                          cpu.doMAX(rd, rs, rt);
 
 		                                          }
 
@@ -1529,11 +1452,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int rd = (insn >> 11) & 31;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtRd(insn);
 
-			                                          R5900.getProcessor().cpu.doMIN(rd, rs, rt);
+			                                          cpu.doMIN(rd, rs, rt);
 
 		                                          }
 
@@ -1555,7 +1476,7 @@ public class Instructions {
 			                                          final int rd = (insn >> 11) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doCLZ(rd, rs);
+			                                          cpu.doCLZ(rd, rs);
 
 		                                          }
 
@@ -1577,7 +1498,7 @@ public class Instructions {
 			                                          final int rd = (insn >> 11) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doCLO(rd, rs);
+			                                          cpu.doCLO(rd, rs);
 
 		                                          }
 
@@ -1601,7 +1522,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doEXT(rt, rs, lsb, msb);
+			                                          cpu.doEXT(rt, rs, lsb, msb);
 
 		                                          }
 
@@ -1625,7 +1546,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doINS(rt, rs, lsb, msb);
+			                                          cpu.doINS(rt, rs, lsb, msb);
 
 		                                          }
 
@@ -1647,7 +1568,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doMULT(rs, rt);
+			                                          cpu.doMULT(rs, rt);
 
 		                                          }
 
@@ -1670,7 +1591,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doDMULT(rs, rt);
+			                                          cpu.doDMULT(rs, rt);
 
 		                                          }
 
@@ -1692,7 +1613,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doDMULTU(rs, rt);
+			                                          cpu.doDMULTU(rs, rt);
 
 		                                          }
 
@@ -1714,7 +1635,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doMULTU(rs, rt);
+			                                          cpu.doMULTU(rs, rt);
 
 		                                          }
 
@@ -1736,7 +1657,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doMADD(rs, rt);
+			                                          cpu.doMADD(rs, rt);
 
 		                                          }
 
@@ -1758,7 +1679,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doMADDU(rs, rt);
+			                                          cpu.doMADDU(rs, rt);
 
 		                                          }
 
@@ -1780,7 +1701,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doMSUB(rs, rt);
+			                                          cpu.doMSUB(rs, rt);
 
 		                                          }
 
@@ -1802,7 +1723,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doMSUBU(rs, rt);
+			                                          cpu.doMSUBU(rs, rt);
 
 		                                          }
 
@@ -1824,7 +1745,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doDIV(rs, rt);
+			                                          cpu.doDIV(rs, rt);
 
 		                                          }
 
@@ -1846,7 +1767,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doDIVU(rs, rt);
+			                                          cpu.doDIVU(rs, rt);
 
 		                                          }
 
@@ -1868,7 +1789,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doDDIV(rs, rt);
+			                                          cpu.doDDIV(rs, rt);
 
 		                                          }
 
@@ -1891,7 +1812,7 @@ public class Instructions {
 			                                          final int rt = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doDDIVU(rs, rt);
+			                                          cpu.doDDIVU(rs, rt);
 
 		                                          }
 
@@ -1912,7 +1833,7 @@ public class Instructions {
 		                                          public void interpret(final int insn, final boolean delay) {
 			                                          final int rd = (insn >> 11) & 31;
 
-			                                          R5900.getProcessor().cpu.doMFHI(rd);
+			                                          cpu.doMFHI(rd);
 
 		                                          }
 
@@ -1933,7 +1854,7 @@ public class Instructions {
 		                                          public void interpret(final int insn, final boolean delay) {
 			                                          final int rd = (insn >> 11) & 31;
 
-			                                          R5900.getProcessor().cpu.doMFLO(rd);
+			                                          cpu.doMFLO(rd);
 
 		                                          }
 
@@ -1954,7 +1875,7 @@ public class Instructions {
 		                                          public void interpret(final int insn, final boolean delay) {
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doMTHI(rs);
+			                                          cpu.doMTHI(rs);
 
 		                                          }
 
@@ -1975,7 +1896,7 @@ public class Instructions {
 		                                          public void interpret(final int insn, final boolean delay) {
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doMTLO(rs);
+			                                          cpu.doMTLO(rs);
 
 		                                          }
 
@@ -1994,12 +1915,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          if (R5900.getProcessor().cpu.doBEQ(rs, rt, (short) imm16)) {
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBEQ(rs, rt, (short) imm16)) {
+				                                          cpu.processor.interpretDelayslot();
 			                                          }
 		                                          }
 
@@ -2019,12 +1938,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          if (R5900.getProcessor().cpu.doBEQL(rs, rt, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBEQL(rs, rt, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2046,8 +1963,8 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          if (R5900.getProcessor().cpu.doBGEZ(rs, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBGEZ(rs, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2069,8 +1986,8 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          if (R5900.getProcessor().cpu.doBGEZAL(rs, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBGEZAL(rs, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2092,8 +2009,8 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          if (R5900.getProcessor().cpu.doBGEZALL(rs, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBGEZALL(rs, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2115,8 +2032,8 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          if (R5900.getProcessor().cpu.doBGEZL(rs, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBGEZL(rs, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2138,8 +2055,8 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          if (R5900.getProcessor().cpu.doBGTZ(rs, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBGTZ(rs, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2161,8 +2078,8 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          if (R5900.getProcessor().cpu.doBGTZL(rs, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBGTZL(rs, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2184,8 +2101,8 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          if (R5900.getProcessor().cpu.doBLEZ(rs, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBLEZ(rs, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2207,8 +2124,8 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          if (R5900.getProcessor().cpu.doBLEZL(rs, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBLEZL(rs, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2230,8 +2147,8 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          if (R5900.getProcessor().cpu.doBLTZ(rs, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBLTZ(rs, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2253,8 +2170,8 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          if (R5900.getProcessor().cpu.doBLTZAL(rs, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBLTZAL(rs, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2276,8 +2193,8 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          if (R5900.getProcessor().cpu.doBLTZALL(rs, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBLTZALL(rs, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2299,8 +2216,8 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          if (R5900.getProcessor().cpu.doBLTZL(rs, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBLTZL(rs, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2319,12 +2236,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          if (R5900.getProcessor().cpu.doBNE(rs, rt, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBNE(rs, rt, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2343,12 +2258,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          if (R5900.getProcessor().cpu.doBNEL(rs, rt, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBNEL(rs, rt, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2369,8 +2282,8 @@ public class Instructions {
 		                                          public void interpret(final int insn, final boolean delay) {
 			                                          final int imm26 = (insn >> 0) & 67108863;
 
-			                                          if (R5900.getProcessor().cpu.doJ(imm26))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doJ(imm26))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2391,8 +2304,8 @@ public class Instructions {
 		                                          public void interpret(final int insn, final boolean delay) {
 			                                          final int imm26 = (insn >> 0) & 67108863;
 
-			                                          if (R5900.getProcessor().cpu.doJAL(imm26))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doJAL(imm26))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2414,8 +2327,8 @@ public class Instructions {
 			                                          final int rd = (insn >> 11) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          if (R5900.getProcessor().cpu.doJALR(rd, rs))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doJALR(rd, rs))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2436,8 +2349,8 @@ public class Instructions {
 		                                          public void interpret(final int insn, final boolean delay) {
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          if (R5900.getProcessor().cpu.doJR(rs))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doJR(rs))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2458,8 +2371,8 @@ public class Instructions {
 		                                          public void interpret(final int insn, final boolean delay) {
 			                                          final int imm16 = (insn >> 0) & 65535;
 
-			                                          if (R5900.getProcessor().cpu.doBC1F((short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBC1F((short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2480,8 +2393,8 @@ public class Instructions {
 		                                          public void interpret(final int insn, final boolean delay) {
 			                                          final int imm16 = (insn >> 0) & 65535;
 
-			                                          if (R5900.getProcessor().cpu.doBC1T((short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBC1T((short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2502,8 +2415,8 @@ public class Instructions {
 		                                          public void interpret(final int insn, final boolean delay) {
 			                                          final int imm16 = (insn >> 0) & 65535;
 
-			                                          if (R5900.getProcessor().cpu.doBC1FL((short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBC1FL((short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2524,8 +2437,8 @@ public class Instructions {
 		                                          public void interpret(final int insn, final boolean delay) {
 			                                          final int imm16 = (insn >> 0) & 65535;
 
-			                                          if (R5900.getProcessor().cpu.doBC1TL((short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBC1TL((short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2547,8 +2460,8 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int imm3 = (insn >> 18) & 7;
 
-			                                          if (R5900.getProcessor().cpu.doBVF(imm3, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBVF(imm3, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2570,8 +2483,8 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int imm3 = (insn >> 18) & 7;
 
-			                                          if (R5900.getProcessor().cpu.doBVT(imm3, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBVT(imm3, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2593,8 +2506,8 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int imm3 = (insn >> 18) & 7;
 
-			                                          if (R5900.getProcessor().cpu.doBVFL(imm3, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBVFL(imm3, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2616,8 +2529,8 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int imm3 = (insn >> 18) & 7;
 
-			                                          if (R5900.getProcessor().cpu.doBVTL(imm3, (short) imm16))
-				                                          R5900.getProcessor().interpretDelayslot();
+			                                          if (cpu.doBVTL(imm3, (short) imm16))
+				                                          cpu.processor.interpretDelayslot();
 
 		                                          }
 
@@ -2636,11 +2549,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doLB(rt, rs, (short) imm16);
+			                                          cpu.doLB(rt, rs, (short) imm16);
 
 		                                          }
 
@@ -2659,11 +2570,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doLBU(rt, rs, (short) imm16);
+			                                          cpu.doLBU(rt, rs, (short) imm16);
 
 		                                          }
 
@@ -2682,11 +2591,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doLH(rt, rs, (short) imm16);
+			                                          cpu.doLH(rt, rs, (short) imm16);
 
 		                                          }
 
@@ -2705,11 +2612,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doLHU(rt, rs, (short) imm16);
+			                                          cpu.doLHU(rt, rs, (short) imm16);
 
 		                                          }
 
@@ -2728,11 +2633,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doLW(rt, rs, (short) imm16);
+			                                          cpu.doLW(rt, rs, (short) imm16);
 		                                          }
 
 	                                          };
@@ -2750,11 +2653,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doLWL(rt, rs, (short) imm16);
+			                                          cpu.doLWL(rt, rs, (short) imm16);
 		                                          }
 
 	                                          };
@@ -2772,11 +2673,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doLWR(rt, rs, (short) imm16);
+			                                          cpu.doLWR(rt, rs, (short) imm16);
 
 		                                          }
 
@@ -2795,11 +2694,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doLDR(rt, rs, (short) imm16);
+			                                          cpu.doLDR(rt, rs, (short) imm16);
 
 		                                          }
 
@@ -2818,11 +2715,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doSB(rt, rs, (short) imm16);
+			                                          cpu.doSB(rt, rs, (short) imm16);
 
 		                                          }
 
@@ -2841,11 +2736,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doSH(rt, rs, (short) imm16);
+			                                          cpu.doSH(rt, rs, (short) imm16);
 
 		                                          }
 
@@ -2864,11 +2757,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doSW(rt, rs, (short) imm16);
+			                                          cpu.doSW(rt, rs, (short) imm16);
 
 		                                          }
 
@@ -2887,11 +2778,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doSWL(rt, rs, (short) imm16);
+			                                          cpu.doSWL(rt, rs, (short) imm16);
 
 		                                          }
 
@@ -2910,11 +2799,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doSWR(rt, rs, (short) imm16);
+			                                          cpu.doSWR(rt, rs, (short) imm16);
 
 		                                          }
 
@@ -2933,11 +2820,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doLL(rt, rs, (short) imm16);
+			                                          cpu.doLL(rt, rs, (short) imm16);
 
 		                                          }
 
@@ -2960,7 +2845,7 @@ public class Instructions {
 			                                          final int ft = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doLWC1(ft, rs, (short) imm16);
+			                                          cpu.doLWC1(ft, rs, (short) imm16);
 
 		                                          }
 
@@ -2983,7 +2868,7 @@ public class Instructions {
 			                                          final int base = (insn >> 21) & 31;
 			                                          final int index = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doLWXC1(base, index, fd);
+			                                          cpu.doLWXC1(base, index, fd);
 
 		                                          }
 
@@ -3007,7 +2892,7 @@ public class Instructions {
 			                                          final int vt5 = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doLVS((vt5 + (vt2 << 32)), rs, (short) (imm14 << 2));
+			                                          cpu.doLVS((vt5 + (vt2 << 32)), rs, (short) (imm14 << 2));
 
 		                                          }
 
@@ -3031,7 +2916,7 @@ public class Instructions {
 			                                          final int vt5 = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doLVLQ((vt5 + (vt1 << 32)), rs, (short) (imm14 << 2));
+			                                          cpu.doLVLQ((vt5 + (vt1 << 32)), rs, (short) (imm14 << 2));
 
 		                                          }
 
@@ -3055,7 +2940,7 @@ public class Instructions {
 			                                          final int vt5 = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doLVRQ((vt5 + (vt1 << 32)), rs, (short) (imm14 << 2));
+			                                          cpu.doLVRQ((vt5 + (vt1 << 32)), rs, (short) (imm14 << 2));
 
 		                                          }
 
@@ -3079,7 +2964,7 @@ public class Instructions {
 			                                          final int vt5 = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doLVQ((vt5 + (vt1 << 32)), rs, (((short) imm14) << 2));
+			                                          cpu.doLVQ((vt5 + (vt1 << 32)), rs, (((short) imm14) << 2));
 
 		                                          }
 
@@ -3098,11 +2983,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int imm16 = (insn >> 0) & 65535;
-			                                          final int rt = (insn >> 16) & 31;
-			                                          final int rs = (insn >> 21) & 31;
+			                                          decodeRsRtImm16(insn);
 
-			                                          R5900.getProcessor().cpu.doSC(rt, rs, (short) imm16);
+			                                          cpu.doSC(rt, rs, (short) imm16);
 
 		                                          }
 
@@ -3125,7 +3008,7 @@ public class Instructions {
 			                                          final int ft = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doSWC1(ft, rs, (short) imm16);
+			                                          cpu.doSWC1(ft, rs, (short) imm16);
 
 		                                          }
 
@@ -3149,7 +3032,7 @@ public class Instructions {
 			                                          final int vt5 = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doSVS((vt5 + (vt2 << 32)), rs, (((short) imm14) << 2));
+			                                          cpu.doSVS((vt5 + (vt2 << 32)), rs, (((short) imm14) << 2));
 
 		                                          }
 
@@ -3173,7 +3056,7 @@ public class Instructions {
 			                                          final int vt5 = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doSVLQ((vt5 + (vt1 << 32)), rs, (((short) imm14) << 2));
+			                                          cpu.doSVLQ((vt5 + (vt1 << 32)), rs, (((short) imm14) << 2));
 
 		                                          }
 
@@ -3197,7 +3080,7 @@ public class Instructions {
 			                                          final int vt5 = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doSVRQ((vt5 + (vt1 << 32)), rs, (((short) imm14) << 2));
+			                                          cpu.doSVRQ((vt5 + (vt1 << 32)), rs, (((short) imm14) << 2));
 
 		                                          }
 
@@ -3221,7 +3104,7 @@ public class Instructions {
 			                                          final int vt5 = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doSVQ((vt5 + (vt1 << 32)), rs, (((short) imm14) << 2));
+			                                          cpu.doSVQ((vt5 + (vt1 << 32)), rs, (((short) imm14) << 2));
 
 		                                          }
 
@@ -3245,7 +3128,7 @@ public class Instructions {
 			                                          final int vt5 = (insn >> 16) & 31;
 			                                          final int rs = (insn >> 21) & 31;
 
-			                                          R5900.getProcessor().cpu.doSVQ((vt5 + (vt1 << 32)), rs, (((short) imm14) << 2));
+			                                          cpu.doSVQ((vt5 + (vt1 << 32)), rs, (((short) imm14) << 2));
 
 		                                          }
 
@@ -3268,7 +3151,7 @@ public class Instructions {
 			                                          final int fs = (insn >> 11) & 31;
 			                                          final int ft = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doADDS(fd, fs, ft);
+			                                          cpu.doADDS(fd, fs, ft);
 
 		                                          }
 
@@ -3291,7 +3174,7 @@ public class Instructions {
 			                                          final int fs = (insn >> 11) & 31;
 			                                          final int ft = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doSUBS(fd, fs, ft);
+			                                          cpu.doSUBS(fd, fs, ft);
 
 		                                          }
 
@@ -3314,7 +3197,7 @@ public class Instructions {
 			                                          final int fs = (insn >> 11) & 31;
 			                                          final int ft = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doMULS(fd, fs, ft);
+			                                          cpu.doMULS(fd, fs, ft);
 
 		                                          }
 
@@ -3337,7 +3220,7 @@ public class Instructions {
 			                                          final int fs = (insn >> 11) & 31;
 			                                          final int ft = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doDIVS(fd, fs, ft);
+			                                          cpu.doDIVS(fd, fs, ft);
 
 		                                          }
 
@@ -3359,7 +3242,7 @@ public class Instructions {
 			                                          final int fd = (insn >> 6) & 31;
 			                                          final int fs = (insn >> 11) & 31;
 
-			                                          R5900.getProcessor().cpu.doSQRTS(fd, fs);
+			                                          cpu.doSQRTS(fd, fs);
 
 		                                          }
 
@@ -3381,7 +3264,7 @@ public class Instructions {
 			                                          final int fd = (insn >> 6) & 31;
 			                                          final int fs = (insn >> 11) & 31;
 
-			                                          R5900.getProcessor().cpu.doABSS(fd, fs);
+			                                          cpu.doABSS(fd, fs);
 
 		                                          }
 
@@ -3403,7 +3286,7 @@ public class Instructions {
 			                                          final int fd = (insn >> 6) & 31;
 			                                          final int fs = (insn >> 11) & 31;
 
-			                                          R5900.getProcessor().cpu.doMOVS(fd, fs);
+			                                          cpu.doMOVS(fd, fs);
 
 		                                          }
 
@@ -3425,7 +3308,7 @@ public class Instructions {
 			                                          final int fd = (insn >> 6) & 31;
 			                                          final int fs = (insn >> 11) & 31;
 
-			                                          R5900.getProcessor().cpu.doNEGS(fd, fs);
+			                                          cpu.doNEGS(fd, fs);
 
 		                                          }
 
@@ -3447,7 +3330,7 @@ public class Instructions {
 			                                          final int fd = (insn >> 6) & 31;
 			                                          final int fs = (insn >> 11) & 31;
 
-			                                          R5900.getProcessor().cpu.doROUNDWS(fd, fs);
+			                                          cpu.doROUNDWS(fd, fs);
 
 		                                          }
 
@@ -3469,7 +3352,7 @@ public class Instructions {
 			                                          final int fd = (insn >> 6) & 31;
 			                                          final int fs = (insn >> 11) & 31;
 
-			                                          R5900.getProcessor().cpu.doTRUNCWS(fd, fs);
+			                                          cpu.doTRUNCWS(fd, fs);
 
 		                                          }
 
@@ -3491,7 +3374,7 @@ public class Instructions {
 			                                          final int fd = (insn >> 6) & 31;
 			                                          final int fs = (insn >> 11) & 31;
 
-			                                          R5900.getProcessor().cpu.doCEILWS(fd, fs);
+			                                          cpu.doCEILWS(fd, fs);
 
 		                                          }
 
@@ -3513,7 +3396,7 @@ public class Instructions {
 			                                          final int fd = (insn >> 6) & 31;
 			                                          final int fs = (insn >> 11) & 31;
 
-			                                          R5900.getProcessor().cpu.doFLOORWS(fd, fs);
+			                                          cpu.doFLOORWS(fd, fs);
 
 		                                          }
 
@@ -3535,7 +3418,7 @@ public class Instructions {
 			                                          final int fd = (insn >> 6) & 31;
 			                                          final int fs = (insn >> 11) & 31;
 
-			                                          R5900.getProcessor().cpu.doCVTSW(fd, fs);
+			                                          cpu.doCVTSW(fd, fs);
 
 		                                          }
 
@@ -3557,7 +3440,7 @@ public class Instructions {
 			                                          final int fd = (insn >> 6) & 31;
 			                                          final int fs = (insn >> 11) & 31;
 
-			                                          R5900.getProcessor().cpu.doCVTWS(fd, fs);
+			                                          cpu.doCVTWS(fd, fs);
 
 		                                          }
 
@@ -3580,7 +3463,7 @@ public class Instructions {
 			                                          final int fs = (insn >> 11) & 31;
 			                                          final int ft = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doCCONDS(fs, ft, fcond);
+			                                          cpu.doCCONDS(fs, ft, fcond);
 
 		                                          }
 
@@ -3602,7 +3485,7 @@ public class Instructions {
 			                                          final int c1dr = (insn >> 11) & 31;
 			                                          final int rt = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doMFC1(rt, c1dr);
+			                                          cpu.doMFC1(rt, c1dr);
 
 		                                          }
 
@@ -3624,7 +3507,7 @@ public class Instructions {
 			                                          final int c1dr = (insn >> 11) & 31;
 			                                          final int rt = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doDMFC1(rt, c1dr);
+			                                          cpu.doDMFC1(rt, c1dr);
 
 		                                          }
 
@@ -3646,7 +3529,7 @@ public class Instructions {
 			                                          final int c1cr = (insn >> 11) & 31;
 			                                          final int rt = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doCFC1(rt, c1cr);
+			                                          cpu.doCFC1(rt, c1cr);
 
 		                                          }
 
@@ -3668,7 +3551,7 @@ public class Instructions {
 			                                          final int c1dr = (insn >> 11) & 31;
 			                                          final int rt = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doMTC1(rt, c1dr);
+			                                          cpu.doMTC1(rt, c1dr);
 
 		                                          }
 
@@ -3690,7 +3573,7 @@ public class Instructions {
 			                                          final int c1dr = (insn >> 11) & 31;
 			                                          final int rt = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doDMTC1(rt, c1dr);
+			                                          cpu.doDMTC1(rt, c1dr);
 
 		                                          }
 
@@ -3712,7 +3595,7 @@ public class Instructions {
 			                                          final int c1cr = (insn >> 11) & 31;
 			                                          final int rt = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doCFC1(rt, c1cr);
+			                                          cpu.doCFC1(rt, c1cr);
 
 		                                          }
 
@@ -3852,13 +3735,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVADD(1 + one + (two << 1), vd, vs, vt);
+			                                          cpu.doVADD(1 + one + (two << 1), vd, vs, vt);
 
 		                                          }
 
@@ -3877,13 +3757,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVSUB(1 + one + (two << 1), vd, vs, vt);
+			                                          cpu.doVSUB(1 + one + (two << 1), vd, vs, vt);
 
 		                                          }
 
@@ -3902,13 +3779,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVSBN(1 + one + (two << 1), vd, vs, vt);
+			                                          cpu.doVSBN(1 + one + (two << 1), vd, vs, vt);
 
 		                                          }
 
@@ -3927,13 +3801,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVDIV(1 + one + (two << 1), vd, vs, vt);
+			                                          cpu.doVDIV(1 + one + (two << 1), vd, vs, vt);
 
 		                                          }
 
@@ -3952,13 +3823,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVMUL(1 + one + (two << 1), vd, vs, vt);
+			                                          cpu.doVMUL(1 + one + (two << 1), vd, vs, vt);
 
 		                                          }
 
@@ -3977,13 +3845,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVDOT(1 + one + (two << 1), vd, vs, vt);
+			                                          cpu.doVDOT(1 + one + (two << 1), vd, vs, vt);
 
 		                                          }
 
@@ -4002,13 +3867,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVSCL(1 + one + (two << 1), vd, vs, vt);
+			                                          cpu.doVSCL(1 + one + (two << 1), vd, vs, vt);
 
 		                                          }
 
@@ -4027,13 +3889,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVHDP(1 + one + (two << 1), vd, vs, vt);
+			                                          cpu.doVHDP(1 + one + (two << 1), vd, vs, vt);
 
 		                                          }
 
@@ -4052,13 +3911,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVDET(1 + one + (two << 1), vd, vs, vt);
+			                                          cpu.doVDET(1 + one + (two << 1), vd, vs, vt);
 
 		                                          }
 
@@ -4077,13 +3933,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVCRS(1 + one + (two << 1), vd, vs, vt);
+			                                          cpu.doVCRS(1 + one + (two << 1), vd, vs, vt);
 
 		                                          }
 
@@ -4105,7 +3958,7 @@ public class Instructions {
 			                                          final int imm7 = (insn >> 0) & 127;
 			                                          final int rt = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doMFV(rt, imm7);
+			                                          cpu.doMFV(rt, imm7);
 
 		                                          }
 
@@ -4127,7 +3980,7 @@ public class Instructions {
 			                                          final int imm7 = (insn >> 0) & 127;
 			                                          final int rt = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doMFVC(rt, imm7);
+			                                          cpu.doMFVC(rt, imm7);
 
 		                                          }
 
@@ -4149,7 +4002,7 @@ public class Instructions {
 			                                          final int imm7 = (insn >> 0) & 127;
 			                                          final int rt = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doMTV(rt, imm7);
+			                                          cpu.doMTV(rt, imm7);
 
 		                                          }
 
@@ -4171,7 +4024,7 @@ public class Instructions {
 			                                          final int imm7 = (insn >> 0) & 127;
 			                                          final int rt = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doMTVC(rt, imm7);
+			                                          cpu.doMTVC(rt, imm7);
 
 		                                          }
 
@@ -4196,7 +4049,7 @@ public class Instructions {
 			                                          final int two = (insn >> 15) & 1;
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVCMP(1 + one + (two << 1), vs, vt, imm3);
+			                                          cpu.doVCMP(1 + one + (two << 1), vs, vt, imm3);
 
 		                                          }
 
@@ -4215,13 +4068,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVMIN(1 + one + (two << 1), vd, vs, vt);
+			                                          cpu.doVMIN(1 + one + (two << 1), vd, vs, vt);
 
 		                                          }
 
@@ -4240,13 +4090,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVMAX(1 + one + (two << 1), vd, vs, vt);
+			                                          cpu.doVMAX(1 + one + (two << 1), vd, vs, vt);
 
 		                                          }
 
@@ -4265,13 +4112,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVSCMP(1 + one + (two << 1), vd, vs, vt);
+			                                          cpu.doVSCMP(1 + one + (two << 1), vd, vs, vt);
 
 		                                          }
 
@@ -4290,13 +4134,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVSGE(1 + one + (two << 1), vd, vs, vt);
+			                                          cpu.doVSGE(1 + one + (two << 1), vd, vs, vt);
 
 		                                          }
 
@@ -4315,13 +4156,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVSLT(1 + one + (two << 1), vd, vs, vt);
+			                                          cpu.doVSLT(1 + one + (two << 1), vd, vs, vt);
 
 		                                          }
 
@@ -4340,12 +4178,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVMOV(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVMOV(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4364,12 +4199,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVABS(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVABS(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4388,12 +4220,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVNEG(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVNEG(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4416,7 +4245,7 @@ public class Instructions {
 			                                          final int one = (insn >> 7) & 1;
 			                                          final int two = (insn >> 15) & 1;
 
-			                                          R5900.getProcessor().cpu.doVIDT(1 + one + (two << 1), vd);
+			                                          cpu.doVIDT(1 + one + (two << 1), vd);
 
 		                                          }
 
@@ -4435,12 +4264,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVSAT0(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVSAT0(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4459,12 +4285,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVSAT1(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVSAT1(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4487,7 +4310,7 @@ public class Instructions {
 			                                          final int one = (insn >> 7) & 1;
 			                                          final int two = (insn >> 15) & 1;
 
-			                                          R5900.getProcessor().cpu.doVZERO(1 + one + (two << 1), vd);
+			                                          cpu.doVZERO(1 + one + (two << 1), vd);
 
 		                                          }
 
@@ -4510,7 +4333,7 @@ public class Instructions {
 			                                          final int one = (insn >> 7) & 1;
 			                                          final int two = (insn >> 15) & 1;
 
-			                                          R5900.getProcessor().cpu.doVONE(1 + one + (two << 1), vd);
+			                                          cpu.doVONE(1 + one + (two << 1), vd);
 
 		                                          }
 
@@ -4529,12 +4352,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVRCP(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVRCP(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4553,12 +4373,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVRSQ(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVRSQ(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4577,12 +4394,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVSIN(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVSIN(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4601,12 +4415,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVCOS(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVCOS(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4625,12 +4436,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVEXP2(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVEXP2(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4649,12 +4457,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVLOG2(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVLOG2(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4673,12 +4478,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVSQRT(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVSQRT(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4697,12 +4499,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVASIN(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVASIN(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4721,12 +4520,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVNRCP(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVNRCP(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4745,12 +4541,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVNSIN(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVNSIN(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4769,12 +4562,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVREXP2(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVREXP2(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4797,7 +4587,7 @@ public class Instructions {
 			                                          final int vs = (insn >> 8) & 127;
 			                                          final int two = (insn >> 15) & 1;
 
-			                                          R5900.getProcessor().cpu.doVRNDS(1 + one + (two << 1), vs);
+			                                          cpu.doVRNDS(1 + one + (two << 1), vs);
 
 		                                          }
 
@@ -4820,7 +4610,7 @@ public class Instructions {
 			                                          final int one = (insn >> 7) & 1;
 			                                          final int two = (insn >> 15) & 1;
 
-			                                          R5900.getProcessor().cpu.doVRNDI(1 + one + (two << 1), vd);
+			                                          cpu.doVRNDI(1 + one + (two << 1), vd);
 
 		                                          }
 
@@ -4843,7 +4633,7 @@ public class Instructions {
 			                                          final int one = (insn >> 7) & 1;
 			                                          final int two = (insn >> 15) & 1;
 
-			                                          R5900.getProcessor().cpu.doVRNDF1(1 + one + (two << 1), vd);
+			                                          cpu.doVRNDF1(1 + one + (two << 1), vd);
 
 		                                          }
 
@@ -4866,7 +4656,7 @@ public class Instructions {
 			                                          final int one = (insn >> 7) & 1;
 			                                          final int two = (insn >> 15) & 1;
 
-			                                          R5900.getProcessor().cpu.doVRNDF2(1 + one + (two << 1), vd);
+			                                          cpu.doVRNDF2(1 + one + (two << 1), vd);
 
 		                                          }
 
@@ -4885,12 +4675,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVF2H(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVF2H(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4909,12 +4696,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVH2F(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVH2F(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4933,12 +4717,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVSBZ(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVSBZ(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4957,12 +4738,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVLGB(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVLGB(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -4981,12 +4759,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVUC2I(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVUC2I(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5005,12 +4780,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVC2I(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVC2I(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5029,12 +4801,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVUS2I(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVUS2I(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5053,12 +4822,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVS2I(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVS2I(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5077,12 +4843,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVI2UC(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVI2UC(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5101,12 +4864,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVI2C(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVI2C(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5125,12 +4885,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVI2US(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVI2US(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5149,12 +4906,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVI2S(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVI2S(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5173,12 +4927,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVSRT1(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVSRT1(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5197,12 +4948,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVSRT2(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVSRT2(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5221,12 +4969,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVBFY1(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVBFY1(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5245,12 +4990,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVBFY2(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVBFY2(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5269,12 +5011,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVOCP(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVOCP(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5293,12 +5032,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVSOCP(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVSOCP(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5317,12 +5053,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVFAD(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVFAD(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5341,12 +5074,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVAVG(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVAVG(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5365,12 +5095,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVSRT3(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVSRT3(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5389,12 +5116,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVSRT4(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVSRT4(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5416,7 +5140,7 @@ public class Instructions {
 			                                          final int vd = (insn >> 0) & 127;
 			                                          final int imm7 = (insn >> 8) & 127;
 
-			                                          R5900.getProcessor().cpu.doVMFVC(vd, imm7);
+			                                          cpu.doVMFVC(vd, imm7);
 
 		                                          }
 
@@ -5438,7 +5162,7 @@ public class Instructions {
 			                                          final int imm7 = (insn >> 0) & 127;
 			                                          final int vs = (insn >> 8) & 127;
 
-			                                          R5900.getProcessor().cpu.doVMTVC(vs, imm7);
+			                                          cpu.doVMTVC(vs, imm7);
 
 		                                          }
 
@@ -5457,12 +5181,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVT4444(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVT4444(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5481,12 +5202,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVT5551(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVT5551(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5505,12 +5223,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVT5650(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVT5650(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -5534,7 +5249,7 @@ public class Instructions {
 			                                          final int two = (insn >> 15) & 1;
 			                                          final int imm5 = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doVCST(1 + one + (two << 1), vd, imm5);
+			                                          cpu.doVCST(1 + one + (two << 1), vd, imm5);
 
 		                                          }
 
@@ -5553,13 +5268,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int imm5 = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doVF2IN(1 + one + (two << 1), vd, vs, imm5);
+			                                          cpu.doVF2IN(1 + one + (two << 1), vd, vs, imm5);
 
 		                                          }
 
@@ -5578,13 +5290,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int imm5 = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doVF2IZ(1 + one + (two << 1), vd, vs, imm5);
+			                                          cpu.doVF2IZ(1 + one + (two << 1), vd, vs, imm5);
 
 		                                          }
 
@@ -5603,13 +5312,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int imm5 = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doVF2IU(1 + one + (two << 1), vd, vs, imm5);
+			                                          cpu.doVF2IU(1 + one + (two << 1), vd, vs, imm5);
 
 		                                          }
 
@@ -5628,13 +5334,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int imm5 = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doVF2ID(1 + one + (two << 1), vd, vs, imm5);
+			                                          cpu.doVF2ID(1 + one + (two << 1), vd, vs, imm5);
 
 		                                          }
 
@@ -5653,13 +5356,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int imm5 = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doVI2F(1 + one + (two << 1), vd, vs, imm5);
+			                                          cpu.doVI2F(1 + one + (two << 1), vd, vs, imm5);
 
 		                                          }
 
@@ -5678,13 +5378,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int imm3 = (insn >> 16) & 7;
 
-			                                          R5900.getProcessor().cpu.doVCMOVT(1 + one + (two << 1), imm3, vd, vs);
+			                                          cpu.doVCMOVT(1 + one + (two << 1), imm3, vd, vs);
 
 		                                          }
 
@@ -5703,13 +5400,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int imm3 = (insn >> 16) & 7;
 
-			                                          R5900.getProcessor().cpu.doVCMOVF(1 + one + (two << 1), imm3, vd, vs);
+			                                          cpu.doVCMOVF(1 + one + (two << 1), imm3, vd, vs);
 
 		                                          }
 
@@ -5728,13 +5422,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int imm8 = (insn >> 16) & 255;
 
-			                                          R5900.getProcessor().cpu.doVWBN(1 + one + (two << 1), vd, vs, imm8);
+			                                          cpu.doVWBN(1 + one + (two << 1), vd, vs, imm8);
 
 		                                          }
 
@@ -5770,7 +5461,7 @@ public class Instructions {
 			                                          final int negz = (insn >> 18) & 1;
 			                                          final int negw = (insn >> 19) & 1;
 
-			                                          R5900.getProcessor().cpu.doVPFXS(negw, negz, negy, negx, cstw, cstz, csty, cstx, absw, absz, absy, absx, swzw, swzz, swzy, swzx);
+			                                          cpu.doVPFXS(negw, negz, negy, negx, cstw, cstz, csty, cstx, absw, absz, absy, absx, swzw, swzz, swzy, swzx);
 
 		                                          }
 
@@ -5806,7 +5497,7 @@ public class Instructions {
 			                                          final int negz = (insn >> 18) & 1;
 			                                          final int negw = (insn >> 19) & 1;
 
-			                                          R5900.getProcessor().cpu.doVPFXT(negw, negz, negy, negx, cstw, cstz, csty, cstx, absw, absz, absy, absx, swzw, swzz, swzy, swzx);
+			                                          cpu.doVPFXT(negw, negz, negy, negx, cstw, cstz, csty, cstx, absw, absz, absy, absx, swzw, swzz, swzy, swzx);
 
 		                                          }
 
@@ -5834,7 +5525,7 @@ public class Instructions {
 			                                          final int mskz = (insn >> 10) & 1;
 			                                          final int mskw = (insn >> 11) & 1;
 
-			                                          R5900.getProcessor().cpu.doVPFXD(mskw, mskz, msky, mskx, satw, satz, saty, satx);
+			                                          cpu.doVPFXD(mskw, mskz, msky, mskx, satw, satz, saty, satx);
 
 		                                          }
 
@@ -5856,7 +5547,7 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int vd = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVIIM(vd, imm16);
+			                                          cpu.doVIIM(vd, imm16);
 
 		                                          }
 
@@ -5878,7 +5569,7 @@ public class Instructions {
 			                                          final int imm16 = (insn >> 0) & 65535;
 			                                          final int vd = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVFIM(vd, imm16);
+			                                          cpu.doVFIM(vd, imm16);
 
 		                                          }
 
@@ -5897,13 +5588,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVMMUL(1 + one + (two << 1), vd, vs, vt);
+			                                          cpu.doVMMUL(1 + one + (two << 1), vd, vs, vt);
 
 		                                          }
 
@@ -5926,7 +5614,7 @@ public class Instructions {
 			                                          final int vs = (insn >> 8) & 127;
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVHTFM2(vd, vs, vt);
+			                                          cpu.doVHTFM2(vd, vs, vt);
 
 		                                          }
 
@@ -5949,7 +5637,7 @@ public class Instructions {
 			                                          final int vs = (insn >> 8) & 127;
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVTFM2(vd, vs, vt);
+			                                          cpu.doVTFM2(vd, vs, vt);
 
 		                                          }
 
@@ -5972,7 +5660,7 @@ public class Instructions {
 			                                          final int vs = (insn >> 8) & 127;
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVHTFM3(vd, vs, vt);
+			                                          cpu.doVHTFM3(vd, vs, vt);
 
 		                                          }
 
@@ -5995,7 +5683,7 @@ public class Instructions {
 			                                          final int vs = (insn >> 8) & 127;
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVTFM3(vd, vs, vt);
+			                                          cpu.doVTFM3(vd, vs, vt);
 
 		                                          }
 
@@ -6018,7 +5706,7 @@ public class Instructions {
 			                                          final int vs = (insn >> 8) & 127;
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVHTFM4(vd, vs, vt);
+			                                          cpu.doVHTFM4(vd, vs, vt);
 
 		                                          }
 
@@ -6041,7 +5729,7 @@ public class Instructions {
 			                                          final int vs = (insn >> 8) & 127;
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVTFM4(vd, vs, vt);
+			                                          cpu.doVTFM4(vd, vs, vt);
 
 		                                          }
 
@@ -6060,13 +5748,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVMSCL(1 + one + (two << 1), vd, vs, vt);
+			                                          cpu.doVMSCL(1 + one + (two << 1), vd, vs, vt);
 
 		                                          }
 
@@ -6089,7 +5774,7 @@ public class Instructions {
 			                                          final int vs = (insn >> 8) & 127;
 			                                          final int vt = (insn >> 16) & 127;
 
-			                                          R5900.getProcessor().cpu.doVQMUL(vd, vs, vt);
+			                                          cpu.doVQMUL(vd, vs, vt);
 
 		                                          }
 
@@ -6108,12 +5793,9 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 
-			                                          R5900.getProcessor().cpu.doVMMOV(1 + one + (two << 1), vd, vs);
+			                                          cpu.doVMMOV(1 + one + (two << 1), vd, vs);
 
 		                                          }
 
@@ -6136,7 +5818,7 @@ public class Instructions {
 			                                          final int one = (insn >> 7) & 1;
 			                                          final int two = (insn >> 15) & 1;
 
-			                                          R5900.getProcessor().cpu.doVMIDT(1 + one + (two << 1), vd);
+			                                          cpu.doVMIDT(1 + one + (two << 1), vd);
 
 		                                          }
 
@@ -6159,7 +5841,7 @@ public class Instructions {
 			                                          final int one = (insn >> 7) & 1;
 			                                          final int two = (insn >> 15) & 1;
 
-			                                          R5900.getProcessor().cpu.doVMZERO(1 + one + (two << 1), vd);
+			                                          cpu.doVMZERO(1 + one + (two << 1), vd);
 
 		                                          }
 
@@ -6182,7 +5864,7 @@ public class Instructions {
 			                                          final int one = (insn >> 7) & 1;
 			                                          final int two = (insn >> 15) & 1;
 
-			                                          R5900.getProcessor().cpu.doVMONE(1 + one + (two << 1), vd);
+			                                          cpu.doVMONE(1 + one + (two << 1), vd);
 
 		                                          }
 
@@ -6201,13 +5883,10 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          final int vd = (insn >> 0) & 127;
-			                                          final int one = (insn >> 7) & 1;
-			                                          final int vs = (insn >> 8) & 127;
-			                                          final int two = (insn >> 15) & 1;
+			                                          decodeTwoVsOneVd(insn);
 			                                          final int imm5 = (insn >> 16) & 31;
 
-			                                          R5900.getProcessor().cpu.doVROT(1 + one + (two << 1), vd, vs, imm5);
+			                                          cpu.doVROT(1 + one + (two << 1), vd, vs, imm5);
 
 		                                          }
 
@@ -6281,7 +5960,7 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          R5900.getProcessor().doDERET();
+			                                          cpu.doDERET();
 		                                          }
 
 	                                          };
@@ -6300,7 +5979,7 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          R5900.getProcessor().doWAIT();
+			                                          cpu.doWAIT();
 		                                          }
 
 	                                          };
@@ -6319,7 +5998,7 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          R5900.getProcessor().cpu.doTLBR();
+			                                          cpu.doTLBR();
 		                                          }
 
 	                                          };
@@ -6338,7 +6017,7 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          R5900.getProcessor().cpu.doTLBP();
+			                                          cpu.doTLBP();
 		                                          }
 
 	                                          };
@@ -6357,7 +6036,7 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          R5900.getProcessor().cpu.doTLBWI();
+			                                          cpu.doTLBWI();
 		                                          }
 
 	                                          };
@@ -6376,8 +6055,14 @@ public class Instructions {
 
 		                                          @Override
 		                                          public void interpret(final int insn, final boolean delay) {
-			                                          R5900.getProcessor().cpu.doTLBWR();
+			                                          cpu.doTLBWR();
 		                                          }
 
 	                                          };
+
+	static CpuState	                cpu;
+
+	public static final void setCpu(final CpuState cpu) {
+		EEInstructions.cpu = cpu;
+	}
 }

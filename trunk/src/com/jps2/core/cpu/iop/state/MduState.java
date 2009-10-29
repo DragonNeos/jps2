@@ -1,6 +1,6 @@
-package com.jps2.core.cpu.r3000a;
+package com.jps2.core.cpu.iop.state;
 
-public class MduState extends GprState {
+public abstract class MduState extends GprState {
 
 	long	hilo;
 
@@ -45,37 +45,37 @@ public class MduState extends GprState {
 		hilo = that.hilo;
 	}
 
-	final void doMFHI(final int rd) {
+	public final void doMFHI(final int rd) {
 		if (rd != 0) {
 			gpr[rd].write32(getHi());
 		}
 	}
 
-	final void doMTHI(final int rs) {
+	public final void doMTHI(final int rs) {
 		final int hi = gpr[rs].read32();
 		hilo = (((long) hi) << 32) | (hilo & 0xffffffffL);
 	}
 
-	final void doMFLO(final int rd) {
+	public final void doMFLO(final int rd) {
 		if (rd != 0) {
 			gpr[rd].write32(getLo());
 		}
 	}
 
-	final void doMTLO(final int rs) {
+	public final void doMTLO(final int rs) {
 		final int lo = gpr[rs].read32();
 		hilo = (hilo & 0xffffffff00000000L) | ((lo) & 0x00000000ffffffffL);
 	}
 
-	final void doMULT(final int rs, final int rt) {
+	public final void doMULT(final int rs, final int rt) {
 		hilo = ((long) gpr[rs].read32()) * ((long) gpr[rt].read32());
 	}
 	
-	final void doMULTU(final int rs, final int rt) {
+	public final void doMULTU(final int rs, final int rt) {
 		hilo = ((long) Math.abs(gpr[rs].read32())) * ((long)Math.abs(gpr[rt].read32()));
 	}
 	
-	final void doDIV(final int rs, final int rt) {
+	public final void doDIV(final int rs, final int rt) {
 		// According to MIPS spec., result is unpredictable when dividing by zero.
 		if (gpr[rt].read32() != 0) {
 			final long x = gpr[rs].read32();
@@ -84,7 +84,7 @@ public class MduState extends GprState {
 		}
 	}
 
-	final void doDIVU(final int rs, final int rt) {
+	public final void doDIVU(final int rs, final int rt) {
 		// According to MIPS spec., result is unpredictable when dividing by zero.
 		if (gpr[rt].read32() != 0) {
 			final long x = Math.abs(gpr[rs].read32());

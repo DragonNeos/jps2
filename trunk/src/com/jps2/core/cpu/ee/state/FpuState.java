@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.jps2.core.cpu.r5900;
+package com.jps2.core.cpu.ee.state;
 
 import java.util.Arrays;
 
@@ -11,21 +11,21 @@ import java.util.Arrays;
  * 
  * @author hli
  */
-public class FpuState extends BcuState {
+public abstract class FpuState extends BcuState {
 
 	public static final class Fcr0 {
 
-		public static final int imp = 0; /* FPU design number */
+		public static final int	imp	= 0; /* FPU design number */
 
-		public static final int rev = 0; /* FPU revision bumber */
+		public static final int	rev	= 0; /* FPU revision bumber */
 
 	}
 
 	public class Fcr31 {
 
-		public int rm;
-		public boolean c;
-		public boolean fs;
+		public int		rm;
+		public boolean	c;
+		public boolean	fs;
 
 		public void reset() {
 			rm = 0;
@@ -44,8 +44,8 @@ public class FpuState extends BcuState {
 		}
 	}
 
-	public double[] fpr;
-	public Fcr31 fcr31;
+	public double[]	fpr;
+	public Fcr31	fcr31;
 
 	@Override
 	public void reset() {
@@ -82,7 +82,7 @@ public class FpuState extends BcuState {
 	}
 
 	public void doMFC1(final int rt, final int c1dr) {
-		gpr[rt].write32((int)(Double.doubleToRawLongBits(fpr[c1dr]) & 0xFFFFFFFF));
+		gpr[rt].write32((int) (Double.doubleToRawLongBits(fpr[c1dr]) & 0xFFFFFFFF));
 	}
 
 	public void doDMFC1(final int rt, final int c1dr) {
@@ -244,14 +244,14 @@ public class FpuState extends BcuState {
 	}
 
 	public void doLWC1(final int ft, final int rs, final int simm16) {
-		fpr[ft] = Float.intBitsToFloat(memory.read32(gpr[rs].read32() + simm16));
+		fpr[ft] = Float.intBitsToFloat(processor.memory.read32(gpr[rs].read32() + simm16));
 	}
-	
+
 	public void doLWXC1(final int base, final int index, final int fd) {
-		fpr[fd] = Float.intBitsToFloat(memory.read32(gpr[base].read32() + gpr[index].read32()));
+		fpr[fd] = Float.intBitsToFloat(processor.memory.read32(gpr[base].read32() + gpr[index].read32()));
 	}
 
 	public void doSWC1(final int ft, final int rs, final int simm16) {
-		memory.write32(gpr[rs].read32() + simm16, (int) Double.doubleToRawLongBits(fpr[ft]));
+		processor.memory.write32(gpr[rs].read32() + simm16, (int) Double.doubleToRawLongBits(fpr[ft]));
 	}
 }

@@ -28,4 +28,9 @@ public class NullSpu2 extends AbstractSpu2Plugin {
 		return true;
 	}
 
+	@Override
+	public int[] getVersion() {
+		return new int[] { 0, 0, 1 };
+	}
+
 }

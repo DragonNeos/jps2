@@ -2,7 +2,7 @@ package com.jps2.core.memory;
 
 import org.apache.log4j.Logger;
 
-public abstract class MemoryManager {
+public abstract class AbstractMemoryManager {
 
 	public static final Logger	logger	= Logger.getLogger(AbstractMemoryManager.class);
 

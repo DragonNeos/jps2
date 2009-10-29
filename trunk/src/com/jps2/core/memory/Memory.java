@@ -19,8 +19,6 @@ package com.jps2.core.memory;
 import java.io.InputStream;
 import java.util.logging.Logger;
 
-import com.jps2.core.cpu.r5900.R5900;
-
 
 public abstract class Memory {
 	public static final Logger	log	         = Logger.getLogger("memory");
@@ -28,7 +26,7 @@ public abstract class Memory {
 	protected int	           addressMask	 = 0x1FFFFFF;
 	protected int	           offset;
 	private final String	   name;
-
+	
 	public Memory(final String name) {
 		this.name = name;
 	}
@@ -40,7 +38,7 @@ public abstract class Memory {
 	}
 
 	public void invalidMemoryAddress(final int address, final String prefix, final int status) {
-		final String message = String.format(name + "-%s - Invalid memory address : 0x%X PC=%08X", prefix, address, R5900.getProcessor().cpu.pc);
+		final String message = String.format(name + "-%s - Invalid memory address : 0x%X", prefix, address);
 		Memory.log.severe(message);
 		throw new RuntimeException(message);
 	}

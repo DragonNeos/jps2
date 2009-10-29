@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.jps2.JPS2;
 import com.jps2.util.Utilities;
 
 

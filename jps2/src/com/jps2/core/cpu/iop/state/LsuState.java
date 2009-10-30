@@ -25,7 +25,8 @@ public abstract class LsuState extends MduState {
 	}
 
 	public final void doLB(final int rt, final int rs, final int simm16) {
-		final int word = (byte) processor.memory.read8(gpr[rs].read32() + simm16);
+		final int word = (byte) processor.memory.read8(gpr[rs].read32()
+				+ simm16);
 		if (rt != 0) {
 			gpr[rt].write32(word);
 		}
@@ -47,7 +48,8 @@ public abstract class LsuState extends MduState {
 			}
 		}
 
-		final int word = (short) processor.memory.read16(gpr[rs].read32() + simm16);
+		final int word = (short) processor.memory.read16(gpr[rs].read32()
+				+ simm16);
 		if (rt != 0) {
 			gpr[rt].write32(word);
 		}
@@ -123,8 +125,8 @@ public abstract class LsuState extends MduState {
 			}
 		}
 
-		processor.memory.write16(gpr[rs].read32() + simm16,
-				(short) (gpr[rt].read32() & 0xFFFF));
+		processor.memory.write16(gpr[rs].read32() + simm16, (short) (gpr[rt]
+				.read32() & 0xFFFF));
 	}
 
 	private static final int[] swlMask = { 0xffffff00, 0xffff0000, 0xff000000,

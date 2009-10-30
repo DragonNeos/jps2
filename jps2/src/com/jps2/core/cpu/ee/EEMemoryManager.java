@@ -61,11 +61,13 @@ public class EEMemoryManager extends AbstractMemoryManager {
 				switch ((address >> 20 & 0xF)) {
 				case 0xC:
 					if (write) {
-						throw new RuntimeException("ReadOnly Memories.memory ROM " + Long.toHexString(address));
+						throw new RuntimeException(
+								"ReadOnly Memories.memory ROM "
+										+ Long.toHexString(address));
 					}
 					Memories.memoryROM.setOffset(0x1FC00000);
 					return Memories.memoryROM;
-					case 0x8:
+				case 0x8:
 					Memories.hwRegistersIOP.setOffset(0x1F800000);
 					return Memories.hwRegistersIOP;
 				}
@@ -103,7 +105,8 @@ public class EEMemoryManager extends AbstractMemoryManager {
 		case 0x9:
 			if (address >= 0x9FC00000) {
 				if (write) {
-					throw new RuntimeException("ReadOnly Memories.memory ROM " + Long.toHexString(address));
+					throw new RuntimeException("ReadOnly Memories.memory ROM "
+							+ Long.toHexString(address));
 				}
 				Memories.memoryROM.setOffset(0x9FC00000);
 				return Memories.memoryROM;
@@ -138,7 +141,9 @@ public class EEMemoryManager extends AbstractMemoryManager {
 						logger.info("IOP START");
 					}
 					if (write) {
-						throw new RuntimeException("ReadOnly Memories.memory ROM " + Long.toHexString(address));
+						throw new RuntimeException(
+								"ReadOnly Memories.memory ROM "
+										+ Long.toHexString(address));
 					}
 					Memories.memoryROM.setOffset(0xBFC00000);
 				}
@@ -146,14 +151,17 @@ public class EEMemoryManager extends AbstractMemoryManager {
 			}
 			break;
 		case 0xF:
-			if (address >= 0xFFFE0000 && (address <= 0XFFFE0020 || (address >= 0XFFFE0100 && address < 0XFFFE0160))) {
+			if (address >= 0xFFFE0000
+					&& (address <= 0XFFFE0020 || (address >= 0XFFFE0100 && address < 0XFFFE0160))) {
 				// int masked_addr = address & ~3;
-				// if( masked_addr == 0xfffe0130 || masked_addr == 0xfffe0140 || masked_addr == 0xfffe0144)
+				// if( masked_addr == 0xfffe0130 || masked_addr == 0xfffe0140 ||
+				// masked_addr == 0xfffe0144)
 				Memories.memorySysInfo.setOffset(0xFFFE0000);
 				return Memories.memorySysInfo;
 			}
 		}
 
-		throw new RuntimeException("Invalid memory " + Integer.toHexString(address));
+		throw new RuntimeException("Invalid memory "
+				+ Integer.toHexString(address));
 	}
 }

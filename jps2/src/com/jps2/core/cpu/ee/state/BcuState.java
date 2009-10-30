@@ -1,6 +1,5 @@
 package com.jps2.core.cpu.ee.state;
 
-
 /**
  * Branch Control Unit, handles branching and jumping operations
  * 
@@ -157,7 +156,8 @@ public abstract class BcuState extends LsuState {
 	public boolean doJ(final int uimm26) {
 		npc = jumpTarget(pc, uimm26);
 		if (npc == pc - 4) {
-			throw new RuntimeException("Pausing emulator - jump to self (death loop)");
+			throw new RuntimeException(
+					"Pausing emulator - jump to self (death loop)");
 		}
 		return true;
 	}
@@ -169,15 +169,18 @@ public abstract class BcuState extends LsuState {
 	}
 
 	public boolean doBEQ(final int rs, final int rt, final int simm16) {
-		npc = (gpr[rs].read32() == gpr[rt].read32()) ? branchTarget(pc, simm16) : (pc + 4);
+		npc = (gpr[rs].read32() == gpr[rt].read32()) ? branchTarget(pc, simm16)
+				: (pc + 4);
 		if (npc == pc - 4 && rs == rt) {
-			throw new RuntimeException("Pausing emulator - branch to self (death loop)");
+			throw new RuntimeException(
+					"Pausing emulator - branch to self (death loop)");
 		}
 		return true;
 	}
 
 	public boolean doBNE(final int rs, final int rt, final int simm16) {
-		npc = (gpr[rs].read32() != gpr[rt].read32()) ? branchTarget(pc, simm16) : (pc + 4);
+		npc = (gpr[rs].read32() != gpr[rt].read32()) ? branchTarget(pc, simm16)
+				: (pc + 4);
 		return true;
 	}
 

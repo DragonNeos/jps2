@@ -23,95 +23,115 @@ import com.jps2.core.memory.Memory;
 
 import static com.jps2.util.Utilities.*;
 
-public class Elf32StubHeader
-{
-    // Resolved version of s_modulename and in a Java String
-    private String s_modulenamez;
+public class Elf32StubHeader {
+	// Resolved version of s_modulename and in a Java String
+	private String s_modulenamez;
 
-    private long s_modulename;
-    private int s_version;
-    private int s_flags;
-    private int s_size; // var count in upper 8bits?
-    private int s_imports;
-    private long s_nid;
-    private long s_text;
+	private long s_modulename;
+	private int s_version;
+	private int s_flags;
+	private int s_size; // var count in upper 8bits?
+	private int s_imports;
+	private long s_nid;
+	private long s_text;
 
-    public static int sizeof() { return 20; }
-    public Elf32StubHeader(ByteBuffer f) throws IOException
-    {
-        s_modulenamez = "";
+	public static int sizeof() {
+		return 20;
+	}
 
-        s_modulename = readUWord(f);
-        s_version = readUHalf(f);
-        s_flags = readUHalf(f);
-        s_size = readUHalf(f);
-        s_imports = readUHalf(f);
-        s_nid = readUWord(f);
-        s_text = readUWord(f);
-    }
+	public Elf32StubHeader(ByteBuffer f) throws IOException {
+		s_modulenamez = "";
 
-    public Elf32StubHeader(Memory mem, int address)
-    {
-        s_modulenamez = "";
+		s_modulename = readUWord(f);
+		s_version = readUHalf(f);
+		s_flags = readUHalf(f);
+		s_size = readUHalf(f);
+		s_imports = readUHalf(f);
+		s_nid = readUWord(f);
+		s_text = readUWord(f);
+	}
 
-        s_modulename = mem.read32(address);
-        s_version = mem.read16(address + 4);
-        s_flags = mem.read16(address + 6);
-        s_size = mem.read16(address + 8);
-        s_imports = mem.read16(address + 10);
-        s_nid = mem.read32(address + 12);
-        s_text = mem.read32(address + 16);
-    }
+	public Elf32StubHeader(Memory mem, int address) {
+		s_modulenamez = "";
 
-    public String toString()
-    {
-        StringBuffer str = new StringBuffer();
-        if (s_modulenamez != null && s_modulenamez.length() > 0)
-            str.append(s_modulenamez + "\n");
-        str.append("s_modulename" + "\t" +  formatString("long", Long.toHexString(s_modulename & 0xFFFFFFFFL).toUpperCase()) + "\n");
-        str.append("s_version" + "\t\t" +  formatString("short", Long.toHexString(s_version & 0xFFFF).toUpperCase()) + "\n");
-        str.append("s_flags" + "\t\t\t" +  formatString("short", Long.toHexString(s_flags & 0xFFFF).toUpperCase()) + "\n");
-        str.append("s_size" + "\t\t\t" +  formatString("short", Long.toHexString(s_size & 0xFFFF).toUpperCase()) + "\n");
-        str.append("s_imports" + "\t\t" +  formatString("short", Long.toHexString(s_imports & 0xFFFF).toUpperCase()) + "\n");
-        str.append("s_nid" + "\t\t\t" +  formatString("long", Long.toHexString(s_nid & 0xFFFFFFFFL).toUpperCase()) + "\n");
-        str.append("s_text" + "\t\t\t" +  formatString("long", Long.toHexString(s_text & 0xFFFFFFFFL).toUpperCase()) + "\n");
-        return str.toString();
-    }
+		s_modulename = mem.read32(address);
+		s_version = mem.read16(address + 4);
+		s_flags = mem.read16(address + 6);
+		s_size = mem.read16(address + 8);
+		s_imports = mem.read16(address + 10);
+		s_nid = mem.read32(address + 12);
+		s_text = mem.read32(address + 16);
+	}
 
-    public String getModuleNamez() {
-        return s_modulenamez;
-    }
+	public String toString() {
+		StringBuffer str = new StringBuffer();
+		if (s_modulenamez != null && s_modulenamez.length() > 0)
+			str.append(s_modulenamez + "\n");
+		str.append("s_modulename"
+				+ "\t"
+				+ formatString("long", Long.toHexString(
+						s_modulename & 0xFFFFFFFFL).toUpperCase()) + "\n");
+		str.append("s_version"
+				+ "\t\t"
+				+ formatString("short", Long.toHexString(s_version & 0xFFFF)
+						.toUpperCase()) + "\n");
+		str.append("s_flags"
+				+ "\t\t\t"
+				+ formatString("short", Long.toHexString(s_flags & 0xFFFF)
+						.toUpperCase()) + "\n");
+		str.append("s_size"
+				+ "\t\t\t"
+				+ formatString("short", Long.toHexString(s_size & 0xFFFF)
+						.toUpperCase()) + "\n");
+		str.append("s_imports"
+				+ "\t\t"
+				+ formatString("short", Long.toHexString(s_imports & 0xFFFF)
+						.toUpperCase()) + "\n");
+		str.append("s_nid"
+				+ "\t\t\t"
+				+ formatString("long", Long.toHexString(s_nid & 0xFFFFFFFFL)
+						.toUpperCase()) + "\n");
+		str.append("s_text"
+				+ "\t\t\t"
+				+ formatString("long", Long.toHexString(s_text & 0xFFFFFFFFL)
+						.toUpperCase()) + "\n");
+		return str.toString();
+	}
 
-    public void setModuleNamez(String moduleName) {
-        s_modulenamez = moduleName;
-    }
+	public String getModuleNamez() {
+		return s_modulenamez;
+	}
 
-    public long getOffsetModuleName() {
-        return s_modulename;
-    }
+	public void setModuleNamez(String moduleName) {
+		s_modulenamez = moduleName;
+	}
 
-    public int getVersion() {
-        return s_version;
-    }
+	public long getOffsetModuleName() {
+		return s_modulename;
+	}
 
-    public int getFlags() {
-        return s_flags;
-    }
+	public int getVersion() {
+		return s_version;
+	}
 
-    public int getSize() {
-        return s_size;
-    }
+	public int getFlags() {
+		return s_flags;
+	}
 
-    /** The number of imports from this module */
-    public int getImports() {
-        return s_imports;
-    }
+	public int getSize() {
+		return s_size;
+	}
 
-    public long getOffsetNid() {
-        return s_nid;
-    }
+	/** The number of imports from this module */
+	public int getImports() {
+		return s_imports;
+	}
 
-    public long getOffsetText() {
-        return s_text;
-    }
+	public long getOffsetNid() {
+		return s_nid;
+	}
+
+	public long getOffsetText() {
+		return s_text;
+	}
 }

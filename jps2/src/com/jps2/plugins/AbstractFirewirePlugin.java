@@ -23,7 +23,7 @@ public abstract class AbstractFirewirePlugin implements Plugin {
 
 	public abstract int firewireRead32(int address);
 
-	public abstract void firewireWrite32(int address,int data);
+	public abstract void firewireWrite32(int address, int data);
 
 	public abstract void firewireIrqCallback();
 

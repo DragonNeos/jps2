@@ -1,6 +1,5 @@
 package com.jps2.core.cpu.iop.state;
 
-
 /**
  * Branch Control Unit, handles branching and jumping operations
  * 
@@ -58,7 +57,7 @@ public abstract class BcuState extends LsuState {
 	}
 
 	@Override
-    public final int nextOpcode() {
+	public final int nextOpcode() {
 		final int opcode = processor.memory.read32(pc);
 
 		// by default, the next instruction to emulate is at the next address
@@ -68,7 +67,7 @@ public abstract class BcuState extends LsuState {
 	}
 
 	@Override
-    public final void nextPc() {
+	public final void nextPc() {
 		pc = npc;
 		npc = pc + 4;
 	}

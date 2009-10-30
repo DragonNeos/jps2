@@ -4,7 +4,8 @@ import org.apache.log4j.Logger;
 
 public abstract class AbstractMemoryManager {
 
-	public static final Logger	logger	= Logger.getLogger(AbstractMemoryManager.class);
+	public static final Logger logger = Logger
+			.getLogger(AbstractMemoryManager.class);
 
 	public abstract Memory getMemoryByAddress(int address, boolean write);
 

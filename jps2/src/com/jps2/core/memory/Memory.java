@@ -19,26 +19,28 @@ package com.jps2.core.memory;
 import java.io.InputStream;
 import java.util.logging.Logger;
 
-
 public abstract class Memory {
-	public static final Logger	log	         = Logger.getLogger("memory");
-	protected boolean	       useSafeMemory	= true;
-	protected int	           addressMask	 = 0x1FFFFFF;
-	protected int	           offset;
-	private final String	   name;
-	
+	public static final Logger log = Logger.getLogger("memory");
+	protected boolean useSafeMemory = true;
+	protected int addressMask = 0x1FFFFFF;
+	protected int offset;
+	private final String name;
+
 	public Memory(final String name) {
 		this.name = name;
 	}
 
-	public abstract void copy(Memory memory, int positionSource, int positionDest);
+	public abstract void copy(Memory memory, int positionSource,
+			int positionDest);
 
 	public void setOffset(final int offset) {
 		this.offset = ~offset;
 	}
 
-	public void invalidMemoryAddress(final int address, final String prefix, final int status) {
-		final String message = String.format(name + "-%s - Invalid memory address : 0x%X", prefix, address);
+	public void invalidMemoryAddress(final int address, final String prefix,
+			final int status) {
+		final String message = String.format(name
+				+ "-%s - Invalid memory address : 0x%X", prefix, address);
 		Memory.log.severe(message);
 		throw new RuntimeException(message);
 	}

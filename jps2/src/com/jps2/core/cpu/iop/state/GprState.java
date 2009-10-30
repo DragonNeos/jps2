@@ -9,44 +9,45 @@ import com.jps2.core.cpu.registers.Register32bits;
 import com.jps2.core.cpu.registers.ZeroRegister32bits;
 
 /**
- * General Purpose Registers, handles integer operations like ALU, shifter, etc. Handles control register too
+ * General Purpose Registers, handles integer operations like ALU, shifter, etc.
+ * Handles control register too
  */
 abstract class GprState extends Cpu {
 
-	static final int	ZERO	= 0;
-	static final int	AT	 = 1;
-	static final int	V0	 = 2;
-	static final int	V1	 = 3;
-	static final int	A0	 = 4;
-	static final int	A1	 = 5;
-	static final int	A2	 = 6;
-	static final int	A3	 = 7;
-	static final int	T0	 = 8;
-	static final int	T1	 = 9;
-	static final int	T2	 = 10;
-	static final int	T3	 = 11;
-	static final int	T4	 = 12;
-	static final int	T5	 = 13;
-	static final int	T6	 = 14;
-	static final int	T7	 = 15;
-	static final int	S0	 = 16;
-	static final int	S1	 = 17;
-	static final int	S2	 = 18;
-	static final int	S3	 = 19;
-	static final int	S4	 = 20;
-	static final int	S5	 = 21;
-	static final int	S6	 = 22;
-	static final int	S7	 = 23;
-	static final int	T8	 = 24;
-	static final int	T9	 = 25;
-	static final int	K0	 = 26;
-	static final int	K1	 = 27;
-	static final int	GP	 = 28;
-	static final int	SP	 = 29;
-	static final int	FP	 = 30;
-	static final int	RA	 = 31;
+	static final int ZERO = 0;
+	static final int AT = 1;
+	static final int V0 = 2;
+	static final int V1 = 3;
+	static final int A0 = 4;
+	static final int A1 = 5;
+	static final int A2 = 6;
+	static final int A3 = 7;
+	static final int T0 = 8;
+	static final int T1 = 9;
+	static final int T2 = 10;
+	static final int T3 = 11;
+	static final int T4 = 12;
+	static final int T5 = 13;
+	static final int T6 = 14;
+	static final int T7 = 15;
+	static final int S0 = 16;
+	static final int S1 = 17;
+	static final int S2 = 18;
+	static final int S3 = 19;
+	static final int S4 = 20;
+	static final int S5 = 21;
+	static final int S6 = 22;
+	static final int S7 = 23;
+	static final int T8 = 24;
+	static final int T9 = 25;
+	static final int K0 = 26;
+	static final int K1 = 27;
+	static final int GP = 28;
+	static final int SP = 29;
+	static final int FP = 30;
+	static final int RA = 31;
 
-	Register32bits[]	gpr;
+	Register32bits[] gpr;
 
 	void reset() {
 		gpr[0] = new ZeroRegister32bits();
@@ -134,16 +135,20 @@ abstract class GprState extends Cpu {
 		}
 	}
 
-	public final void doSUB(final int rd, final int rs, final int rt, final int inst, final boolean delay) {
-		final BigInteger sub = BigInteger.valueOf(gpr[rs].read32()).subtract(BigInteger.valueOf(gpr[rt].read32()));
+	public final void doSUB(final int rd, final int rs, final int rt,
+			final int inst, final boolean delay) {
+		final BigInteger sub = BigInteger.valueOf(gpr[rs].read32()).subtract(
+				BigInteger.valueOf(gpr[rt].read32()));
 		if (sub.bitCount() > 32) {
-			processor.processException(ExcCode.ARITHMETIC_OVERFLOW, inst, delay);
+			processor
+					.processException(ExcCode.ARITHMETIC_OVERFLOW, inst, delay);
 		} else {
 			gpr[rd].write32(sub.intValue());
 		}
 	}
 
-	public final void doSUBU(final int rd, final int rs, final int rt, final int inst, final boolean delay) {
+	public final void doSUBU(final int rd, final int rs, final int rt,
+			final int inst, final boolean delay) {
 		gpr[rd].write32(gpr[rs].read32() - gpr[rt].read32());
 	}
 
@@ -173,7 +178,8 @@ abstract class GprState extends Cpu {
 
 	public final void doSLTU(final int rd, final int rs, final int rt) {
 		if (rd != 0) {
-			gpr[rd].write32(unsignedCompare(gpr[rs].read32(), gpr[rt].read32()));
+			gpr[rd]
+					.write32(unsignedCompare(gpr[rs].read32(), gpr[rt].read32()));
 		}
 	}
 
@@ -219,10 +225,13 @@ abstract class GprState extends Cpu {
 		}
 	}
 
-	public final void doADD(final int rd, final int rs, final int rt, final int inst, final boolean delay) {
-		final BigInteger sum = BigInteger.valueOf(gpr[rs].read32()).add(BigInteger.valueOf(gpr[rt].read32()));
+	public final void doADD(final int rd, final int rs, final int rt,
+			final int inst, final boolean delay) {
+		final BigInteger sum = BigInteger.valueOf(gpr[rs].read32()).add(
+				BigInteger.valueOf(gpr[rt].read32()));
 		if (sum.bitCount() > 32) {
-			processor.processException(ExcCode.ARITHMETIC_OVERFLOW, inst, delay);
+			processor
+					.processException(ExcCode.ARITHMETIC_OVERFLOW, inst, delay);
 		} else {
 			gpr[rd].write32(sum.intValue());
 		}

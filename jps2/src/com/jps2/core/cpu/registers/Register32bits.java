@@ -5,9 +5,9 @@ import com.jps2.core.cpu.DataType;
 public interface Register32bits {
 
 	DataType getType();
-	
+
 	boolean isTrue();
-	
+
 	boolean isFalse();
 
 	byte read8();
@@ -15,7 +15,7 @@ public interface Register32bits {
 	short read16();
 
 	int read32();
-	
+
 	void writeBoolean(final boolean data);
 
 	void write8(final byte data);

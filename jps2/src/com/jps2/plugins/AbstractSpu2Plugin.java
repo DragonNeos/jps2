@@ -19,6 +19,6 @@ public abstract class AbstractSpu2Plugin implements Plugin {
 	@Override
 	public abstract boolean test(final StringBuffer messages);
 
-	public abstract void spu2write(int address,short data);
+	public abstract void spu2write(int address, short data);
 
 }

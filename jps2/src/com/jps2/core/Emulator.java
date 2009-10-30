@@ -11,19 +11,19 @@ import com.jps2.plugins.PluginManager;
 
 public class Emulator {
 
-	public static final Logger	  logger	 = Logger.getLogger(Emulator.class);
+	public static final Logger logger = Logger.getLogger(Emulator.class);
 
-	private static final Emulator	instance	= new Emulator();
+	private static final Emulator instance = new Emulator();
 
-	public final SIO	          sio	     = new SIO();
+	public final SIO sio = new SIO();
 
-	private IOPProcess	          iopProcess;
-	private EEProcess	          eeProcess;
+	private IOPProcess iopProcess;
+	private EEProcess eeProcess;
 
-	private boolean	              running	 = false;
-	private boolean	              paused	 = false;
+	private boolean running = false;
+	private boolean paused = false;
 
-	private EmulatorStateListener	listener;
+	private EmulatorStateListener listener;
 
 	private Emulator() {
 	}
@@ -70,6 +70,7 @@ public class Emulator {
 			if (listener != null) {
 				listener.error(t);
 			}
+			stop();
 		}
 	}
 
@@ -119,14 +120,16 @@ public class Emulator {
 
 	private final class IOPProcess extends Thread {
 
-		private final IOP	iop	= new IOP();
+		private final IOP iop = new IOP();
 
 		IOPProcess() {
 			super("IOP Process");
 			setDaemon(true);
 			// send cpu to others objects in emulator
-			Memories.hwRegistersIOP.setCpu((com.jps2.core.cpu.iop.state.CpuState) iop.cpu);
-			IOPInstructions.setCpu((com.jps2.core.cpu.iop.state.CpuState) iop.cpu);
+			Memories.hwRegistersIOP
+					.setCpu((com.jps2.core.cpu.iop.state.CpuState) iop.cpu);
+			IOPInstructions
+					.setCpu((com.jps2.core.cpu.iop.state.CpuState) iop.cpu);
 			start();
 		}
 
@@ -149,13 +152,14 @@ public class Emulator {
 				if (listener != null) {
 					listener.error(t);
 				}
+				logger.error("A error throw in IOP Process.", t);
 			}
 		}
 	}
 
 	private final class EEProcess extends Thread {
 
-		private final EE	ee	= new EE();
+		private final EE ee = new EE();
 
 		EEProcess() {
 			super("EE Process");
@@ -184,6 +188,7 @@ public class Emulator {
 				if (listener != null) {
 					listener.error(t);
 				}
+				logger.error("A error throw in EE Process.", t);
 			}
 		}
 	}

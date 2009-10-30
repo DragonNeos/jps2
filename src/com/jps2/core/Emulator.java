@@ -43,21 +43,29 @@ public class Emulator {
 		return paused;
 	}
 
-	public void start() {
+	public boolean isRunning() {
+		return running;
+	}
+
+	public boolean isEmulating() {
+		return running && !paused;
+	}
+
+	public synchronized void start() {
 		try {
 			if (running) {
 				stop();
 			}
-			Memories.alloc();
-			PluginManager.initialize();
 			running = true;
-			paused = false;
-			// init cpus
-//			iopProcess = new IOPProcess();
-			eeProcess = new EEProcess();
 			if (listener != null) {
 				listener.started();
 			}
+			Memories.alloc();
+			PluginManager.initialize();
+			paused = false;
+			// init cpus
+			iopProcess = new IOPProcess();
+			// eeProcess = new EEProcess();
 		} catch (final Throwable t) {
 			if (listener != null) {
 				listener.error(t);

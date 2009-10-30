@@ -32,6 +32,8 @@ public class AboutDialog extends JDialog {
 		initComponents();
 		// adjust window preferred size
 		pack();
+		// no resize is allowed
+		setResizable(false);
 		// center of screen
 		setLocationRelativeTo(null);
 		// show

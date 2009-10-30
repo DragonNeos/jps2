@@ -29,10 +29,10 @@ public class FastMemory extends Memory {
 		super(name);
 		this.size = size;
 	}
-	
+
 	@Override
 	public int getSize() {
-	    return size;
+		return size;
 	}
 
 	@Override
@@ -48,15 +48,23 @@ public class FastMemory extends Memory {
 
 	@Override
 	public boolean allocate() {
-		final int allSize = (size + 1) / 4;
-		try {
-			all = new int[allSize];
-		} catch (final OutOfMemoryError e) {
-			// Not enough memory provided for this VM, cannot use FastMemory
-			// model
-			Memory.log.warning("Cannot allocate FastMemory: add the option '-Xmx256m' to the Java Virtual Machine startup command to improve Performance");
-			Memory.log.info("The current Java Virtual Machine has been started using '-Xmx" + (Runtime.getRuntime().maxMemory() / (1024 * 1024)) + "m'");
-			return false;
+		if (all == null) {
+			final int allSize = (size + 1) / 4;
+			try {
+				all = new int[allSize];
+			} catch (final OutOfMemoryError e) {
+				// Not enough memory provided for this VM, cannot use FastMemory
+				// model
+				Memory.log
+						.warning("Cannot allocate FastMemory: add the option '-Xmx256m' to the Java Virtual Machine startup command to improve Performance");
+				Memory.log
+						.info("The current Java Virtual Machine has been started using '-Xmx"
+								+ (Runtime.getRuntime().maxMemory() / (1024 * 1024))
+								+ "m'");
+				return false;
+			}
+		} else {
+			Arrays.fill(all, 0);
 		}
 
 		return true;
@@ -125,7 +133,8 @@ public class FastMemory extends Memory {
 		try {
 			address &= offset;
 			address &= addressMask;
-			return (all[(address / 4) + 1] << 32) | (all[(address / 4)] & 0xFFFFFFFFL);
+			return (all[(address / 4) + 1] << 32)
+					| (all[(address / 4)] & 0xFFFFFFFFL);
 		} catch (final Exception e) {
 			invalidMemoryAddress(address, "read64", 0);
 			return 0;
@@ -202,7 +211,7 @@ public class FastMemory extends Memory {
 	public void writeStream(int address, final InputStream input) {
 		address &= addressMask;
 		try {
-			final byte[] buffer = new byte[32*1024*100];
+			final byte[] buffer = new byte[32 * 1024 * 100];
 			int readed = -1;
 			int i = 0;
 			while ((readed = input.read(buffer)) != -1) {
@@ -212,7 +221,8 @@ public class FastMemory extends Memory {
 				}
 			}
 		} catch (final Exception e) {
-			throw new OutOfMemoryError("Invalid Address for memory (" + Long.toHexString(address) + ").");
+			throw new OutOfMemoryError("Invalid Address for memory ("
+					+ Long.toHexString(address) + ").");
 		}
 	}
 

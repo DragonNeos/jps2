@@ -1379,7 +1379,7 @@ public class IOPInstructions {
 
 	static CpuState cpu;
 
-	public static final void setCpu( CpuState cpu) {
-		IOPInstructions.cpu	 = cpu;
+	public static final void setCpu(CpuState cpu) {
+		IOPInstructions.cpu = cpu;
 	}
 }

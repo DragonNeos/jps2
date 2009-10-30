@@ -17,25 +17,25 @@ along with Jpcsp.  If not, see <http://www.gnu.org/licenses/>.
 package com.jps2.format;
 
 public class DeferredStub {
-    private String moduleName;
-    private int importAddress;
-    private int nid;
+	private String moduleName;
+	private int importAddress;
+	private int nid;
 
-    public DeferredStub(String moduleName, int importAddress, int nid) {
-        this.moduleName = moduleName;
-        this.importAddress = importAddress;
-        this.nid = nid;
-    }
+	public DeferredStub(String moduleName, int importAddress, int nid) {
+		this.moduleName = moduleName;
+		this.importAddress = importAddress;
+		this.nid = nid;
+	}
 
-    public String getModuleName() {
-        return moduleName;
-    }
+	public String getModuleName() {
+		return moduleName;
+	}
 
-    public int getImportAddress() {
-        return importAddress;
-    }
+	public int getImportAddress() {
+		return importAddress;
+	}
 
-    public int getNid() {
-        return nid;
-    }
+	public int getNid() {
+		return nid;
+	}
 }

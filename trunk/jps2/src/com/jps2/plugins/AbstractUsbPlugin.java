@@ -27,11 +27,11 @@ public abstract class AbstractUsbPlugin implements Plugin {
 
 	public abstract int usbRead32(int address);
 
-	public abstract void usbWrite8(int address,byte data);
+	public abstract void usbWrite8(int address, byte data);
 
-	public abstract void usbWrite16(int address,short data);
+	public abstract void usbWrite16(int address, short data);
 
-	public abstract void usbWrite32(int address,int data);
+	public abstract void usbWrite32(int address, int data);
 
 	public abstract void usbAsync();
 

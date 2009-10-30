@@ -9,7 +9,7 @@ public class Common {
 
 	public static abstract class Instruction {
 
-		protected int rt, rd, rs,sa,imm16,vd,one,vs,two;
+		protected int rt, rd, rs, sa, imm16, vd, one, vs, two;
 
 		private int m_count = 0;
 		private int flags = 0;
@@ -42,19 +42,20 @@ public class Common {
 			rt = (insn >> 16) & 31;
 			rd = (insn >> 11) & 31;
 		}
+
 		protected final void decodeRsRtImm16(final int insn) {
 			rs = (insn >> 21) & 31;
 			rt = (insn >> 16) & 31;
 			imm16 = (insn >> 0) & 65535;
 		}
-		
+
 		protected final void decodeRtRdSa(final int insn) {
 			rt = (insn >> 16) & 31;
 			rd = (insn >> 11) & 31;
 			sa = (insn >> 6) & 31;
 		}
-		
-		protected final void decodeTwoVsOneVd(final int insn){
+
+		protected final void decodeTwoVsOneVd(final int insn) {
 			two = (insn >> 15) & 1;
 			vs = (insn >> 8) & 127;
 			one = (insn >> 7) & 1;

@@ -3,10 +3,10 @@ package com.jps2.core.cpu.registers;
 import com.jps2.core.cpu.DataType;
 
 public class GeneralPorpuseRegister64bis implements Register64bits {
-	long	 doubleword	= 0x0l;
-	int	     word	    = 0x0;
+	long doubleword = 0x0l;
+	int word = 0x0;
 
-	DataType	type	= DataType.WORD;
+	DataType type = DataType.WORD;
 
 	public final DataType getType() {
 		return type;

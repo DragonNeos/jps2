@@ -8,15 +8,17 @@ import com.jps2.util.Bios;
 
 public abstract class Memories {
 
-	public static final Logger	   logger	       = Logger.getLogger(Memories.class);
+	public static final Logger logger = Logger.getLogger(Memories.class);
 
-	public static final FastMemory	memoryRAM	   = new FastMemory("RAM", 0x01FFFFFF);
-	public static final FastMemory	memoryREG	   = new FastMemory("REG", 0x0000FFFF);
-	public static final FastMemory	memoryPAD	   = new FastMemory("PAD", 0x0000FFFF);
-	public static final FastMemory	memoryROM	   = new FastMemory("ROM", 0x003FFFFF);
-	public static final IOPHardwareRegisters	hwRegistersIOP	= new IOPHardwareRegisters();
-	public static final FastMemory	memoryIOP	   = new FastMemory("IOP RAM", 0x001FFFFF);
-	public static final FastMemory	memorySysInfo	= new FastMemory("SysInfo", 0x160);
+	public static final FastMemory memoryRAM = new FastMemory("RAM", 0x01FFFFFF);
+	public static final FastMemory memoryREG = new FastMemory("REG", 0x0000FFFF);
+	public static final FastMemory memoryPAD = new FastMemory("PAD", 0x0000FFFF);
+	public static final FastMemory memoryROM = new FastMemory("ROM", 0x003FFFFF);
+	public static final IOPHardwareRegisters hwRegistersIOP = new IOPHardwareRegisters();
+	public static final FastMemory memoryIOP = new FastMemory("IOP RAM",
+			0x001FFFFF);
+	public static final FastMemory memorySysInfo = new FastMemory("SysInfo",
+			0x160);
 
 	private Memories() {
 	}

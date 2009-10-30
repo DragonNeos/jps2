@@ -24,7 +24,6 @@ import java.util.List;
 
 import com.jps2.util.Utilities;
 
-
 public class Elf32 {
 
 	// File offset
@@ -61,7 +60,8 @@ public class Elf32 {
 		StringBuffer sb = new StringBuffer();
 
 		for (int i = 0; i < header.getE_phnum(); i++) {
-			f.position((int) (elfOffset + header.getE_phoff() + (i * header.getE_phentsize())));
+			f.position((int) (elfOffset + header.getE_phoff() + (i * header
+					.getE_phentsize())));
 			Elf32ProgramHeader phdr = new Elf32ProgramHeader(f);
 
 			// Save loaded header
@@ -91,7 +91,8 @@ public class Elf32 {
 		// - save headers
 		// - find .shstrtab
 		for (int i = 0; i < header.getE_shnum(); i++) {
-			f.position((int) (elfOffset + header.getE_shoff() + (i * header.getE_shentsize())));
+			f.position((int) (elfOffset + header.getE_shoff() + (i * header
+					.getE_shentsize())));
 			Elf32SectionHeader shdr = new Elf32SectionHeader(f);
 
 			// Save loaded header
@@ -99,10 +100,10 @@ public class Elf32 {
 
 			// Find the .shstrtab section
 			if (shdr.getSh_type() == Elf32SectionHeader.SHT_STRTAB && // 0x00000003
-			        shstrtab == null &&
-			        // Some programs have 2 STRTAB headers,
-			        // the header with size 1 has to be ignored.
-			        shdr.getSh_size() > 1) {
+					shstrtab == null &&
+					// Some programs have 2 STRTAB headers,
+					// the header with size 1 has to be ignored.
+					shdr.getSh_size() > 1) {
 				shstrtab = shdr;
 			}
 		}
@@ -117,18 +118,21 @@ public class Elf32 {
 		StringBuffer sb = new StringBuffer();
 		int SectionCounter = 0;
 		for (Elf32SectionHeader shdr : sectionHeaderList) {
-			int position = (int) (elfOffset + shstrtab.getSh_offset() + shdr.getSh_name());
+			int position = (int) (elfOffset + shstrtab.getSh_offset() + shdr
+					.getSh_name());
 			f.position(position); // removed past end of file check
-								  // (fiveofhearts 18/10/08)
+			// (fiveofhearts 18/10/08)
 
 			// Number the section
-			sb.append("-----SECTION HEADER #" + SectionCounter + "-----" + "\n");
+			sb
+					.append("-----SECTION HEADER #" + SectionCounter + "-----"
+							+ "\n");
 
 			String SectionName = Utilities.readStringZ(f); // removed
-														   // readStringZ
-														   // exception check
-														   // (fiveofhearts
-														   // 18/10/08)
+			// readStringZ
+			// exception check
+			// (fiveofhearts
+			// 18/10/08)
 			if (SectionName.length() > 0) {
 				shdr.setSh_namez(SectionName);
 				sb.append(SectionName + "\n");

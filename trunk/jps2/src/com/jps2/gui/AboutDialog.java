@@ -23,11 +23,13 @@ public class AboutDialog extends JDialog {
 	 */
 	public AboutDialog() {
 		// use MainWindow as onwer and make this dialog modal (block MainWindow)
-		super(MainWindow.getInstance(), ResourceManager.getString("about.title"), true);
+		super(MainWindow.getInstance(), ResourceManager
+				.getString("about.title"), true);
 		// dispose this dialog if presse close button
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		// set dialog icon
-		setIconImage(ResourceManager.getIcon("/icons/16x16/about.png").getImage());
+		setIconImage(ResourceManager.getIcon("/icons/16x16/about.png")
+				.getImage());
 		// contruct dialog UI
 		initComponents();
 		// adjust window preferred size
@@ -42,12 +44,14 @@ public class AboutDialog extends JDialog {
 
 	private final void initComponents() {
 		// add about logo in north
-		add(new JLabel(ResourceManager.getIcon("/icons/about_logo.png")), BorderLayout.NORTH);
+		add(new JLabel(ResourceManager.getIcon("/icons/about_logo.png")),
+				BorderLayout.NORTH);
 
 		// add close button in a panel on south
 		add(new JPanel() {
 			{
-				add(new JButton(new AbstractAction(ResourceManager.getString("about.close.text")) {
+				add(new JButton(new AbstractAction(ResourceManager
+						.getString("about.close.text")) {
 
 					@Override
 					public void actionPerformed(final ActionEvent e) {

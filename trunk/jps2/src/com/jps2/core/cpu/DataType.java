@@ -10,7 +10,7 @@ public enum DataType {
 	HALFWORD(2), /**/
 	BYTE(1);
 
-	public final int	lenght;
+	public final int lenght;
 
 	DataType(final int lenght) {
 		this.lenght = lenght;

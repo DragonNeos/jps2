@@ -2,7 +2,7 @@ package com.jps2.core.cpu.iop.state;
 
 public abstract class MduState extends GprState {
 
-	long	hilo;
+	long hilo;
 
 	void setHi(final int value) {
 		hilo = (hilo & 0xffffffffL) | (((long) value) << 32);
@@ -70,26 +70,29 @@ public abstract class MduState extends GprState {
 	public final void doMULT(final int rs, final int rt) {
 		hilo = ((long) gpr[rs].read32()) * ((long) gpr[rt].read32());
 	}
-	
+
 	public final void doMULTU(final int rs, final int rt) {
-		hilo = ((long) Math.abs(gpr[rs].read32())) * ((long)Math.abs(gpr[rt].read32()));
+		hilo = ((long) Math.abs(gpr[rs].read32()))
+				* ((long) Math.abs(gpr[rt].read32()));
 	}
-	
+
 	public final void doDIV(final int rs, final int rt) {
-		// According to MIPS spec., result is unpredictable when dividing by zero.
+		// According to MIPS spec., result is unpredictable when dividing by
+		// zero.
 		if (gpr[rt].read32() != 0) {
 			final long x = gpr[rs].read32();
 			final long y = gpr[rt].read32();
-			hilo = (x % y << 32) | (( x / y) & 0xFFFFFFFFL);
+			hilo = (x % y << 32) | ((x / y) & 0xFFFFFFFFL);
 		}
 	}
 
 	public final void doDIVU(final int rs, final int rt) {
-		// According to MIPS spec., result is unpredictable when dividing by zero.
+		// According to MIPS spec., result is unpredictable when dividing by
+		// zero.
 		if (gpr[rt].read32() != 0) {
 			final long x = Math.abs(gpr[rs].read32());
 			final long y = Math.abs(gpr[rt].read32());
-			hilo = (x % y << 32) | (( x / y) & 0xFFFFFFFFL);
+			hilo = (x % y << 32) | ((x / y) & 0xFFFFFFFFL);
 		}
 	}
 }

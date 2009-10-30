@@ -10,25 +10,35 @@ import java.util.Random;
  */
 public abstract class VfpuState extends FpuState {
 
-	public float[][][]	       vpr;	            // mtx, fsl, idx
-	private static final float	floatConstants[]	= { 0.0f, Float.MAX_VALUE, (float) Math.sqrt(2.0f), (float) Math.sqrt(0.5f), 2.0f / (float) Math.sqrt(Math.PI), 2.0f / (float) Math.PI,
-	        1.0f / (float) Math.PI, (float) Math.PI / 4.0f, (float) Math.PI / 2.0f, (float) Math.PI, (float) Math.E,
-	        (float) (Math.log(Math.E) / Math.log(2.0)), // log2(E) = log(E) / log(2)
-	        (float) Math.log10(Math.E), (float) Math.log(2.0), (float) Math.log(10.0), (float) Math.PI * 2.0f, (float) Math.PI / 6.0f, (float) Math.log10(2.0),
-	        (float) (Math.log(10.0) / Math.log(2.0)), // log2(10) = log(10) / log(2)
-	        (float) Math.sqrt(3.0) / 2.0f	     };
+	public float[][][] vpr; // mtx, fsl, idx
+	private static final float floatConstants[] = { 0.0f, Float.MAX_VALUE,
+			(float) Math.sqrt(2.0f), (float) Math.sqrt(0.5f),
+			2.0f / (float) Math.sqrt(Math.PI), 2.0f / (float) Math.PI,
+			1.0f / (float) Math.PI,
+			(float) Math.PI / 4.0f,
+			(float) Math.PI / 2.0f,
+			(float) Math.PI,
+			(float) Math.E,
+			(float) (Math.log(Math.E) / Math.log(2.0)), // log2(E) = log(E) /
+														// log(2)
+			(float) Math.log10(Math.E), (float) Math.log(2.0),
+			(float) Math.log(10.0), (float) Math.PI * 2.0f,
+			(float) Math.PI / 6.0f, (float) Math.log10(2.0),
+			(float) (Math.log(10.0) / Math.log(2.0)), // log2(10) = log(10) /
+														// log(2)
+			(float) Math.sqrt(3.0) / 2.0f };
 
-	private static Random	   rnd;
+	private static Random rnd;
 
 	public class Vcr {
 
 		public class PfxSrc /* $128, $129 */{
 
-			public int[]		swz;
-			public boolean[]	abs;
-			public boolean[]	cst;
-			public boolean[]	neg;
-			public boolean		enabled;
+			public int[] swz;
+			public boolean[] abs;
+			public boolean[] cst;
+			public boolean[] neg;
+			public boolean enabled;
 
 			public void reset() {
 				Arrays.fill(swz, 0);
@@ -59,14 +69,14 @@ public abstract class VfpuState extends FpuState {
 			}
 		}
 
-		public PfxSrc	pfxs;
-		public PfxSrc	pfxt;
+		public PfxSrc pfxs;
+		public PfxSrc pfxt;
 
 		public class PfxDst /* 130 */{
 
-			public int[]		sat;
-			public boolean[]	msk;
-			public boolean		enabled;
+			public int[] sat;
+			public boolean[] msk;
+			public boolean enabled;
 
 			public void reset() {
 				Arrays.fill(sat, 0);
@@ -91,7 +101,7 @@ public abstract class VfpuState extends FpuState {
 			}
 		}
 
-		public PfxDst		pfxd;
+		public PfxDst pfxd;
 		public boolean[] /* 131 */cc;
 
 		public void reset() {
@@ -123,7 +133,7 @@ public abstract class VfpuState extends FpuState {
 		}
 	}
 
-	public Vcr	vcr;
+	public Vcr vcr;
 
 	private void resetFpr() {
 		for (final float[][] m : vpr) {
@@ -164,12 +174,13 @@ public abstract class VfpuState extends FpuState {
 		vcr = new Vcr(that.vcr);
 	}
 
-	private static float[]	v1	= new float[4];
-	private static float[]	v2	= new float[4];
-	private static float[]	v3	= new float[4];
+	private static float[] v1 = new float[4];
+	private static float[] v2 = new float[4];
+	private static float[] v3 = new float[4];
 
 	// VFPU stuff
-	private float transformVr(final int swz, final boolean abs, final boolean cst, final boolean neg, final float[] x) {
+	private float transformVr(final int swz, final boolean abs,
+			final boolean cst, final boolean neg, final float[] x) {
 		float value = 0.0f;
 		if (cst) {
 			switch (swz) {
@@ -197,11 +208,13 @@ public abstract class VfpuState extends FpuState {
 	}
 
 	private float applyPrefixVs(final int i, final float[] x) {
-		return transformVr(vcr.pfxs.swz[i], vcr.pfxs.abs[i], vcr.pfxs.cst[i], vcr.pfxs.neg[i], x);
+		return transformVr(vcr.pfxs.swz[i], vcr.pfxs.abs[i], vcr.pfxs.cst[i],
+				vcr.pfxs.neg[i], x);
 	}
 
 	private float applyPrefixVt(final int i, final float[] x) {
-		return transformVr(vcr.pfxt.swz[i], vcr.pfxt.abs[i], vcr.pfxt.cst[i], vcr.pfxt.neg[i], x);
+		return transformVr(vcr.pfxt.swz[i], vcr.pfxt.abs[i], vcr.pfxt.cst[i],
+				vcr.pfxt.neg[i], x);
 	}
 
 	private float applyPrefixVd(final int i, final float value) {
@@ -785,7 +798,8 @@ public abstract class VfpuState extends FpuState {
 	// group VFPU3
 
 	// VFPU3:VCMP
-	public void doVCMP(final int vsize, final int vs, final int vt, final int cond) {
+	public void doVCMP(final int vsize, final int vs, final int vt,
+			final int cond) {
 		boolean cc_or = false;
 		boolean cc_and = true;
 
@@ -830,7 +844,8 @@ public abstract class VfpuState extends FpuState {
 				if ((cond & 3) == 0) {
 					cc = ((cond & 4) == 0) ? (v1[i] == 0.0f) : (v1[i] != 0.0f);
 				} else {
-					cc = (((cond & 1) == 1) && Float.isNaN(v1[i])) || (((cond & 2) == 2) && Float.isInfinite(v1[i]));
+					cc = (((cond & 1) == 1) && Float.isNaN(v1[i]))
+							|| (((cond & 2) == 2) && Float.isInfinite(v1[i]));
 					if ((cond & 4) == 4) {
 						cc = !cc;
 					}
@@ -871,7 +886,8 @@ public abstract class VfpuState extends FpuState {
 	}
 
 	// VFPU3:VSCMP
-	public void doVSCMP(final int vsize, final int vd, final int vs, final int vt) {
+	public void doVSCMP(final int vsize, final int vd, final int vs,
+			final int vt) {
 		loadVs(vsize, vs);
 		loadVt(vsize, vt);
 
@@ -1120,7 +1136,8 @@ public abstract class VfpuState extends FpuState {
 		}
 		loadVs(vsize, vs);
 		for (int i = 0; i < vsize / 2; ++i) {
-			v3[i] = (floatToHalffloat(v1[1 + i * 2]) << 16) | (floatToHalffloat(v1[0 + i * 2]) << 0);
+			v3[i] = (floatToHalffloat(v1[1 + i * 2]) << 16)
+					| (floatToHalffloat(v1[0 + i * 2]) << 0);
 		}
 		saveVd(vsize / 2, vd, v3);
 	}
@@ -1191,7 +1208,8 @@ public abstract class VfpuState extends FpuState {
 		for (int i = 0; i < vsize; ++i) {
 			final int imm32 = Float.floatToRawIntBits(v1[i]);
 			v3[0 + 2 * i] = Float.intBitsToFloat(((imm32) & 0xFFFF) << 15);
-			v3[1 + 2 * i] = Float.intBitsToFloat(((imm32 >>> 16) & 0xFFFF) << 15);
+			v3[1 + 2 * i] = Float
+					.intBitsToFloat(((imm32 >>> 16) & 0xFFFF) << 15);
 		}
 		saveVd(vsize * 2, vd, v3);
 	}
@@ -1206,7 +1224,8 @@ public abstract class VfpuState extends FpuState {
 		for (int i = 0; i < vsize; ++i) {
 			final int imm32 = Float.floatToRawIntBits(v1[i]);
 			v3[0 + 2 * i] = Float.intBitsToFloat(((imm32) & 0xFFFF) << 16);
-			v3[1 + 2 * i] = Float.intBitsToFloat(((imm32 >>> 16) & 0xFFFF) << 16);
+			v3[1 + 2 * i] = Float
+					.intBitsToFloat(((imm32 >>> 16) & 0xFFFF) << 16);
 		}
 		saveVd(vsize * 2, vd, v3);
 	}
@@ -1225,7 +1244,10 @@ public abstract class VfpuState extends FpuState {
 		final int z = Float.floatToRawIntBits(v1[2]);
 		final int w = Float.floatToRawIntBits(v1[3]);
 
-		v3[0] = Float.intBitsToFloat(((x < 0) ? 0 : ((x >> 23) << 0)) | ((y < 0) ? 0 : ((y >> 23) << 8)) | ((z < 0) ? 0 : ((z >> 23) << 16)) | ((w < 0) ? 0 : ((w >> 23) << 24)));
+		v3[0] = Float.intBitsToFloat(((x < 0) ? 0 : ((x >> 23) << 0))
+				| ((y < 0) ? 0 : ((y >> 23) << 8))
+				| ((z < 0) ? 0 : ((z >> 23) << 16))
+				| ((w < 0) ? 0 : ((w >> 23) << 24)));
 
 		saveVd(1, vd, v3);
 	}
@@ -1244,7 +1266,8 @@ public abstract class VfpuState extends FpuState {
 		final int z = Float.floatToRawIntBits(v1[2]);
 		final int w = Float.floatToRawIntBits(v1[3]);
 
-		v3[0] = Float.intBitsToFloat(((x >>> 24) << 0) | ((y >>> 24) << 8) | ((z >>> 24) << 16) | ((w >>> 24) << 24));
+		v3[0] = Float.intBitsToFloat(((x >>> 24) << 0) | ((y >>> 24) << 8)
+				| ((z >>> 24) << 16) | ((w >>> 24) << 24));
 
 		saveVd(1, vd, v3);
 	}
@@ -1261,13 +1284,15 @@ public abstract class VfpuState extends FpuState {
 		final int x = Float.floatToRawIntBits(v1[0]);
 		final int y = Float.floatToRawIntBits(v1[1]);
 
-		v3[0] = Float.intBitsToFloat(((x < 0) ? 0 : ((x >> 15) << 0)) | ((y < 0) ? 0 : ((y >> 15) << 16)));
+		v3[0] = Float.intBitsToFloat(((x < 0) ? 0 : ((x >> 15) << 0))
+				| ((y < 0) ? 0 : ((y >> 15) << 16)));
 
 		if (vsize == 4) {
 			final int z = Float.floatToRawIntBits(v1[2]);
 			final int w = Float.floatToRawIntBits(v1[3]);
 
-			v3[1] = Float.intBitsToFloat(((z < 0) ? 0 : ((z >> 15) << 0)) | ((w < 0) ? 0 : ((w >> 15) << 16)));
+			v3[1] = Float.intBitsToFloat(((z < 0) ? 0 : ((z >> 15) << 0))
+					| ((w < 0) ? 0 : ((w >> 15) << 16)));
 			saveVd(2, vd, v3);
 		} else {
 			saveVd(1, vd, v3);
@@ -1292,7 +1317,8 @@ public abstract class VfpuState extends FpuState {
 			final int z = Float.floatToRawIntBits(v1[2]);
 			final int w = Float.floatToRawIntBits(v1[3]);
 
-			v3[1] = Float.intBitsToFloat(((z >>> 16) << 0) | ((w >>> 16) << 16));
+			v3[1] = Float
+					.intBitsToFloat(((z >>> 16) << 0) | ((w >>> 16) << 16));
 			saveVd(2, vd, v3);
 		} else {
 			saveVd(1, vd, v3);
@@ -1603,7 +1629,8 @@ public abstract class VfpuState extends FpuState {
 	}
 
 	// VFPU4:VF2IN
-	public void doVF2IN(final int vsize, final int vd, final int vs, final int imm5) {
+	public void doVF2IN(final int vsize, final int vd, final int vs,
+			final int imm5) {
 		loadVs(vsize, vs);
 
 		for (int i = 0; i < vsize; ++i) {
@@ -1615,19 +1642,22 @@ public abstract class VfpuState extends FpuState {
 	}
 
 	// VFPU4:VF2IZ
-	public void doVF2IZ(final int vsize, final int vd, final int vs, final int imm5) {
+	public void doVF2IZ(final int vsize, final int vd, final int vs,
+			final int imm5) {
 		loadVs(vsize, vs);
 
 		for (int i = 0; i < vsize; ++i) {
 			final float value = Math.scalb(v1[i], imm5);
-			v3[i] = Float.intBitsToFloat(v1[i] >= 0 ? (int) Math.floor(value) : (int) Math.ceil(value));
+			v3[i] = Float.intBitsToFloat(v1[i] >= 0 ? (int) Math.floor(value)
+					: (int) Math.ceil(value));
 		}
 
 		saveVd(vsize, vd, v3);
 	}
 
 	// VFPU4:VF2IU
-	public void doVF2IU(final int vsize, final int vd, final int vs, final int imm5) {
+	public void doVF2IU(final int vsize, final int vd, final int vs,
+			final int imm5) {
 		loadVs(vsize, vs);
 
 		for (int i = 0; i < vsize; ++i) {
@@ -1639,7 +1669,8 @@ public abstract class VfpuState extends FpuState {
 	}
 
 	// VFPU4:VF2ID
-	public void doVF2ID(final int vsize, final int vd, final int vs, final int imm5) {
+	public void doVF2ID(final int vsize, final int vd, final int vs,
+			final int imm5) {
 		loadVs(vsize, vs);
 
 		for (int i = 0; i < vsize; ++i) {
@@ -1651,7 +1682,8 @@ public abstract class VfpuState extends FpuState {
 	}
 
 	// VFPU4:VI2F
-	public void doVI2F(final int vsize, final int vd, final int vs, final int imm5) {
+	public void doVI2F(final int vsize, final int vd, final int vs,
+			final int imm5) {
 		loadVs(vsize, vs);
 
 		for (int i = 0; i < vsize; ++i) {
@@ -1663,7 +1695,8 @@ public abstract class VfpuState extends FpuState {
 	}
 
 	// VFPU4:VCMOVT
-	public void doVCMOVT(final int vsize, final int imm3, final int vd, final int vs) {
+	public void doVCMOVT(final int vsize, final int imm3, final int vd,
+			final int vs) {
 		if (imm3 < 6) {
 			if (vcr.cc[imm3]) {
 				loadVs(vsize, vs);
@@ -1684,7 +1717,8 @@ public abstract class VfpuState extends FpuState {
 	}
 
 	// VFPU4:VCMOVF
-	public void doVCMOVF(final int vsize, final int imm3, final int vd, final int vs) {
+	public void doVCMOVF(final int vsize, final int imm3, final int vd,
+			final int vs) {
 		if (imm3 < 6) {
 			if (!vcr.cc[imm3]) {
 				loadVs(vsize, vs);
@@ -1707,14 +1741,18 @@ public abstract class VfpuState extends FpuState {
 	}
 
 	// VFPU4:VWBN
-	public void doVWBN(final int vsize, final int vd, final int vs, final int imm8) {
+	public void doVWBN(final int vsize, final int vd, final int vs,
+			final int imm8) {
 		doUNK("Unimplemented VWBN");
 	}
 
 	// group VFPU5
 	// VFPU5:VPFXS
-	public void doVPFXS(final int negw, final int negz, final int negy, final int negx, final int cstw, final int cstz, final int csty, final int cstx, final int absw, final int absz, final int absy,
-	        final int absx, final int swzw, final int swzz, final int swzy, final int swzx) {
+	public void doVPFXS(final int negw, final int negz, final int negy,
+			final int negx, final int cstw, final int cstz, final int csty,
+			final int cstx, final int absw, final int absz, final int absy,
+			final int absx, final int swzw, final int swzz, final int swzy,
+			final int swzx) {
 		vcr.pfxs.swz[0] = swzx;
 		vcr.pfxs.swz[1] = swzy;
 		vcr.pfxs.swz[2] = swzz;
@@ -1735,8 +1773,11 @@ public abstract class VfpuState extends FpuState {
 	}
 
 	// VFPU5:VPFXT
-	public void doVPFXT(final int negw, final int negz, final int negy, final int negx, final int cstw, final int cstz, final int csty, final int cstx, final int absw, final int absz, final int absy,
-	        final int absx, final int swzw, final int swzz, final int swzy, final int swzx) {
+	public void doVPFXT(final int negw, final int negz, final int negy,
+			final int negx, final int cstw, final int cstz, final int csty,
+			final int cstx, final int absw, final int absz, final int absy,
+			final int absx, final int swzw, final int swzz, final int swzy,
+			final int swzx) {
 		vcr.pfxt.swz[0] = swzx;
 		vcr.pfxt.swz[1] = swzy;
 		vcr.pfxt.swz[2] = swzz;
@@ -1757,7 +1798,9 @@ public abstract class VfpuState extends FpuState {
 	}
 
 	// VFPU5:VPFXD
-	public void doVPFXD(final int mskw, final int mskz, final int msky, final int mskx, final int satw, final int satz, final int saty, final int satx) {
+	public void doVPFXD(final int mskw, final int mskz, final int msky,
+			final int mskx, final int satw, final int satz, final int saty,
+			final int satx) {
 		vcr.pfxd.sat[0] = satx;
 		vcr.pfxd.sat[1] = saty;
 		vcr.pfxd.sat[2] = satz;
@@ -1785,7 +1828,8 @@ public abstract class VfpuState extends FpuState {
 
 	// group VFPU6
 	// VFPU6:VMMUL
-	public void doVMMUL(final int vsize, final int vd, final int vs, final int vt) {
+	public void doVMMUL(final int vsize, final int vd, final int vs,
+			final int vt) {
 		if (vsize == 1) {
 			doUNK("Not supported VMMUL.S");
 			return;
@@ -1881,7 +1925,8 @@ public abstract class VfpuState extends FpuState {
 	}
 
 	// VFPU6:VMSCL
-	public void doVMSCL(final int vsize, final int vd, final int vs, final int vt) {
+	public void doVMSCL(final int vsize, final int vd, final int vs,
+			final int vt) {
 		for (int i = 0; i < vsize; ++i) {
 			this.doVSCL(vsize, vd + i, vs + i, vt);
 		}
@@ -1941,7 +1986,8 @@ public abstract class VfpuState extends FpuState {
 	}
 
 	// VFPU6:VROT
-	public void doVROT(final int vsize, final int vd, final int vs, final int imm5) {
+	public void doVROT(final int vsize, final int vd, final int vs,
+			final int imm5) {
 		loadVs(1, vs);
 
 		final double a = 0.5 * Math.PI * v1[0];
@@ -1978,7 +2024,9 @@ public abstract class VfpuState extends FpuState {
 		final int m = (vt >> 2) & 7;
 		final int i = (vt >> 0) & 3;
 
-		vpr[m][i][s] = Float.intBitsToFloat(processor.memory.read32(gpr[rs].read32() + simm14_a16));
+		vpr[m][i][s] = Float.intBitsToFloat(processor.memory.read32(gpr[rs]
+				.read32()
+				+ simm14_a16));
 	}
 
 	// LSU:SVS
@@ -1990,11 +2038,13 @@ public abstract class VfpuState extends FpuState {
 		if (CHECK_ALIGNMENT) {
 			final int address = gpr[rs].read32() + simm14_a16;
 			if ((address & 3) != 0) {
-				throw new RuntimeException(String.format("SV.S unaligned addr:0x%08x pc:0x%08x", address, pc));
+				throw new RuntimeException(String.format(
+						"SV.S unaligned addr:0x%08x pc:0x%08x", address, pc));
 			}
 		}
 
-		processor.memory.write32(gpr[rs].read32() + simm14_a16, Float.floatToRawIntBits(vpr[m][i][s]));
+		processor.memory.write32(gpr[rs].read32() + simm14_a16, Float
+				.floatToRawIntBits(vpr[m][i][s]));
 	}
 
 	// LSU:LVQ
@@ -2006,17 +2056,20 @@ public abstract class VfpuState extends FpuState {
 
 		if (CHECK_ALIGNMENT) {
 			if ((address & 15) != 0) {
-				throw new RuntimeException(String.format("LV.Q unaligned addr:0x%08x pc:0x%08x", address, pc));
+				throw new RuntimeException(String.format(
+						"LV.Q unaligned addr:0x%08x pc:0x%08x", address, pc));
 			}
 		}
 
 		if ((vt & 32) != 0) {
 			for (int j = 0; j < 4; ++j) {
-				vpr[m][j][i] = Float.intBitsToFloat(processor.memory.read32(address + j * 4));
+				vpr[m][j][i] = Float.intBitsToFloat(processor.memory
+						.read32(address + j * 4));
 			}
 		} else {
 			for (int j = 0; j < 4; ++j) {
-				vpr[m][i][j] = Float.intBitsToFloat(processor.memory.read32(address + j * 4));
+				vpr[m][i][j] = Float.intBitsToFloat(processor.memory
+						.read32(address + j * 4));
 			}
 		}
 	}
@@ -2031,7 +2084,8 @@ public abstract class VfpuState extends FpuState {
 
 		if (CHECK_ALIGNMENT) {
 			if ((address & 3) != 0) {
-				throw new RuntimeException(String.format("LVL.Q unaligned addr:0x%08x pc:0x%08x", address, pc));
+				throw new RuntimeException(String.format(
+						"LVL.Q unaligned addr:0x%08x pc:0x%08x", address, pc));
 			}
 		}
 
@@ -2045,12 +2099,14 @@ public abstract class VfpuState extends FpuState {
 
 		if ((vt & 32) != 0) {
 			for (int j = 0; j < k; ++j) {
-				vpr[m][j][i] = Float.intBitsToFloat(processor.memory.read32(address));
+				vpr[m][j][i] = Float.intBitsToFloat(processor.memory
+						.read32(address));
 				address += 4;
 			}
 		} else {
 			for (int j = 0; j < k; ++j) {
-				vpr[m][i][j] = Float.intBitsToFloat(processor.memory.read32(address));
+				vpr[m][i][j] = Float.intBitsToFloat(processor.memory
+						.read32(address));
 				address += 4;
 			}
 		}
@@ -2066,7 +2122,8 @@ public abstract class VfpuState extends FpuState {
 
 		if (CHECK_ALIGNMENT) {
 			if ((address & 3) != 0) {
-				throw new RuntimeException(String.format("LVR.Q unaligned addr:0x%08x pc:0x%08x", address, pc));
+				throw new RuntimeException(String.format(
+						"LVR.Q unaligned addr:0x%08x pc:0x%08x", address, pc));
 			}
 		}
 
@@ -2080,12 +2137,14 @@ public abstract class VfpuState extends FpuState {
 		address += (4 - k) << 2;
 		if ((vt & 32) != 0) {
 			for (int j = 4 - k; j < 4; ++j) {
-				vpr[m][j][i] = Float.intBitsToFloat(processor.memory.read32(address));
+				vpr[m][j][i] = Float.intBitsToFloat(processor.memory
+						.read32(address));
 				address += 4;
 			}
 		} else {
 			for (int j = 4 - k; j < 4; ++j) {
-				vpr[m][i][j] = Float.intBitsToFloat(processor.memory.read32(address));
+				vpr[m][i][j] = Float.intBitsToFloat(processor.memory
+						.read32(address));
 				address += 4;
 			}
 		}
@@ -2100,17 +2159,20 @@ public abstract class VfpuState extends FpuState {
 
 		if (CHECK_ALIGNMENT) {
 			if ((address & 15) != 0) {
-				throw new RuntimeException(String.format("SV.Q unaligned addr:0x%08x pc:0x%08x", address, pc));
+				throw new RuntimeException(String.format(
+						"SV.Q unaligned addr:0x%08x pc:0x%08x", address, pc));
 			}
 		}
 
 		if ((vt & 32) != 0) {
 			for (int j = 0; j < 4; ++j) {
-				processor.memory.write32((address + j * 4), Float.floatToRawIntBits(vpr[m][j][i]));
+				processor.memory.write32((address + j * 4), Float
+						.floatToRawIntBits(vpr[m][j][i]));
 			}
 		} else {
 			for (int j = 0; j < 4; ++j) {
-				processor.memory.write32((address + j * 4), Float.floatToRawIntBits(vpr[m][i][j]));
+				processor.memory.write32((address + j * 4), Float
+						.floatToRawIntBits(vpr[m][i][j]));
 			}
 		}
 	}
@@ -2124,7 +2186,8 @@ public abstract class VfpuState extends FpuState {
 
 		if (CHECK_ALIGNMENT) {
 			if ((address & 3) != 0) {
-				throw new RuntimeException(String.format("SVL.Q unaligned addr:0x%08x pc:0x%08x", address, pc));
+				throw new RuntimeException(String.format(
+						"SVL.Q unaligned addr:0x%08x pc:0x%08x", address, pc));
 			}
 		}
 
@@ -2132,12 +2195,14 @@ public abstract class VfpuState extends FpuState {
 
 		if ((vt & 32) != 0) {
 			for (int j = 0; j < k; ++j) {
-				processor.memory.write32((address), Float.floatToRawIntBits(vpr[m][j][i]));
+				processor.memory.write32((address), Float
+						.floatToRawIntBits(vpr[m][j][i]));
 				address += 4;
 			}
 		} else {
 			for (int j = 0; j < k; ++j) {
-				processor.memory.write32((address), Float.floatToRawIntBits(vpr[m][i][j]));
+				processor.memory.write32((address), Float
+						.floatToRawIntBits(vpr[m][i][j]));
 				address += 4;
 			}
 		}
@@ -2152,7 +2217,8 @@ public abstract class VfpuState extends FpuState {
 
 		if (CHECK_ALIGNMENT) {
 			if ((address & 3) != 0) {
-				throw new RuntimeException(String.format("SVR.Q unaligned addr:0x%08x pc:0x%08x", address, pc));
+				throw new RuntimeException(String.format(
+						"SVR.Q unaligned addr:0x%08x pc:0x%08x", address, pc));
 			}
 		}
 
@@ -2160,12 +2226,14 @@ public abstract class VfpuState extends FpuState {
 		address += (4 - k) << 2;
 		if ((vt & 32) != 0) {
 			for (int j = 4 - k; j < 4; ++j) {
-				processor.memory.write32((address), Float.floatToRawIntBits(vpr[m][j][i]));
+				processor.memory.write32((address), Float
+						.floatToRawIntBits(vpr[m][j][i]));
 				address += 4;
 			}
 		} else {
 			for (int j = 4 - k; j < 4; ++j) {
-				processor.memory.write32((address), Float.floatToRawIntBits(vpr[m][i][j]));
+				processor.memory.write32((address), Float
+						.floatToRawIntBits(vpr[m][i][j]));
 				address += 4;
 			}
 		}

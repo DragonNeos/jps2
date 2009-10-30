@@ -17,7 +17,8 @@ public class EE extends Processor {
 	}
 
 	@Override
-	public void processException(final ExcCode e, final int inst, final boolean delay) {
+	public void processException(final ExcCode e, final int inst,
+			final boolean delay) {
 		System.err.println(e);
 		// if (e == ExcCode.TRAP) {
 		// return;
@@ -52,7 +53,8 @@ public class EE extends Processor {
 		// }
 		//
 		// // Set the Status
-		// cpu.status.setRawValue((cpu.status.getRawValue() & ~0x3f) | (cpu.status.getRawValue() & 0xf) << 2);
+		// cpu.status.setRawValue((cpu.status.getRawValue() & ~0x3f) |
+		// (cpu.status.getRawValue() & 0xf) << 2);
 		//
 		// final int call = (int) (cpu.gpr[GprState.T1] & 0xff);
 		// switch (cpu.pc & 0x1fffff) {

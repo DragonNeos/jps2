@@ -4,54 +4,56 @@ import java.util.Arrays;
 
 public class SIO {
 	// Status Flags
-	private static final int	TX_RDY	       = 0x0001;
-	private static final int	RX_RDY	       = 0x0002;
-	private static final int	TX_EMPTY	   = 0x0004;
-	private static final int	PARITY_ERR	   = 0x0008;
-	private static final int	RX_OVERRUN	   = 0x0010;
-	private static final int	FRAMING_ERR	   = 0x0020;
-	private static final int	SYNC_DETECT	   = 0x0040;
-	private static final int	DSR	           = 0x0080;
-	private static final int	CTS	           = 0x0100;
-	private static final int	IRQ	           = 0x0200;
+	private static final int TX_RDY = 0x0001;
+	private static final int RX_RDY = 0x0002;
+	private static final int TX_EMPTY = 0x0004;
+	private static final int PARITY_ERR = 0x0008;
+	private static final int RX_OVERRUN = 0x0010;
+	private static final int FRAMING_ERR = 0x0020;
+	private static final int SYNC_DETECT = 0x0040;
+	private static final int DSR = 0x0080;
+	private static final int CTS = 0x0100;
+	private static final int IRQ = 0x0200;
 
 	// Control Flags
-	private static final int	TX_PERM	       = 0x0001;
-	private static final int	DTR	           = 0x0002;
-	private static final int	RX_PERM	       = 0x0004;
-	private static final int	BREAK	       = 0x0008;
-	private static final int	RESET_ERR	   = 0x0010;
-	private static final int	RTS	           = 0x0020;
-	private static final int	SIO_RESET	   = 0x0040;
+	private static final int TX_PERM = 0x0001;
+	private static final int DTR = 0x0002;
+	private static final int RX_PERM = 0x0004;
+	private static final int BREAK = 0x0008;
+	private static final int RESET_ERR = 0x0010;
+	private static final int RTS = 0x0020;
+	private static final int SIO_RESET = 0x0040;
 
-	public short	         statReg;
-	public short	         modeReg;
-	public short	         ctrlReg;
-	public short	         baudReg;
+	public short statReg;
+	public short modeReg;
+	public short ctrlReg;
+	public short baudReg;
 
-	public final byte[]	     buffer	           = new byte[256];
-	public int	             bufcount;
-	public int	             parp;
-	public int	             mcdst;
-	public int	             rdwr;
-	public byte	             adrH;
-	public byte	             adrL;
-	public int	             padst;
-	public int	             mtapst;
-	public int	             packetsize;
+	public final byte[] buffer = new byte[256];
+	public int bufcount;
+	public int parp;
+	public int mcdst;
+	public int rdwr;
+	public byte adrH;
+	public byte adrL;
+	public int padst;
+	public int mtapst;
+	public int packetsize;
 
-	public byte	             terminator;
-	public byte	             mode;
-	public byte	             mcCommand;
-	public int	             lastsector;
-	public int	             sector;
-	public int	             k;
-	public int	             count;
+	public byte terminator;
+	public byte mode;
+	public byte mcCommand;
+	public int lastsector;
+	public int sector;
+	public int k;
+	public int count;
 
-	// Active pad slot for each port. Not sure if these automatically reset after each read or not.
-	public final byte[]	     activePadSlot	   = new byte[2];
-	// Active memcard slot for each port. Not sure if these automatically reset after each read or not.
-	public final byte[]	     activeMemcardSlot	= new byte[2];
+	// Active pad slot for each port. Not sure if these automatically reset
+	// after each read or not.
+	public final byte[] activePadSlot = new byte[2];
+	// Active memcard slot for each port. Not sure if these automatically reset
+	// after each read or not.
+	public final byte[] activeMemcardSlot = new byte[2];
 
 	public final int getMemcardIndex() {
 		return (ctrlReg & 0x2000) >> 13;
@@ -80,7 +82,8 @@ public class SIO {
 				if (padst == 2)
 					padst = 0;
 				/*
-				 * if (mcdst == 1) { mcdst = 99; StatReg&= ~TX_EMPTY; StatReg|= RX_RDY; }
+				 * if (mcdst == 1) { mcdst = 99; StatReg&= ~TX_EMPTY; StatReg|=
+				 * RX_RDY; }
 				 */
 			}
 		}
@@ -131,12 +134,15 @@ public class SIO {
 			sio2.packet.recvVal1 = 0x1100; // Pad is present
 
 			if ((ctrlReg & 2) == 2) {
-				int padslot = (ctrlReg >> 12) & 2; // move 0x2000 bitmask into leftmost bits
+				int padslot = (ctrlReg >> 12) & 2; // move 0x2000 bitmask into
+													// leftmost bits
 				if (padslot != 1) {
 					padslot >>= 1; // transform 0/2 to be 0/1 values
 
-					if (!PADsetSlot(padslot + 1, 1 + activePadSlot[padslot]) && activePadSlot[padslot]) {
-						// Pad is not present. Don't send poll, just return a bunch of 0's.
+					if (!PADsetSlot(padslot + 1, 1 + activePadSlot[padslot])
+							&& activePadSlot[padslot]) {
+						// Pad is not present. Don't send poll, just return a
+						// bunch of 0's.
 						sio2.packet.recvVal1 = 0x1D100;
 						padst = 3;
 					} else {
@@ -156,7 +162,8 @@ public class SIO {
 			mtapst = 1;
 			count = 0;
 			sio2.packet.recvVal1 = 0x1D100; // Mtap is not connected :(
-			if ((ctrlReg & 2) != 0) // No idea if this test is needed. Pads use it, memcards don't.
+			if ((ctrlReg & 2) != 0) // No idea if this test is needed. Pads use
+									// it, memcards don't.
 			{
 				final int port = getMultitapPort();
 				if (!IsMtapPresent(port)) {
@@ -166,7 +173,8 @@ public class SIO {
 				} else {
 					bufcount = 3;
 					buffer[0] = (byte) 0xFF;
-					buffer[1] = (byte) 0x80; // Have no idea if this is correct. From PSX mtap.
+					buffer[1] = (byte) 0x80; // Have no idea if this is correct.
+												// From PSX mtap.
 					buffer[2] = 0x5A;
 					sio2.packet.recvVal1 = 0x1100; // Mtap is connected :)
 				}
@@ -204,10 +212,12 @@ public class SIO {
 
 			if (SysPlugins.McdIsPresent(port, slot)) {
 				sio2.packet.recvVal1 = 0x1100;
-				PAD_LOG("START MEMCARD [port:%d, slot:%d] - Present", port, slot);
+				PAD_LOG("START MEMCARD [port:%d, slot:%d] - Present", port,
+						slot);
 			} else {
 				sio2.packet.recvVal1 = 0x1D100;
-				PAD_LOG("START MEMCARD [port:%d, slot:%d] - Missing", port, slot);
+				PAD_LOG("START MEMCARD [port:%d, slot:%d] - Missing", port,
+						slot);
 			}
 
 			SIO_INT();

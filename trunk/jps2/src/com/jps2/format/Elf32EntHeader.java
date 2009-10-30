@@ -23,94 +23,114 @@ import com.jps2.core.memory.Memory;
 
 import static com.jps2.util.Utilities.*;
 
-public class Elf32EntHeader
-{
-    // Resolved version of modulename and in a Java String
-    private String modulenamez;
+public class Elf32EntHeader {
+	// Resolved version of modulename and in a Java String
+	private String modulenamez;
 
-    private long modulename;
-    private int version;
-    private int attr;
-    private short size;
-    private short vcount;
-    private int fcount;
-    private long resident;
+	private long modulename;
+	private int version;
+	private int attr;
+	private short size;
+	private short vcount;
+	private int fcount;
+	private long resident;
 
-    public static int sizeof() { return 16; }
-    public Elf32EntHeader(ByteBuffer f) throws IOException
-    {
-        modulenamez = "";
+	public static int sizeof() {
+		return 16;
+	}
 
-        modulename = readUWord(f);
-        version = readUHalf(f);
-        attr = readUHalf(f);
-        size = readUByte(f);
-        vcount = readUByte(f);
-        fcount = readUHalf(f);
-        resident = readUWord(f);
-    }
+	public Elf32EntHeader(ByteBuffer f) throws IOException {
+		modulenamez = "";
 
-    public Elf32EntHeader(Memory mem, int address)
-    {
-        modulenamez = "";
+		modulename = readUWord(f);
+		version = readUHalf(f);
+		attr = readUHalf(f);
+		size = readUByte(f);
+		vcount = readUByte(f);
+		fcount = readUHalf(f);
+		resident = readUWord(f);
+	}
 
-        modulename = mem.read32(address);
-        version = mem.read16(address + 4);
-        attr = mem.read16(address + 6);
-        size = (short)mem.read8(address + 8);
-        vcount = (short)mem.read8(address + 9);
-        fcount = mem.read16(address + 10);
-        resident = mem.read32(address + 12);
-    }
+	public Elf32EntHeader(Memory mem, int address) {
+		modulenamez = "";
 
-    public String toString()
-    {
-        StringBuffer str = new StringBuffer();
-        if (modulenamez != null && modulenamez.length() > 0)
-            str.append(modulenamez + "\n");
-        str.append("modulename" + "\t" +  formatString("long", Long.toHexString(modulename & 0xFFFFFFFFL).toUpperCase()) + "\n");
-        str.append("version" + "\t\t" +  formatString("short", Long.toHexString(version & 0xFFFF).toUpperCase()) + "\n");
-        str.append("attr" + "\t\t" +  formatString("short", Long.toHexString(attr & 0xFFFF).toUpperCase()) + "\n");
-        str.append("size" + "\t\t" +  formatString("byte", Long.toHexString(size & 0xFFFF).toUpperCase()) + "\n");
-        str.append("vcount" + "\t\t" +  formatString("byte", Long.toHexString(vcount & 0xFFFF).toUpperCase()) + "\n");
-        str.append("fcount" + "\t\t" +  formatString("short", Long.toHexString(fcount & 0xFFFF).toUpperCase()) + "\n");
-        str.append("resident" + "\t\t" +  formatString("long", Long.toHexString(resident & 0xFFFFFFFFL).toUpperCase()) + "\n");
-        return str.toString();
-    }
+		modulename = mem.read32(address);
+		version = mem.read16(address + 4);
+		attr = mem.read16(address + 6);
+		size = (short) mem.read8(address + 8);
+		vcount = (short) mem.read8(address + 9);
+		fcount = mem.read16(address + 10);
+		resident = mem.read32(address + 12);
+	}
 
-    public String getModuleNamez() {
-        return modulenamez;
-    }
+	public String toString() {
+		StringBuffer str = new StringBuffer();
+		if (modulenamez != null && modulenamez.length() > 0)
+			str.append(modulenamez + "\n");
+		str.append("modulename"
+				+ "\t"
+				+ formatString("long", Long.toHexString(
+						modulename & 0xFFFFFFFFL).toUpperCase()) + "\n");
+		str.append("version"
+				+ "\t\t"
+				+ formatString("short", Long.toHexString(version & 0xFFFF)
+						.toUpperCase()) + "\n");
+		str.append("attr"
+				+ "\t\t"
+				+ formatString("short", Long.toHexString(attr & 0xFFFF)
+						.toUpperCase()) + "\n");
+		str.append("size"
+				+ "\t\t"
+				+ formatString("byte", Long.toHexString(size & 0xFFFF)
+						.toUpperCase()) + "\n");
+		str.append("vcount"
+				+ "\t\t"
+				+ formatString("byte", Long.toHexString(vcount & 0xFFFF)
+						.toUpperCase()) + "\n");
+		str.append("fcount"
+				+ "\t\t"
+				+ formatString("short", Long.toHexString(fcount & 0xFFFF)
+						.toUpperCase()) + "\n");
+		str.append("resident"
+				+ "\t\t"
+				+ formatString("long", Long.toHexString(resident & 0xFFFFFFFFL)
+						.toUpperCase()) + "\n");
+		return str.toString();
+	}
 
-    public void setModuleNamez(String moduleName) {
-        modulenamez = moduleName;
-    }
+	public String getModuleNamez() {
+		return modulenamez;
+	}
 
-    public long getOffsetModuleName() {
-        return modulename;
-    }
+	public void setModuleNamez(String moduleName) {
+		modulenamez = moduleName;
+	}
 
-    public int getVersion() {
-        return version;
-    }
+	public long getOffsetModuleName() {
+		return modulename;
+	}
 
-    public int getAttr() {
-        return attr;
-    }
+	public int getVersion() {
+		return version;
+	}
 
-    public int getSize() {
-        return size;
-    }
+	public int getAttr() {
+		return attr;
+	}
 
-    public int getVariableCount() {
-        return vcount;
-    }
+	public int getSize() {
+		return size;
+	}
 
-    public int getFunctionCount() {
-        return fcount;
-    }
+	public int getVariableCount() {
+		return vcount;
+	}
 
-    public long getOffsetResident() {
-        return resident;
-    }
+	public int getFunctionCount() {
+		return fcount;
+	}
+
+	public long getOffsetResident() {
+		return resident;
+	}
 }

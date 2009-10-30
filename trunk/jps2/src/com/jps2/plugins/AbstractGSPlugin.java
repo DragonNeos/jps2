@@ -34,7 +34,8 @@ public abstract class AbstractGSPlugin implements Plugin {
 
 	public abstract void gifTransfer3(int[] mem, int size);
 
-	public abstract long getLastTag(); // returns the last tag processed (64 bits)
+	public abstract long getLastTag(); // returns the last tag processed (64
+										// bits)
 
 	public abstract void gifSoftReset(int mask);
 

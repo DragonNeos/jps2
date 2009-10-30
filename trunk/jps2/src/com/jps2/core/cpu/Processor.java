@@ -5,14 +5,14 @@ import com.jps2.core.memory.AbstractMemoryManager;
 
 public abstract class Processor {
 
-	private static final boolean	   ENABLE_INSN_EXECUTE_COUNT	= false;
+	private static final boolean ENABLE_INSN_EXECUTE_COUNT = false;
 	// cache controls
-	private final CacheLine[]	       instCache	             = new CacheLine[0x10000];
-	private final int	               cacheMask	             = instCache.length - 1;
-	private long	                   insnCacheHits, insnCacheMisses, insnCount;
+	private final CacheLine[] instCache = new CacheLine[0x10000];
+	private final int cacheMask = instCache.length - 1;
+	private long insnCacheHits, insnCacheMisses, insnCount;
 
-	public final Cpu	               cpu;
-	public final AbstractMemoryManager	memory;
+	public final Cpu cpu;
+	public final AbstractMemoryManager memory;
 
 	public Processor(final Cpu cpu, final AbstractMemoryManager memory) {
 		this.cpu = cpu;
@@ -89,12 +89,13 @@ public abstract class Processor {
 		}
 	}
 
-	public abstract void processException(final ExcCode e, final int inst, final boolean delay);
+	public abstract void processException(final ExcCode e, final int inst,
+			final boolean delay);
 
 	private final static class CacheLine {
-		boolean		       valid;
-		int		           address;
-		int		           opcode;
-		Common.Instruction	insn;
+		boolean valid;
+		int address;
+		int opcode;
+		Common.Instruction insn;
 	}
 }

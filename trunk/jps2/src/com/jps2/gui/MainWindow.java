@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
+import java.util.Arrays;
 
 import javax.swing.Box;
 import javax.swing.JButton;
@@ -14,10 +15,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import org.jps2.mac.MacApplication;
-import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.AWTGLCanvas;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -42,22 +41,29 @@ public class MainWindow extends JFrame {
 
 	private MainWindow() {
 		super("JPS2 - Java PS2 emulator");
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setMinimumSize(new Dimension(300, 240));
-		if (Utilities.isMac()) {
-			try {
-				new MacApplication(this, getClass().getDeclaredMethod("about"),
-						null, null, null);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-		}
-		makeMenu();
-		makeToolBar();
 		try {
+			setIconImages(Arrays.asList(ResourceManager.getIcon(
+					"/icons/16x16/joystick.png").getImage(),/**/
+			ResourceManager.getIcon("/icons/32x32/joystick.png").getImage(),/**/
+			ResourceManager.getIcon("/icons/48x48/joystick.png").getImage(),/**/
+			ResourceManager.getIcon("/icons/128x128/joystick.png").getImage(),/**/
+			ResourceManager.getIcon("/icons/256x256/joystick.png").getImage())/**/);
+			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+			setMinimumSize(new Dimension(300, 240));
+			if (Utilities.isMac()) {
+				try {
+					new MacApplication(this, getClass().getDeclaredMethod(
+							"about"), null, null, ResourceManager.getIcon(
+							"/icons/256x256/joystick.png").getImage());
+				} catch (final Exception e) {
+					throw new RuntimeException(e);
+				}
+			}
+			makeMenu();
+			makeToolBar();
 			canvas = new AWTGLCanvas() {
 				{
-					setPreferredSize(new Dimension(512, 512));
+					setPreferredSize(new Dimension(256, 256));
 				}
 				float angle = 0;
 				boolean resized = true;
@@ -110,35 +116,36 @@ public class MainWindow extends JFrame {
 					}
 				}
 			};
-		} catch (final LWJGLException e) {
-			throw new RuntimeException(e);
-		}
-		add(canvas);
-		pack();
-		new Thread("Repaint Process") {
-			{
-				setDaemon(true);
-			}
 
-			@Override
-			public void run() {
-				while (!isInterrupted()) {
-					if (Emulator.getInstance().isEmulating()) {
-						if (canvas.isVisible()) {
-							canvas.repaint();
-						}
-						Display.sync(60);
-					} else {
-						try {
-							sleep(100);
-						} catch (final InterruptedException e) {
-							interrupt();
+			add(canvas);
+			pack();
+			new Thread("Repaint Process") {
+				{
+					setDaemon(true);
+				}
+
+				@Override
+				public void run() {
+					while (!isInterrupted()) {
+						if (Emulator.getInstance().isEmulating()) {
+							if (canvas.isVisible()) {
+								canvas.repaint();
+							}
+							Display.sync(60);
+						} else {
+							try {
+								sleep(100);
+							} catch (final InterruptedException e) {
+								interrupt();
+							}
 						}
 					}
 				}
-			}
-		}.start();
-		setVisible(true);
+			}.start();
+			setVisible(true);
+		} catch (final Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public void about() {
@@ -275,7 +282,7 @@ public class MainWindow extends JFrame {
 
 			@Override
 			public void error(final Throwable throwable) {
-				throwable.printStackTrace();
+				// throwable.printStackTrace();
 			}
 		});
 		// if is mac
@@ -283,9 +290,9 @@ public class MainWindow extends JFrame {
 			// adjust for leopard, if necessary
 			MacUtils.makeWindowLeopardStyle(getRootPane());
 
-			UnifiedToolBar toolBar = new UnifiedToolBar();
+			final UnifiedToolBar toolBar = new UnifiedToolBar();
 			toolBar.installWindowDraggerOnWindow(this);
-			Box layoutBox = Box.createHorizontalBox();
+			final Box layoutBox = Box.createHorizontalBox();
 
 			playButton.putClientProperty("JButton.buttonType",
 					"segmentedTextured");

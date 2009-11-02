@@ -26,15 +26,24 @@ public abstract class AbstractMemoryManager {
 	}
 
 	public void write8(final int address, final byte data) {
-		getMemoryByAddress(address, true).write8(address, data);
+		Memory mem = getMemoryByAddress(address, true);
+		if (mem != null) {
+			mem.write8(address, data);
+		}
 	}
 
 	public void write16(final int address, final short data) {
-		getMemoryByAddress(address, true).write16(address, data);
+		Memory mem = getMemoryByAddress(address, true);
+		if (mem != null) {
+			mem.write16(address, data);
+		}
 	}
 
 	public void write32(final int address, final int data) {
-		getMemoryByAddress(address, true).write32(address, data);
+		Memory mem = getMemoryByAddress(address, true);
+		if (mem != null) {
+			mem.write32(address, data);
+		}
 	}
 
 	public void write64(final int address, final long data) {

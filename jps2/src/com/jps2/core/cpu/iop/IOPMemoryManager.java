@@ -25,6 +25,9 @@ public class IOPMemoryManager extends AbstractMemoryManager {
 		switch ((address >> 28 & 0xF)) {
 		// IOP RAM
 		case 0x0:
+			if (write && Memories.hwRegistersIOP.cpu.isWriteLocked()) {
+				return null;
+			}
 			Memories.memoryIOP.setOffset(0x00000000);
 			return Memories.memoryIOP;
 			// IOP registers/ROM
@@ -51,6 +54,9 @@ public class IOPMemoryManager extends AbstractMemoryManager {
 			break;
 		// IOP RAM
 		case 0x8:
+			if (write && Memories.hwRegistersIOP.cpu.isWriteLocked()) {
+				return null;
+			}
 			Memories.memoryIOP.setOffset(0x80000000);
 			return Memories.memoryIOP;
 			// ROM
@@ -73,12 +79,19 @@ public class IOPMemoryManager extends AbstractMemoryManager {
 			break;
 		// IOP RAM
 		case 0xA:
+			if (write && Memories.hwRegistersIOP.cpu.isWriteLocked()) {
+				return null;
+			}
 			Memories.memoryIOP.setOffset(0xA0000000);
 			return Memories.memoryIOP;
 			// IOP registers/ROM
 		case 0xB:
 			switch ((address >> 20 & 0xF)) {
-			// IOP
+			// CDVD
+			case 0x4:
+				Memories.cdvdRegistersIOP.setOffset(0xbf402000);
+				return Memories.cdvdRegistersIOP;
+				// IOP
 			case 0x8:
 				if (address >= 0xBF800000) {
 					Memories.hwRegistersIOP.setOffset(0xBF800000);
@@ -91,9 +104,6 @@ public class IOPMemoryManager extends AbstractMemoryManager {
 			case 0xE:
 			case 0xF:
 				if (address >= 0xBFC00000) {
-					if (address == 0xBFC10000) {
-						logger.info("IOP START");
-					}
 					if (write) {
 						throw new RuntimeException("ReadOnly memory ROM "
 								+ Long.toHexString(address));

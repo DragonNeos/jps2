@@ -50,6 +50,16 @@ public final class CpuState extends VfpuState {
 		cp0 = new int[32];
 		reset();
 	}
+	
+	public final boolean isWriteLocked(){
+		return (cp0[CP0_STATUS] & 0x10000) != 0;
+	}
+	
+	public final void doMFC0(final int rt, final int c0dr) {
+		if (rt != 0) {
+			gpr[rt].write32(cp0[c0dr]);
+		}
+	}
 
 	public final void doTLBR() {
 

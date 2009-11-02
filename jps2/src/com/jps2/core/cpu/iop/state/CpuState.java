@@ -152,6 +152,10 @@ public class CpuState extends BcuState {
 		}
 		return (int) (counter.count + ((cycle - counter.cycleT) / counter.rate));
 	}
+	
+	public final boolean isWriteLocked(){
+		return (cp0[CP0_STATUS] & 0x10000) != 0;
+	}
 
 	public final void doRFE() {
 		cp0[CP0_STATUS] = (cp0[CP0_STATUS] & 0xfffffff0)
@@ -159,7 +163,7 @@ public class CpuState extends BcuState {
 	}
 
 	public final void doMFC0(final int rt, final int c0dr) {
-		if (gpr[rt].isFalse()) {
+		if (rt != 0) {
 			gpr[rt].write32(cp0[c0dr]);
 		}
 	}
@@ -169,7 +173,7 @@ public class CpuState extends BcuState {
 	}
 
 	public final void doCFC0(final int rt, final int c0dr) {
-		if (gpr[rt].isFalse()) {
+		if (rt != 0) {
 			gpr[rt].write32(cp0[c0dr]);
 		}
 	}

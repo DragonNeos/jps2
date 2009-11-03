@@ -27,24 +27,22 @@ public abstract class Memories {
 
 	public static final void alloc() {
 		logger.info("Allocating memories.");
+		memoryROM.allocate();
+		logger.info("ROM...OK.");
+		Memories.memoryROM.setOffset(0xBFC00000);
+		Bios.load(Memories.memoryROM);
+		logger.info("Bios file loaded.");
 		memoryRAM.allocate();
 		logger.info("RAM...OK.");
 		memoryREG.allocate();
 		logger.info("REG...OK.");
 		memoryPAD.allocate();
 		logger.info("PAD...OK.");
-		memoryROM.allocate();
-		logger.info("ROM...OK.");
 		hwRegistersIOP.allocate();
 		memoryIOP.allocate();
 		logger.info("IOP...OK.");
 		memorySysInfo.allocate();
 		cdvdRegistersIOP.allocate();
-		
-		logger.info("Loading bios ROM.");
-		Memories.memoryROM.setOffset(0xBFC00000);
-		Bios.load(Memories.memoryROM);
-		logger.info("Bios..OK.");
 		// cache config
 		Memories.memorySysInfo.write32(0x0130, 0x1edd8); // CACHE_CONFIG
 		// memoryManager.write32(0x1f801450, 0x8); // PS1 mode

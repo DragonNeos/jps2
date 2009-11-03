@@ -127,7 +127,7 @@ public class MainWindow extends JFrame {
 				@Override
 				public void run() {
 					while (!isInterrupted()) {
-						if (Emulator.getInstance().isEmulating()) {
+						if (false && Emulator.getInstance().isEmulating()) {
 							if (canvas.isVisible()) {
 								canvas.repaint();
 							}

@@ -122,7 +122,7 @@ public class EEMemoryManager extends AbstractMemoryManager {
 			// REG
 			case 0x0:
 				if (address >= 0xB0000000) {
-					logger.info("REG");
+					logger.info("REG " + Integer.toHexString(address));
 					Memories.memoryREG.setOffset(0xB0000000);
 					return Memories.memoryREG;
 				}

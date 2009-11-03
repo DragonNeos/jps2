@@ -65,7 +65,7 @@ public class Emulator {
 			paused = false;
 			// init cpus
 			iopProcess = new IOPProcess();
-			// eeProcess = new EEProcess();
+			eeProcess = new EEProcess();
 		} catch (final Throwable t) {
 			if (listener != null) {
 				listener.error(t);

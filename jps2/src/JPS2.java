@@ -1,6 +1,7 @@
 import javax.swing.UIManager;
 
 import com.jps2.gui.MainWindow;
+import com.jps2.util.ConfigManager;
 
 /**
  * Application entry point for GUI.<br>
@@ -19,6 +20,8 @@ public class JPS2 {
 		} catch (final Exception e) {
 			// ignore UIManager erros
 		}
+		// init config
+		ConfigManager.initialize();
 		// init GUI
 		MainWindow.getInstance();
 	}

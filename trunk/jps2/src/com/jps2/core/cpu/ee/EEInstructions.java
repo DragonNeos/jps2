@@ -30,6 +30,7 @@ public class EEInstructions {
 
 		@Override
 		public void interpret(final int insn, final boolean delay) {
+			System.err.println("PREF");
 			// nothing to do
 		}
 
@@ -85,6 +86,7 @@ public class EEInstructions {
 
 		@Override
 		public void interpret(final int insn, final boolean delay) {
+			System.err.println("ERET");
 			// TODO
 		}
 
@@ -103,10 +105,8 @@ public class EEInstructions {
 
 		@Override
 		public void interpret(final int insn, final boolean delay) {
-			final int imm20 = (insn >> 6) & 0xFFFFF;
-			System.err.println(imm20);
-			// TODO
-
+			cpu.pc -= 4;
+			cpu.processor.processException(ExcCode.BREAKPOINT, insn, delay);
 		}
 
 	};
@@ -119,13 +119,12 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
 		public void interpret(final int insn, final boolean delay) {
-			System.err.println(insn);
-			// TODO
+			// Nothing to do
 		}
 
 	};
@@ -138,11 +137,12 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
 		public void interpret(final int insn, final boolean delay) {
+			System.err.println("HALT");
 			// TODO
 		}
 
@@ -156,11 +156,12 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
 		public void interpret(final int insn, final boolean delay) {
+
 			final int rt = (insn >> 21) & 31;
 
 		}
@@ -175,11 +176,12 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
 		public void interpret(final int insn, final boolean delay) {
+
 			final int rt = (insn >> 21) & 31;
 			// TODO
 		}
@@ -194,11 +196,12 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
 		public void interpret(final int insn, final boolean delay) {
+
 			final int rt = (insn >> 21) & 31;
 			// TODO
 		}
@@ -1237,7 +1240,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -1259,7 +1262,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -1281,7 +1284,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -1303,7 +1306,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -1325,7 +1328,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -1347,7 +1350,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -1365,7 +1368,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -1385,7 +1388,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -1405,7 +1408,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -1426,7 +1429,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -1447,7 +1450,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -1468,7 +1471,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -1490,7 +1493,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -1512,7 +1515,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -1536,7 +1539,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -1649,7 +1652,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -1671,7 +1674,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -1693,7 +1696,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -1715,7 +1718,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -2842,7 +2845,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -3005,7 +3008,7 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
@@ -3676,14 +3679,14 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
 		public void interpret(final int insn, final boolean delay) {
 			final int c0cr = (insn >> 11) & 31;
 			final int rt = (insn >> 16) & 31;
-
+			throw new RuntimeException();
 		}
 
 	};
@@ -3701,9 +3704,7 @@ public class EEInstructions {
 
 		@Override
 		public void interpret(final int insn, final boolean delay) {
-			final int c0dr = (insn >> 11) & 31;
-			final int rt = (insn >> 16) & 31;
-
+			cpu.doMTC0((insn >> 11) & 31, (insn >> 16) & 31, insn & 0x3F);
 		}
 
 	};
@@ -3737,14 +3738,14 @@ public class EEInstructions {
 
 		@Override
 		public final String category() {
-			return "ALLEGREX";
+			return "CPU";
 		}
 
 		@Override
 		public void interpret(final int insn, final boolean delay) {
 			final int c0cr = (insn >> 11) & 31;
 			final int rt = (insn >> 16) & 31;
-
+			throw new RuntimeException();
 		}
 
 	};
@@ -5971,6 +5972,7 @@ public class EEInstructions {
 		@Override
 		public void interpret(final int insn, final boolean delay) {
 			// TODO
+			throw new RuntimeException();
 		}
 
 	};
@@ -5990,6 +5992,7 @@ public class EEInstructions {
 		@Override
 		public void interpret(final int insn, final boolean delay) {
 			cpu.doDERET();
+			throw new RuntimeException();
 		}
 
 	};

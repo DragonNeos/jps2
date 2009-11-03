@@ -140,7 +140,7 @@ public class Common {
 
 		@Override
 		public String toString() {
-			return name() + "(" + flagsToString() + ")";
+			return name() ;//+ "(" + flagsToString() + ")";
 		}
 	}
 

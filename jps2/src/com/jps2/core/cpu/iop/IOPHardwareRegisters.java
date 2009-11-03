@@ -58,13 +58,13 @@ public final class IOPHardwareRegisters extends FastMemory {
 
 	// CDRom registers are used for various command; status; and data stuff.
 	public static final int HW_CDR_DATA0 = 0x1800; // CDROM multipurpose data
-													// register 1
+	// register 1
 	public static final int HW_CDR_DATA1 = 0x1801; // CDROM multipurpose data
-													// register 2
+	// register 2
 	public static final int HW_CDR_DATA2 = 0x1802; // CDROM multipurpose data
-													// register 3
+	// register 3
 	public static final int HW_CDR_DATA3 = 0x1803; // CDROM multipurpose data
-													// register 4
+	// register 4
 
 	// SIO2 is a DMA interface for the SIO.
 	public static final int HW_SIO2_DATAIN = 0x8260;
@@ -162,7 +162,7 @@ public final class IOPHardwareRegisters extends FastMemory {
 	public static final int IOP_T5_TARGET = 0x14a8;
 
 	public static final int IOP_EVT_CDVD = 5; // General Cdvd commands (Seek,
-												// Standby, Break, etc)
+	// Standby, Break, etc)
 	public static final int IOP_EVT_SIF0 = 9;
 	public static final int IOP_EVT_SIF1 = 10;
 	public static final int IOP_EVT_DMA11 = 11;
@@ -177,7 +177,7 @@ public final class IOPHardwareRegisters extends FastMemory {
 	public static final Logger logger = Logger
 			.getLogger(IOPHardwareRegisters.class);
 
-	private CpuState cpu;
+	public CpuState cpu;
 
 	public void setCpu(final CpuState cpu) {
 		this.cpu = cpu;
@@ -593,8 +593,53 @@ public final class IOPHardwareRegisters extends FastMemory {
 	}
 
 	@Override
-	public int read8(final int address) {
-		throw new RuntimeException("IOPMemory.read8()");
+	public int read8(int address) {
+		int hard;
+		address &= offset;
+		if (address >= HW_USB_START && address < HW_USB_END) {
+			return PluginManager.getUsbPlugin().usbRead8(address);
+		}
+
+		switch (address) {
+		case 0x1040:
+			hard = Emulator.getInstance().sio.sioRead8();
+			break;
+		// case 0x1f801050: hard = serial_read8(); break;//for use of serial
+		// port ignore for now
+
+		case 0x146e: // DEV9_R_REV
+			return 0;//DEV9read8(address);
+
+		case 0x1800:
+			hard = 0;// cdrRead0();
+			break;
+		case 0x1801:
+			hard = 0;// cdrRead1();
+			break;
+		case 0x1802:
+			hard = 0;//cdrRead2();
+			break;
+		case 0x1803:
+			hard = 0;//cdrRead3();
+			break;
+
+		case 0x3100: // PS/EE/IOP conf related
+			hard = 0x10; // Dram 2M
+			break;
+
+		case 0x8264:
+			hard = 0;//sio2_fifoOut();// sio2 serial data feed/fifo_out
+			logger.debug(String.format("SIO2 read8 DATAOUT %08X", hard));
+			return hard;
+
+		default:
+			hard = super.read8(address);
+			logger.debug(String.format("Unknown 8bit read at address %x value %x", address, hard));
+			return hard;
+		}
+
+		logger.debug(String.format("Known 8bit read at address %x value %x", address, hard));
+		return hard;
 	}
 
 	@Override
@@ -827,9 +872,9 @@ public final class IOPHardwareRegisters extends FastMemory {
 		case 0x1078:
 			logger.debug(String.format("ICTRL 32bit write %x", data));
 			super.write32(address, data); // 1; //According to pSXAuthor this
-											// always becomes 1 on write, but
-											// MHPB won't boot if value is not
-											// writen ;p
+			// always becomes 1 on write, but
+			// MHPB won't boot if value is not
+			// writen ;p
 			cpu.iopTestIntc();
 			return;
 

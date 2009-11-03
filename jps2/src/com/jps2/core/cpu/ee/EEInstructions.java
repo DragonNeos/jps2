@@ -3643,7 +3643,7 @@ public class EEInstructions {
 		public void interpret(final int insn, final boolean delay) {
 			final int c0dr = (insn >> 11) & 31;
 			final int rt = (insn >> 16) & 31;
-
+			cpu.doMFC0(rt, c0dr);
 		}
 
 	};

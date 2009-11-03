@@ -62,6 +62,7 @@ public class GeneralPorpuseRegister32bis implements Register32bits {
 
 	@Override
 	public final void writeBoolean(final boolean data) {
+		type = DataType.BYTE;
 		word = data ? 1 : 0;
 	}
 }

@@ -3704,7 +3704,9 @@ public class EEInstructions {
 
 		@Override
 		public void interpret(final int insn, final boolean delay) {
-			cpu.doMTC0((insn >> 11) & 31, (insn >> 16) & 31, insn & 0x3F);
+			cpu
+					.doMTC0((insn >> 11) & 31, (insn >> 16) & 31, insn & 0x3F,
+							delay);
 		}
 
 	};
@@ -5972,7 +5974,7 @@ public class EEInstructions {
 		@Override
 		public void interpret(final int insn, final boolean delay) {
 			// TODO
-			throw new RuntimeException();
+//			throw new RuntimeException();
 		}
 
 	};

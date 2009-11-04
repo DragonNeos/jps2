@@ -2,6 +2,8 @@ package com.jps2.util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.security.MessageDigest;
+import java.util.HashSet;
 
 import com.jps2.core.memory.Memory;
 
@@ -22,6 +24,15 @@ public class Bios {
 		}
 	}
 
+	// supported bios MD5
+	private static final HashSet<String> knowBios = new HashSet<String>();
+	static {
+		// scph39001
+		knowBios.add("d5ce2c7d119f563ce04bc04dbc3a323e");
+		// SCPH-70012_BIOS_V12_USA_200
+		knowBios.add("d333558cc14561c1fdc334c75d5f37b7");
+	}
+
 	private static final boolean isValid(final File file) {
 		try {
 			// valid bios must be at least 4mb.
@@ -31,22 +42,27 @@ public class Bios {
 
 			final FileInputStream input = new FileInputStream(file);
 			int readed = -1;
-			final byte[] buffer = new byte[512];
-			final StringBuilder biosStr = new StringBuilder();
-			// read bios file as String
+			byte[] buffer = new byte[512];
+			final MessageDigest digest = MessageDigest.getInstance("MD5");
+			// read bios file to md5 digest
 			while ((readed = input.read(buffer)) != -1) {
-				biosStr.append(new String(buffer, 0, readed));
+				digest.update(buffer, 0, readed);
 			}
-			int index = biosStr.indexOf("RESET");
-			if (index != -1) {
-				index = biosStr.indexOf("ROMVER");
-				// TODO - Dyorgio Process bios version
-				// System.err.println(biosStr.substring(index,index+200));
-				return true;
+			buffer = digest.digest();
+			final StringBuilder hexMd5 = new StringBuilder();
+			String hexPart;
+			for (final byte b : buffer) {
+				hexPart = "0" + Integer.toHexString(b);
+				hexMd5.append(hexPart.substring(hexPart.length() - 2, hexPart
+						.length()));
 			}
+
+			// for new bios uncomment and add in hashset
+			// System.err.println(hexMd5);
+
+			return knowBios.contains(hexMd5.toString());
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
 		}
-		return false;
 	}
 }

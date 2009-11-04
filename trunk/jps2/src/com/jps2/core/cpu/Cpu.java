@@ -1,7 +1,9 @@
 package com.jps2.core.cpu;
 
+import com.jps2.core.cpu.registers.CP0Register;
+
 public abstract class Cpu {
-	
+
 	public static final int ZERO = 0;
 	public static final int AT = 1;
 	public static final int V0 = 2;
@@ -34,7 +36,7 @@ public abstract class Cpu {
 	public static final int SP = 29;
 	public static final int FP = 30;
 	public static final int RA = 31;
-	
+
 	public static final int CP0_INDEX = 0;
 	public static final int CP0_RANDOM = 1;
 	public static final int CP0_ENTRYLO0 = 2;
@@ -71,6 +73,9 @@ public abstract class Cpu {
 	public int pc;
 	public int npc;
 	public int cycle;
+	public int interrupt;
+
+	public CP0Register[] cp0;
 
 	public Processor processor;
 

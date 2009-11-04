@@ -60,7 +60,7 @@ public abstract class ConfigManager {
 				@Override
 				public boolean accept(final File f) {
 					// only show 4Mb files
-					return !f.isFile() || (f.length() > (1024 * 4096));
+					return !f.isFile() || (f.length() >= (1024 * 4096));
 				}
 			});
 

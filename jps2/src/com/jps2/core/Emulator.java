@@ -15,7 +15,7 @@ public class Emulator {
 
 	private static final Emulator instance = new Emulator();
 
-	public final SIO sio = new SIO();
+	public SIO sio;
 
 	private IOPProcess iopProcess;
 	private EEProcess eeProcess;
@@ -62,6 +62,7 @@ public class Emulator {
 			}
 			Memories.alloc();
 			PluginManager.initialize();
+			sio = new SIO();
 			paused = false;
 			// init cpus
 			iopProcess = new IOPProcess();
@@ -99,6 +100,7 @@ public class Emulator {
 			}
 			PluginManager.closeAll();
 			Memories.clear();
+			sio = null;
 			System.gc();
 			if (listener != null) {
 				listener.stopped();
@@ -130,6 +132,7 @@ public class Emulator {
 					.setCpu((com.jps2.core.cpu.iop.state.CpuState) iop.cpu);
 			IOPInstructions
 					.setCpu((com.jps2.core.cpu.iop.state.CpuState) iop.cpu);
+			sio.setCpu((com.jps2.core.cpu.iop.state.CpuState) iop.cpu);
 			start();
 		}
 

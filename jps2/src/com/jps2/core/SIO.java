@@ -2,6 +2,9 @@ package com.jps2.core;
 
 import java.util.Arrays;
 
+import com.jps2.core.cpu.iop.IOPHardwareRegisters;
+import com.jps2.core.cpu.iop.state.CpuState;
+
 public class SIO {
 	// Status Flags
 	private static final int TX_RDY = 0x0001;
@@ -47,6 +50,12 @@ public class SIO {
 	public int sector;
 	public int k;
 	public int count;
+	
+	private CpuState cpu;
+	
+	public void setCpu(final CpuState cpu) {
+		this.cpu = cpu;
+	}
 
 	// Active pad slot for each port. Not sure if these automatically reset
 	// after each read or not.
@@ -111,9 +120,10 @@ public class SIO {
 			mcdst = 0;
 			parp = 0;
 			statReg = TX_RDY | TX_EMPTY;
-			R3000a.getProcessor().cpu.interrupt &= ~(1 << IOP_EVT_SIO);
+			cpu.interrupt &= ~(1 << IOPHardwareRegisters.IOP_EVT_SIO);
 		}
 
+		
 	}
 
 	public void sioInterrupt() {

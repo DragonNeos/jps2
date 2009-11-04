@@ -11,6 +11,9 @@ import com.jps2.core.memory.Memory;
 import com.jps2.plugins.PluginManager;
 
 public final class IOPHardwareRegisters extends FastMemory {
+
+	public static final long IOPCNT_FUTURE_TARGET = 0x1000000000L;
+
 	public static final int HW_USB_START = 0x1600;
 	public static final int HW_USB_END = 0x1700;
 	public static final int HW_FW_START = 0x8400;
@@ -608,7 +611,7 @@ public final class IOPHardwareRegisters extends FastMemory {
 		// port ignore for now
 
 		case 0x146e: // DEV9_R_REV
-			return 0;//DEV9read8(address);
+			return 0;// DEV9read8(address);
 
 		case 0x1800:
 			hard = 0;// cdrRead0();
@@ -617,10 +620,10 @@ public final class IOPHardwareRegisters extends FastMemory {
 			hard = 0;// cdrRead1();
 			break;
 		case 0x1802:
-			hard = 0;//cdrRead2();
+			hard = 0;// cdrRead2();
 			break;
 		case 0x1803:
-			hard = 0;//cdrRead3();
+			hard = 0;// cdrRead3();
 			break;
 
 		case 0x3100: // PS/EE/IOP conf related
@@ -628,17 +631,19 @@ public final class IOPHardwareRegisters extends FastMemory {
 			break;
 
 		case 0x8264:
-			hard = 0;//sio2_fifoOut();// sio2 serial data feed/fifo_out
+			hard = 0;// sio2_fifoOut();// sio2 serial data feed/fifo_out
 			logger.debug(String.format("SIO2 read8 DATAOUT %08X", hard));
 			return hard;
 
 		default:
 			hard = super.read8(address);
-			logger.debug(String.format("Unknown 8bit read at address %x value %x", address, hard));
+			logger.debug(String.format(
+					"Unknown 8bit read at address %x value %x", address, hard));
 			return hard;
 		}
 
-		logger.debug(String.format("Known 8bit read at address %x value %x", address, hard));
+		logger.debug(String.format("Known 8bit read at address %x value %x",
+				address, hard));
 		return hard;
 	}
 

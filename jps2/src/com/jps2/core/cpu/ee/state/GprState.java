@@ -4,9 +4,10 @@ import java.math.BigInteger;
 
 import com.jps2.core.cpu.Cpu;
 import com.jps2.core.cpu.ExcCode;
-import com.jps2.core.cpu.registers.GeneralPorpuseRegister64bis;
+import com.jps2.core.cpu.registers.GeneralPorpuseRegister128bits;
+import com.jps2.core.cpu.registers.Register128bits;
 import com.jps2.core.cpu.registers.Register64bits;
-import com.jps2.core.cpu.registers.ZeroRegister64bits;
+import com.jps2.core.cpu.registers.ZeroRegister128bits;
 
 /**
  * General Purpose Registers, handles integer operations like ALU, shifter, etc.
@@ -14,24 +15,24 @@ import com.jps2.core.cpu.registers.ZeroRegister64bits;
  */
 public abstract class GprState extends Cpu {
 
-	public Register64bits[] gpr;
+	public Register128bits[] gpr;
 
 	public void reset() {
-		gpr[0] = new ZeroRegister64bits();
+		gpr[0] = new ZeroRegister128bits();
 		for (int i = 1; i < gpr.length; i++) {
-			gpr[i] = new GeneralPorpuseRegister64bis();
+			gpr[i] = new GeneralPorpuseRegister128bits();
 		}
 	}
 
 	public void resetAll() {
-		gpr[0] = new ZeroRegister64bits();
+		gpr[0] = new ZeroRegister128bits();
 		for (int i = 1; i < gpr.length; i++) {
-			gpr[i] = new GeneralPorpuseRegister64bis();
+			gpr[i] = new GeneralPorpuseRegister128bits();
 		}
 	}
 
 	public GprState() {
-		gpr = new Register64bits[32];
+		gpr = new Register128bits[32];
 	}
 
 	public void copy(final GprState that) {
@@ -265,6 +266,12 @@ public abstract class GprState extends Cpu {
 	public final void doADDIU(final int rt, final int rs, final int simm16) {
 		if (rt != 0) {
 			gpr[rt].write32(gpr[rs].read32() + simm16);
+		}
+	}
+
+	public final void doDADDIU(final int rt, final int rs, final int simm16) {
+		if (rt != 0) {
+			gpr[rt].write64(gpr[rs].read64() + simm16);
 		}
 	}
 

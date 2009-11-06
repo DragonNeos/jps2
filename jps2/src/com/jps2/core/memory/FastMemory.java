@@ -133,11 +133,29 @@ public class FastMemory extends Memory {
 		try {
 			address &= offset;
 			address &= addressMask;
-			return (all[(address / 4) + 1] << 32)
-					| (all[(address / 4)] & 0xFFFFFFFFL);
+			// return (all[(address / 4) + 1] << 32)
+			// | (all[(address / 4)] & 0xFFFFFFFFL);
+			return (all[(address / 4)] << 32)
+					| (all[(address / 4) + 1] & 0xFFFFFFFFL);
 		} catch (final Exception e) {
 			invalidMemoryAddress(address, "read64", 0);
 			return 0;
+		}
+	}
+
+	@Override
+	public long[] read128(int address) {
+		try {
+			address &= offset;
+			address &= addressMask;
+			return new long[] {
+					(all[(address / 4)] << 32)
+							| (all[(address / 4) + 1] & 0xFFFFFFFFL),
+					(all[(address / 4) + 2] << 32)
+							| (all[(address / 4) + 3] & 0xFFFFFFFFL) };
+		} catch (final Exception e) {
+			invalidMemoryAddress(address, "read64", 0);
+			return new long[2];
 		}
 	}
 
@@ -200,8 +218,24 @@ public class FastMemory extends Memory {
 		try {
 			address &= offset;
 			address &= addressMask;
-			all[(address / 4)] = (int) data;
-			all[(address / 4) + 1] = (int) (data >> 32);
+			// all[(address / 4)] = (int) data;
+			// all[(address / 4) + 1] = (int) (data >> 32);
+			all[(address / 4)] = (int) (data >> 32);
+			all[(address / 4) + 1] = (int) data;
+		} catch (final Exception e) {
+			invalidMemoryAddress(address, "write64", 0);
+		}
+	}
+
+	@Override
+	public void write128(int address, final long[] data) {
+		try {
+			address &= offset;
+			address &= addressMask;
+			all[(address / 4)] = (int) (data[0] >> 32);
+			all[(address / 4) + 1] = (int) data[0];
+			all[(address / 4) + 2] = (int) (data[1] >> 32);
+			all[(address / 4) + 3] = (int) data[1];
 		} catch (final Exception e) {
 			invalidMemoryAddress(address, "write64", 0);
 		}

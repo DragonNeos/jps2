@@ -56,6 +56,8 @@ public abstract class Memory {
 	public abstract int read32(int address);
 
 	public abstract long read64(int address);
+	
+	public abstract long[] read128(int address);
 
 	public abstract void write8(int address, byte data);
 
@@ -64,6 +66,8 @@ public abstract class Memory {
 	public abstract void write32(int address, int data);
 
 	public abstract void write64(int address, long data);
+	
+	public abstract void write128(int address, long[] data);
 
 	public abstract void writeStream(int address, InputStream input);
 

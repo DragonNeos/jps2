@@ -314,6 +314,29 @@ public class EEInstructions {
 		}
 
 	};
+	
+	public static final Instruction DADDI = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "DADDI";
+		}
+
+		@Override
+		public final String category() {
+			return "MIPS IV";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			decodeRsRtImm16(insn);
+
+			// just ignore overflow exception as it is useless
+			cpu.doDADDIU(rt, rs, (short) imm16);
+
+		}
+
+	};
 	public static final Instruction ADDIU = new Instruction(NO_FLAGS) {
 
 		@Override
@@ -331,6 +354,28 @@ public class EEInstructions {
 			decodeRsRtImm16(insn);
 
 			cpu.doADDIU(rt, rs, (short) imm16);
+
+		}
+
+	};
+	
+	public static final Instruction DADDIU = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "DADDIU";
+		}
+
+		@Override
+		public final String category() {
+			return "MIPS IV";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			decodeRsRtImm16(insn);
+
+			cpu.doDADDIU(rt, rs, (short) imm16);
 
 		}
 
@@ -2669,6 +2714,27 @@ public class EEInstructions {
 		}
 
 	};
+	
+	public static final Instruction LWU = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "LWU";
+		}
+
+		@Override
+		public final String category() {
+			return "MIPS IV";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			decodeRsRtImm16(insn);
+
+			cpu.doLWU(rt, rs, (short) imm16);
+		}
+
+	};
 	public static final Instruction LWL = new Instruction(NO_FLAGS) {
 
 		@Override
@@ -2731,6 +2797,74 @@ public class EEInstructions {
 		}
 
 	};
+	
+	public static final Instruction LDL = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "LDL";
+		}
+
+		@Override
+		public final String category() {
+			return "MIPS IV";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			decodeRsRtImm16(insn);
+
+			cpu.doLDL(rt, rs, (short) imm16);
+
+		}
+
+	};
+	
+	public static final Instruction LQ = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "LQ";
+		}
+
+		@Override
+		public final String category() {
+			return "MIPS IV";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			decodeRsRtImm16(insn);
+
+			cpu.doLQ(rt, rs, (short) imm16);
+
+		}
+
+	};
+	
+	public static final Instruction SQ = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "SQ";
+		}
+
+		@Override
+		public final String category() {
+			return "MIPS IV";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			decodeRsRtImm16(insn);
+
+			cpu.doSQ(rt, rs, (short) imm16);
+
+		}
+
+	};
+	
+	
 	public static final Instruction SB = new Instruction(NO_FLAGS) {
 
 		@Override

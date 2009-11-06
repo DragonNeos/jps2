@@ -2,7 +2,7 @@ package com.jps2.core.cpu.registers;
 
 import com.jps2.core.cpu.DataType;
 
-public class GeneralPorpuseRegister64bis implements Register64bits {
+public class GeneralPorpuseRegister64bits implements Register64bits {
 	long doubleword = 0x0l;
 	int word = 0x0;
 

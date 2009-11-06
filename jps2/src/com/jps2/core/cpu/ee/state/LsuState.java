@@ -85,6 +85,16 @@ public abstract class LsuState extends MduState {
 		}
 	}
 
+	public void doLWU(final int rt, final int rs, final int simm16) {
+		final int address = gpr[rs].read32() + simm16;
+		if (rt != 0) {
+			gpr[rt].write32(processor.memory.read32(address));
+		} else {
+			processor.memory.read32(address);
+		}
+
+	}
+
 	public void doLW(final int rt, final int rs, final int simm16) {
 		if (CHECK_ALIGNMENT) {
 			final int address = gpr[rs].read32() + simm16;
@@ -126,12 +136,29 @@ public abstract class LsuState extends MduState {
 	public void doLDR(final int rt, final int rs, final int simm16) {
 		final int address = gpr[rs].read32() + simm16;
 		final int offset = (address & 0x7);
-		final long value = gpr[rt].read64();
-
 		final long data = processor.memory.read64(address & 0xfffffffc);
+
 		if (rt != 0) {
 			gpr[rt].write64((data >>> ldrShift[offset])
-					| (value & ldrMask[offset]));
+					| (gpr[rt].read64() & ldrMask[offset]));
+		}
+	}
+
+	private static final long[] ldlMask = new long[] { 0x00ffffffffffffffL,
+			0x0000ffffffffffffL, 0x000000ffffffffffL, 0x00000000ffffffffL,
+			0x0000000000ffffffL, 0x000000000000ffffL, 0x00000000000000ffL,
+			0x0000000000000000L };
+	private static final int[] ldlShift = new int[] { 56, 48, 40, 32, 24, 16,
+			8, 0 };
+
+	public void doLDL(final int rt, final int rs, final int simm16) {
+		final int address = gpr[rs].read32() + simm16;
+		final int offset = (address & 0x7);
+		final long data = processor.memory.read64(address & ~7);
+
+		if (rt != 0) {
+			gpr[rt].write64((gpr[rt].read64() & ldlMask[offset])
+					| (data << ldlShift[offset]));
 		}
 	}
 
@@ -205,5 +232,24 @@ public abstract class LsuState extends MduState {
 		if (rt != 0) {
 			gpr[rt].write32(1); // = ll_bit;
 		}
+	}
+
+	public final void doLQ(final int rt, final int rs, final int simm16) {
+		int address = gpr[rs].read32() + simm16;
+		address &= ~0xf;
+
+		if (rt != 0) {
+			gpr[rt].write128(processor.memory.read128(address));
+		} else {
+			// always read
+			processor.memory.read128(address);
+		}
+	}
+
+	public final void doSQ(final int rt, final int rs, final int simm16) {
+		int address = gpr[rs].read32() + simm16;
+		address &= ~0xf;
+		processor.memory.write128(address, gpr[rt].read128());
+
 	}
 }

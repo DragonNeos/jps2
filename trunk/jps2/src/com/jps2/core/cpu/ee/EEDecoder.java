@@ -6,206 +6,59 @@ import com.jps2.core.cpu.Common.STUB;
 
 public class EEDecoder {
 
-	private static final Instruction opcodeTable[] = {
-			new STUB() {
-				@Override
-				public Instruction instance(final int insn) {
-					return specialTable[(insn >> 0) & 0x0000003f]
-							.instance(insn);
-				}
-			},
-			new STUB() {
-				@Override
-				public Instruction instance(final int insn) {
-					return regimmTable[(insn >> 16) & 0x0000001f]
-							.instance(insn);
-				}
-			},
-			EEInstructions.J,
-			EEInstructions.JAL,
-			EEInstructions.BEQ,
-			EEInstructions.BNE,
-			EEInstructions.BLEZ,
-			EEInstructions.BGTZ,
-			EEInstructions.ADDI,
-			EEInstructions.ADDIU,
-			EEInstructions.SLTI,
-			EEInstructions.SLTIU,
-			EEInstructions.ANDI,
-			EEInstructions.ORI,
-			EEInstructions.XORI,
-			EEInstructions.LUI,
-			new STUB() {
+	private static final Instruction opcodeTable[] = { new STUB() {
+		@Override
+		public Instruction instance(final int insn) {
+			return specialTable[(insn >> 0) & 0x0000003f].instance(insn);
+		}
+	}, new STUB() {
+		@Override
+		public Instruction instance(final int insn) {
+			return regimmTable[(insn >> 16) & 0x0000001f].instance(insn);
+		}
+	}, EEInstructions.J, EEInstructions.JAL, EEInstructions.BEQ,
+			EEInstructions.BNE, EEInstructions.BLEZ, EEInstructions.BGTZ,
+			EEInstructions.ADDI, EEInstructions.ADDIU, EEInstructions.SLTI,
+			EEInstructions.SLTIU, EEInstructions.ANDI, EEInstructions.ORI,
+			EEInstructions.XORI, EEInstructions.LUI, new STUB() {
 				@Override
 				public Instruction instance(final int insn) {
 					return cpo0Table[(insn >> 21) & 0x0000001F].instance(insn);
 				}
-			},
-			new STUB() {
+			}, new STUB() {
 				@Override
 				public Instruction instance(final int insn) {
 					return cpo1Table[(insn >> 21) & 0x0000001F].instance(insn);
 				}
-			},
-			// new STUB() {
-			// @Override
-			// public Instruction instance(int insn) {
-			// throw new RuntimeException("não implementado");
-			// TODO
-			// if ((insn & 0x00200000) == 0x00000000) {
-			// return table_7[(insn >> 16) & 0x00000003].instance(insn);
-			// } else {
-			// if ((insn & 0x00000080) == 0x00000000) {
-			// if ((insn & 0x00800000) == 0x00000000) {
-			// return EEInstructions.MFV;
-			// } else {
-			// return EEInstructions.MTV;
-			// }
-			// } else {
-			// if ((insn & 0x00800000) == 0x00000000) {
-			// return EEInstructions.MFVC;
-			// } else {
-			// return EEInstructions.MTVC;
-			// }
-			// }
-			// }
-			// }
-			// }
-			Common.UNK,
+			}, new STUB() {
+				@Override
+				public Instruction instance(final int insn) {
+					// return cpo2Table[(insn >> 21) &
+					// 0x0000001F].instance(insn);
+					throw new RuntimeException("VPU not supported.");
+				}
+			}, Common.UNK, EEInstructions.BEQL, EEInstructions.BNEL,
+			EEInstructions.BLEZL, EEInstructions.BGTZL, EEInstructions.DADDI,
+			EEInstructions.DADDIU, EEInstructions.LDL, EEInstructions.LDR,
 			new STUB() {
-				@Override
-				public Instruction instance(final int insn) {
-					// TODO
-					return cpo1xTable[(insn >> 23) & 0x00000007].instance(insn);
-				}
-			}, EEInstructions.BEQL, EEInstructions.BNEL, EEInstructions.BLEZL,
-			EEInstructions.BGTZL, new STUB() {
 
 				@Override
 				public Instruction instance(final int insn) {
-					return table_8[(insn >> 23) & 0x00000003].instance(insn);
+					return mmiTable[insn];
 				}
-			}, new STUB() {
-
-				@Override
-				public Instruction instance(final int insn) {
-					return table_9[(insn >> 23) & 0x00000007].instance(insn);
-				}
-			}, Common.UNK, EEInstructions.LDR, new STUB() {
-
-				@Override
-				public Instruction instance(final int insn) {
-					if ((insn & 0x00000002) == 0x00000000) {
-						if ((insn & 0x00000004) == 0x00000000) {
-							return EEInstructions.HALT;
-						} else {
-							return EEInstructions.MFIC;
-						}
-					} else {
-						return EEInstructions.MTIC;
-					}
-				}
-			}, Common.UNK, Common.UNK, new STUB() {
-
-				@Override
-				public Instruction instance(final int insn) {
-					if ((insn & 0x00000021) == 0x00000020) {
-						if ((insn & 0x00000080) == 0x00000000) {
-							if ((insn & 0x00000100) == 0x00000000) {
-								return EEInstructions.SEH;
-							} else {
-								return EEInstructions.BITREV;
-							}
-						} else {
-							if ((insn & 0x00000040) == 0x00000000) {
-								return EEInstructions.WSBH;
-							} else {
-								return EEInstructions.WSBW;
-							}
-						}
-					} else {
-						if ((insn & 0x00000001) == 0x00000000) {
-							if ((insn & 0x00000004) == 0x00000000) {
-								return EEInstructions.EXT;
-							} else {
-								return EEInstructions.INS;
-							}
-						} else {
-							return EEInstructions.SEB;
-						}
-					}
-				}
-			}, EEInstructions.LB, EEInstructions.LH, EEInstructions.LWL,
+			}, Common.UNK, EEInstructions.LQ, EEInstructions.SQ,
+			EEInstructions.LB, EEInstructions.LH, EEInstructions.LWL,
 			EEInstructions.LW, EEInstructions.LBU, EEInstructions.LHU,
-			EEInstructions.LWR, Common.UNK, EEInstructions.SB,
+			EEInstructions.LWR, EEInstructions.LWU, EEInstructions.SB,
 			EEInstructions.SH, EEInstructions.SWL, EEInstructions.SW,
-			Common.UNK, Common.UNK, EEInstructions.SWR, Common.UNK,
-			EEInstructions.LL, EEInstructions.LWC1, EEInstructions.LVS,
-			EEInstructions.PREF, new STUB() {
+			EEInstructions.SDL, EEInstructions.SDR, EEInstructions.SWR,
+			EEInstructions.CACHE, Common.UNK, EEInstructions.LWC1, Common.UNK,
+			EEInstructions.PREF, Common.UNK, Common.UNK, EEInstructions.LQC2,
+			EEInstructions.LD, Common.UNK, EEInstructions.SWC1, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, EEInstructions.SQC2,
+			EEInstructions.SD };
 
-				@Override
-				public Instruction instance(final int insn) {
-					return table_12[(insn >> 18) & 0x0000001f].instance(insn);
-				}
-			}, new STUB() {
-
-				@Override
-				public Instruction instance(final int insn) {
-					if ((insn & 0x00000002) == 0x00000000) {
-						return EEInstructions.LVLQ;
-					} else {
-						return EEInstructions.LVRQ;
-					}
-				}
-			}, EEInstructions.LVQ, new STUB() {
-
-				@Override
-				public Instruction instance(final int insn) {
-					return table_13[(insn >> 24) & 0x00000003].instance(insn);
-				}
-			}, EEInstructions.SC, EEInstructions.SWC1, EEInstructions.SVS,
-			Common.UNK, new STUB() {
-
-				@Override
-				public Instruction instance(final int insn) {
-					return table_14[(insn >> 23) & 0x00000007].instance(insn);
-				}
-			}, new STUB() {
-
-				@Override
-				public Instruction instance(final int insn) {
-					if ((insn & 0x00000002) == 0x00000000) {
-						return EEInstructions.SVLQ;
-					} else {
-						return EEInstructions.SVRQ;
-					}
-				}
-			}, new STUB() {
-
-				@Override
-				public Instruction instance(final int insn) {
-					if ((insn & 0x00000002) == 0x00000000) {
-						return EEInstructions.SVQ;
-					} else {
-						return EEInstructions.SWB;
-					}
-				}
-			}, new STUB() {
-
-				@Override
-				public Instruction instance(final int insn) {
-					if ((insn & 0x00000001) == 0x00000000) {
-						if ((insn & 0x00000020) == 0x00000000) {
-							return EEInstructions.VNOP;
-						} else {
-							return EEInstructions.VSYNC;
-						}
-					} else {
-						return EEInstructions.VFLUSH;
-					}
-				}
-			}, };
-	public static final Instruction specialTable[] = { new STUB() {
+	private static final Instruction specialTable[] = { new STUB() {
 
 		@Override
 		public Instruction instance(final int insn) {
@@ -215,69 +68,150 @@ public class EEDecoder {
 				return EEInstructions.SLL;
 			}
 		}
-	}, new STUB() {
+	}, Common.UNK, EEInstructions.SRL, EEInstructions.SRA, EEInstructions.SLLV,
+			Common.UNK, EEInstructions.SRLV, EEInstructions.SRAV,
+			EEInstructions.JR, EEInstructions.JALR, EEInstructions.MOVZ,
+			EEInstructions.MOVN, EEInstructions.SYSCALL, EEInstructions.BREAK,
+			Common.UNK, EEInstructions.SYNC, EEInstructions.MFHI,
+			EEInstructions.MTHI, EEInstructions.MFLO, EEInstructions.MTLO,
+			EEInstructions.DSLLV, Common.UNK, EEInstructions.DSRLV,
+			EEInstructions.DSRAV, EEInstructions.MULT, EEInstructions.MULTU,
+			EEInstructions.DIV, EEInstructions.DIVU, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, EEInstructions.ADD, EEInstructions.ADDU,
+			EEInstructions.SUB, EEInstructions.SUBU, EEInstructions.AND,
+			EEInstructions.OR, EEInstructions.XOR, EEInstructions.NOR,
+			EEInstructions.MFSA, EEInstructions.MTSA, EEInstructions.SLT,
+			EEInstructions.SLTU, EEInstructions.DADD, EEInstructions.DADDU,
+			EEInstructions.DSUB, EEInstructions.DSUBU, EEInstructions.TGE,
+			EEInstructions.TGEU, EEInstructions.TLT, EEInstructions.TLTU,
+			EEInstructions.TEQ, Common.UNK, EEInstructions.TNE, Common.UNK,
+			EEInstructions.DSLL, Common.UNK, EEInstructions.DSRL,
+			EEInstructions.DSRA, EEInstructions.DSLL32, Common.UNK,
+			EEInstructions.DSRL32, EEInstructions.DSRA32 };
 
-		@Override
-		public Instruction instance(final int insn) {
-			if ((insn & 0x10000) == 0x10000) {
-				return EEInstructions.MOVT;
-			} else {
-				return EEInstructions.MOVF;
-			}
-		}
-	}, EEInstructions.SRL, EEInstructions.SRA, EEInstructions.SLLV, Common.UNK,
-			EEInstructions.SRLV, EEInstructions.SRAV, EEInstructions.JR,
-			EEInstructions.JALR, EEInstructions.MOVZ, EEInstructions.MOVN,
-			EEInstructions.SYSCALL, EEInstructions.BREAK, Common.UNK,
-			EEInstructions.SYNC, EEInstructions.MFHI, EEInstructions.MTHI,
-			EEInstructions.MFLO, EEInstructions.MTLO, EEInstructions.DSLLV,
-			Common.UNK, EEInstructions.DSRLV, EEInstructions.DSRAV,
-			EEInstructions.MULT, EEInstructions.MULTU, EEInstructions.DIV,
-			EEInstructions.DIVU, EEInstructions.DMULT, EEInstructions.DMULTU,
-			EEInstructions.DDIV, EEInstructions.DDIVU, EEInstructions.ADD,
-			EEInstructions.ADDU, EEInstructions.SUB, EEInstructions.SUBU,
-			EEInstructions.AND, EEInstructions.OR, EEInstructions.XOR,
-			EEInstructions.NOR, EEInstructions.MFSA, Common.UNK,
-			EEInstructions.SLT, EEInstructions.SLTU, EEInstructions.DADD,
-			EEInstructions.DADDU, EEInstructions.DSUB, EEInstructions.DSUBU,
-			EEInstructions.TGE, EEInstructions.TGEU, EEInstructions.TLT,
-			EEInstructions.TLTU, EEInstructions.TEQ, Common.UNK,
-			EEInstructions.TNE, Common.UNK, EEInstructions.DSLL, Common.UNK,
-			EEInstructions.DSRL, EEInstructions.DSRA, EEInstructions.DSLL32,
-			Common.UNK, EEInstructions.DSRL32, EEInstructions.DSRA32, };
-	public static final Instruction regimmTable[] = { EEInstructions.BLTZ,
+	private	 static final Instruction[] regimmTable = { EEInstructions.BLTZ,
 			EEInstructions.BGEZ, EEInstructions.BLTZL, EEInstructions.BGEZL,
 			Common.UNK, Common.UNK, Common.UNK, Common.UNK,
 			EEInstructions.TGEI, EEInstructions.TGEIU, EEInstructions.TLTI,
-			EEInstructions.TLTIU, Common.UNK, EEInstructions.TNEI, Common.UNK,
-			EEInstructions.BLTZAL, EEInstructions.BGEZAL,
-			EEInstructions.BLTZALL, EEInstructions.BGEZALL, Common.UNK,
+			EEInstructions.TLTIU, EEInstructions.TEQI, Common.UNK,
+			EEInstructions.TNEI, Common.UNK, EEInstructions.BLTZAL,
+			EEInstructions.BGEZAL, EEInstructions.BLTZALL,
+			EEInstructions.BGEZALL, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, EEInstructions.MTSAB, EEInstructions.MTSAH, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK };
+
+	private static final Instruction[] mmiTable = { EEInstructions.MADD,
+			EEInstructions.MADDU, Common.UNK, Common.UNK, EEInstructions.PLZCW,
+			Common.UNK, Common.UNK, Common.UNK, new STUB() {
+
+				@Override
+				public Instruction instance(final int insn) {
+					return mmi0Table[insn];
+				}
+			}, new STUB() {
+
+				@Override
+				public Instruction instance(final int insn) {
+					return mmi2Table[insn];
+				}
+			}, Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, EEInstructions.MFHI1, EEInstructions.MTHI1,
+			EEInstructions.MFLO1, EEInstructions.MTLO1, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, EEInstructions.MULT1,
+			EEInstructions.MULTU1, EEInstructions.DIV1, EEInstructions.DIVU1,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			EEInstructions.MADD1, EEInstructions.MADDU1, Common.UNK,
 			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			new STUB() {
+
+				@Override
+				public Instruction instance(final int insn) {
+					return mmi1Table[insn];
+				}
+			}, new STUB() {
+
+				@Override
+				public Instruction instance(final int insn) {
+					return mmi3Table[insn];
+				}
+			}, Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, EEInstructions.PMFHL, EEInstructions.PMTHL, Common.UNK,
+			Common.UNK, EEInstructions.PSLLH, Common.UNK, EEInstructions.PSRLH,
+			EEInstructions.PSRAH, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, EEInstructions.PSLLW, Common.UNK, EEInstructions.PSRLW,
+			EEInstructions.PSRAW };
+
+	private static final Instruction[] mmi0Table = { EEInstructions.PADDW,
+			EEInstructions.PSUBW, EEInstructions.PCGTW, EEInstructions.PMAXW,
+			EEInstructions.PADDH, EEInstructions.PSUBH, EEInstructions.PCGTH,
+			EEInstructions.PMAXH, EEInstructions.PADDB, EEInstructions.PSUBB,
+			EEInstructions.PCGTB, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, EEInstructions.PADDSW,
+			EEInstructions.PSUBSW, EEInstructions.PEXTLW, EEInstructions.PPACW,
+			EEInstructions.PADDSH, EEInstructions.PSUBSH,
+			EEInstructions.PEXTLH, EEInstructions.PPACH, EEInstructions.PADDSB,
+			EEInstructions.PSUBSB, EEInstructions.PEXTLB, EEInstructions.PPACB,
+			Common.UNK, Common.UNK, EEInstructions.PEXT5, EEInstructions.PPAC5 };
+
+	private static final Instruction[] mmi1Table = { Common.UNK,
+			EEInstructions.PABSW, EEInstructions.PCEQW, EEInstructions.PMINW,
+			EEInstructions.PADSBH, EEInstructions.PABSH, EEInstructions.PCEQH,
+			EEInstructions.PMINH, Common.UNK, Common.UNK, EEInstructions.PCEQB,
 			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
-			Common.UNK };
-	private static final STUB coStub = new STUB() {
+			EEInstructions.PADDUW, EEInstructions.PSUBUW,
+			EEInstructions.PEXTUW, Common.UNK, EEInstructions.PADDUH,
+			EEInstructions.PSUBUH, EEInstructions.PEXTUH, Common.UNK,
+			EEInstructions.PADDUB, EEInstructions.PSUBUB,
+			EEInstructions.PEXTUB, EEInstructions.QFSRV, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK };
+
+	private static final Instruction[] mmi2Table = { EEInstructions.PMADDW,
+			Common.UNK, EEInstructions.PSLLVW, EEInstructions.PSRLVW,
+			EEInstructions.PMSUBW, Common.UNK, Common.UNK, Common.UNK,
+			EEInstructions.PMFHI, EEInstructions.PMFLO, EEInstructions.PINTH,
+			Common.UNK, EEInstructions.PMULTW, EEInstructions.PDIVW,
+			EEInstructions.PCPYLD, Common.UNK, EEInstructions.PMADDH,
+			EEInstructions.PHMADH, EEInstructions.PAND, EEInstructions.PXOR,
+			EEInstructions.PMSUBH, EEInstructions.PHMSBH, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, EEInstructions.PEXEH,
+			EEInstructions.PREVH, EEInstructions.PMULTH, EEInstructions.PDIVBW,
+			EEInstructions.PEXEW, EEInstructions.PROT3W };
+
+	private static final Instruction[] mmi3Table = { EEInstructions.PMADDUW,
+			Common.UNK, Common.UNK, EEInstructions.PSRAVW, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, EEInstructions.PMTHI,
+			EEInstructions.PMTLO, EEInstructions.PINTEH, Common.UNK,
+			EEInstructions.PMULTUW, EEInstructions.PDIVUW,
+			EEInstructions.PCPYUD, Common.UNK, Common.UNK, Common.UNK,
+			EEInstructions.POR, EEInstructions.PNOR, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			EEInstructions.PEXCH, EEInstructions.PCPYH, Common.UNK, Common.UNK,
+			EEInstructions.PEXCW, Common.UNK, };
+
+	private static final STUB c0Stub = new STUB() {
 		@Override
 		public Instruction instance(final int insn) {
-			return coTable[insn & 0x0000003f];
+			return c0Table[insn & 0x0000003f];
 		}
 	};
-	private static final Instruction cpo0Table[] = { EEInstructions.MFC0,
-			EEInstructions.DMFC0, Common.UNK, Common.UNK, EEInstructions.MTC0,
-			EEInstructions.DMTC0, Common.UNK, Common.UNK, Common.UNK,
-			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
-			Common.UNK, Common.UNK, coStub, coStub, coStub, coStub, coStub,
-			coStub, coStub, coStub, coStub, coStub, coStub, coStub, coStub,
-			coStub, coStub, coStub };
 
-	public static final Instruction coTable[] = { Common.UNK,
-			EEInstructions.TLBR, EEInstructions.TLBWI, Common.UNK, Common.UNK,
-			Common.UNK, EEInstructions.TLBWR, Common.UNK, EEInstructions.TLBP,
+	private static final STUB bc0Stub = new STUB() {
+		@Override
+		public Instruction instance(final int insn) {
+			return bc0Table[(insn >> 16) & 0x1f];
+		}
+	};
+
+	private static final Instruction cpo0Table[] = { EEInstructions.MF0,
+			Common.UNK, Common.UNK, Common.UNK, EEInstructions.MT0, Common.UNK,
+			Common.UNK, Common.UNK, bc0Stub, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK, c0Stub,
 			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
 			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
-			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
-			EEInstructions.ERET, Common.UNK, Common.UNK, Common.UNK,
-			Common.UNK, Common.UNK, Common.UNK, EEInstructions.DERET,
-			EEInstructions.WAIT, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK };
+
+	private static final Instruction bc0Table[] = { EEInstructions.BC0F,
+			EEInstructions.BC0T, EEInstructions.BC0FL, EEInstructions.BC0TL,
 			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
 			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
 			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
@@ -285,10 +219,25 @@ public class EEDecoder {
 			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
 			Common.UNK, Common.UNK, Common.UNK };
 
-	public static final Instruction cpo1Table[] = { EEInstructions.MFC1,
-			EEInstructions.DMFC1, EEInstructions.CFC1, Common.UNK,
-			EEInstructions.MTC1, EEInstructions.DMTC1, EEInstructions.CTC1,
-			Common.UNK, new STUB() {
+	private static final Instruction c0Table[] = { Common.UNK,
+			EEInstructions.TLBR, EEInstructions.TLBWI, Common.UNK, Common.UNK,
+			Common.UNK, EEInstructions.TLBWR, Common.UNK, EEInstructions.TLBP,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			EEInstructions.ERET, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, EEInstructions.EI,
+			EEInstructions.DI, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK };
+
+	private static final Instruction cpo1Table[] = { EEInstructions.MFC1,
+			Common.UNK, EEInstructions.CFC1, Common.UNK, EEInstructions.MTC1,
+			Common.UNK, EEInstructions.CTC1, Common.UNK, new STUB() {
 
 				@Override
 				public Instruction instance(final int insn) {
@@ -299,32 +248,28 @@ public class EEDecoder {
 
 				@Override
 				public Instruction instance(final int insn) {
-					return table_6[(insn >> 0) & 0x0000001f].instance(insn);
+					return sTable[(insn >> 0) & 0x0000001f].instance(insn);
 				}
-			}, new STUB() {
+			}, Common.UNK, Common.UNK, Common.UNK, new STUB() {
 
 				@Override
 				public Instruction instance(final int insn) {
-					return table_6[(insn >> 0) & 0x0000001f].instance(insn);
-				}
-			}, Common.UNK, Common.UNK, new STUB() {
-
-				@Override
-				public Instruction instance(final int insn) {
-					return table_6[(insn >> 0) & 0x0000001f].instance(insn);
-				}
-			}, new STUB() {
-
-				@Override
-				public Instruction instance(final int insn) {
-					return table_6[(insn >> 0) & 0x0000001f].instance(insn);
+					return wTable[(insn >> 0) & 0x0000001f].instance(insn);
 				}
 			}, Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
-			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK };
-	public static final Instruction bc1Table[] = { EEInstructions.BC1F,
-			EEInstructions.BC1T, EEInstructions.BC1FL, EEInstructions.BC1TL, };
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK };
 
-	public static final Instruction cpo1xTable[] = { EEInstructions.LWXC1,
+	private static final Instruction bc1Table[] = { EEInstructions.BC1F,
+			EEInstructions.BC1T, EEInstructions.BC1FL, EEInstructions.BC1TL,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK };
+
+	private static final Instruction cpo1xTable[] = { EEInstructions.LWXC1,
 			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
 			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
 			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
@@ -339,43 +284,56 @@ public class EEDecoder {
 			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
 			Common.UNK, Common.UNK, Common.UNK };
 
-	public static final Instruction table_6[] = { EEInstructions.ADD_S,
+	private static final Instruction sTable[] = { EEInstructions.ADD_S,
 			EEInstructions.SUB_S, EEInstructions.MUL_S, EEInstructions.DIV_S,
-			new STUB() {
-
-				@Override
-				public Instruction instance(final int insn) {
-					if ((insn & 0x00000020) == 0x00000000) {
-						return EEInstructions.SQRT_S;
-					} else {
-						return EEInstructions.CVT_W_S;
-					}
-				}
-			}, EEInstructions.ABS_S, EEInstructions.MOV_S,
+			EEInstructions.SQRT_S, EEInstructions.ABS_S, EEInstructions.MOV_S,
 			EEInstructions.NEG_S, Common.UNK, Common.UNK, Common.UNK,
-			Common.UNK, EEInstructions.ROUND_W_S, EEInstructions.TRUNC_W_S,
-			EEInstructions.CEIL_W_S, EEInstructions.FLOOR_W_S,
-			EEInstructions.C_COND_S, EEInstructions.C_COND_S,
-			EEInstructions.C_COND_S, EEInstructions.C_COND_S,
-			EEInstructions.C_COND_S, EEInstructions.C_COND_S,
-			EEInstructions.C_COND_S, EEInstructions.C_COND_S,
-			EEInstructions.C_COND_S, EEInstructions.C_COND_S,
-			EEInstructions.C_COND_S, EEInstructions.C_COND_S,
-			EEInstructions.C_COND_S, EEInstructions.C_COND_S,
-			EEInstructions.C_COND_S, EEInstructions.C_COND_S, };
-	public static final Instruction table_7[] = { EEInstructions.BVF,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, EEInstructions.RSQRT_S, Common.UNK,
+			EEInstructions.ADDA_S, EEInstructions.SUBA_S,
+			EEInstructions.MULA_S, Common.UNK, EEInstructions.MADD_S,
+			EEInstructions.MSUB_S, EEInstructions.MADDA_S,
+			EEInstructions.MSUBA_S, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, EEInstructions.CVTW_S, Common.UNK, Common.UNK,
+			Common.UNK, EEInstructions.MAX_S, EEInstructions.MIN_S, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			EEInstructions.C_F_S, Common.UNK, EEInstructions.C_EQ_S,
+			Common.UNK, EEInstructions.C_LT_S, Common.UNK,
+			EEInstructions.C_LE_S, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK };
+
+	private static final Instruction[] wTable = { Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			EEInstructions.CVTS_W, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
+			Common.UNK, Common.UNK, Common.UNK
+
+	};
+
+	private static final Instruction table_7[] = { EEInstructions.BVF,
 			EEInstructions.BVT, EEInstructions.BVFL, EEInstructions.BVTL, };
-	public static final Instruction table_8[] = { EEInstructions.VADD,
+	private static final Instruction table_8[] = { EEInstructions.VADD,
 			EEInstructions.VSUB, EEInstructions.VSBN, EEInstructions.VDIV, };
-	public static final Instruction table_9[] = { EEInstructions.VMUL,
+	private static final Instruction table_9[] = { EEInstructions.VMUL,
 			EEInstructions.VDOT, EEInstructions.VSCL, Common.UNK,
 			EEInstructions.VHDP, EEInstructions.VDET, EEInstructions.VCRS,
 			Common.UNK, };
-	public static final Instruction table_10[] = { EEInstructions.VCMP,
+	private static final Instruction table_10[] = { EEInstructions.VCMP,
 			Common.UNK, EEInstructions.VMIN, EEInstructions.VMAX,
 			EEInstructions.VSLT, EEInstructions.VSCMP, EEInstructions.VSGE,
 			Common.UNK, };
-	public static final Instruction table_12[] = { new STUB() {
+	private static final Instruction table_12[] = { new STUB() {
 
 		@Override
 		public Instruction instance(final int insn) {
@@ -976,7 +934,7 @@ public class EEDecoder {
 			}
 		}
 	}, };
-	public static final Instruction table_13[] = { EEInstructions.VPFXS,
+	private static final Instruction table_13[] = { EEInstructions.VPFXS,
 			EEInstructions.VPFXT, EEInstructions.VPFXD, new STUB() {
 
 				@Override
@@ -988,7 +946,7 @@ public class EEDecoder {
 					}
 				}
 			}, };
-	public static final Instruction table_14[] = { EEInstructions.VMMUL,
+	private static final Instruction table_14[] = { EEInstructions.VMMUL,
 			new STUB() {
 
 				@Override

@@ -24,23 +24,27 @@ public abstract class AbstractMemoryManager {
 	public long read64(final int address) {
 		return getMemoryByAddress(address, false).read64(address);
 	}
+	
+	public long[] read128(final int address) {
+		return getMemoryByAddress(address, false).read128(address);
+	}
 
 	public void write8(final int address, final byte data) {
-		Memory mem = getMemoryByAddress(address, true);
+		final Memory mem = getMemoryByAddress(address, true);
 		if (mem != null) {
 			mem.write8(address, data);
 		}
 	}
 
 	public void write16(final int address, final short data) {
-		Memory mem = getMemoryByAddress(address, true);
+		final Memory mem = getMemoryByAddress(address, true);
 		if (mem != null) {
 			mem.write16(address, data);
 		}
 	}
 
 	public void write32(final int address, final int data) {
-		Memory mem = getMemoryByAddress(address, true);
+		final Memory mem = getMemoryByAddress(address, true);
 		if (mem != null) {
 			mem.write32(address, data);
 		}
@@ -48,5 +52,9 @@ public abstract class AbstractMemoryManager {
 
 	public void write64(final int address, final long data) {
 		getMemoryByAddress(address, true).write64(address, data);
+	}
+	
+	public void write128(final int address, final long[] data) {
+		getMemoryByAddress(address, true).write128(address, data);
 	}
 }

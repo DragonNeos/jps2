@@ -4,7 +4,7 @@ import java.math.BigInteger;
 
 import com.jps2.core.cpu.Cpu;
 import com.jps2.core.cpu.ExcCode;
-import com.jps2.core.cpu.registers.GeneralPorpuseRegister32bis;
+import com.jps2.core.cpu.registers.GeneralPorpuseRegister32bits;
 import com.jps2.core.cpu.registers.Register32bits;
 import com.jps2.core.cpu.registers.ZeroRegister32bits;
 
@@ -19,14 +19,14 @@ abstract class GprState extends Cpu {
 	void reset() {
 		gpr[0] = new ZeroRegister32bits();
 		for (int i = 1; i < gpr.length; i++) {
-			gpr[i] = new GeneralPorpuseRegister32bis(i);
+			gpr[i] = new GeneralPorpuseRegister32bits(i);
 		}
 	}
 
 	void resetAll() {
 		gpr[0] = new ZeroRegister32bits();
 		for (int i = 1; i < gpr.length; i++) {
-			gpr[i] = new GeneralPorpuseRegister32bis(i);
+			gpr[i] = new GeneralPorpuseRegister32bits(i);
 		}
 	}
 

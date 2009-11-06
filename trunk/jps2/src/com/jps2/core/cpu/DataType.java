@@ -1,6 +1,7 @@
 package com.jps2.core.cpu;
 
 public enum DataType {
+	QUADWORD(16), /**/
 	DOUBLEWORD(8), /**/
 	SEPTIBYTE(7), /**/
 	SEXTIBYTE(6), /**/

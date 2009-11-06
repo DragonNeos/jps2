@@ -2,14 +2,14 @@ package com.jps2.core.cpu.registers;
 
 import com.jps2.core.cpu.DataType;
 
-public class GeneralPorpuseRegister32bis implements Register32bits {
+public class GeneralPorpuseRegister32bits implements Register32bits {
 
 	final int index;
 	private int word = 0x0;
 
 	private DataType type = DataType.WORD;
 
-	public GeneralPorpuseRegister32bis(final int index) {
+	public GeneralPorpuseRegister32bits(final int index) {
 		this.index = index;
 	}
 

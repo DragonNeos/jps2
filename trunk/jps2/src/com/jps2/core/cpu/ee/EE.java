@@ -13,7 +13,12 @@ public class EE extends Processor {
 
 	@Override
 	protected Instruction decode(final int opcode) {
+		try{
 		return EEDecoder.instruction(opcode);
+		}catch (Throwable t){
+			System.err.println("count = " + insnCount);
+			throw new RuntimeException(t);
+		}
 	}
 
 	@Override

@@ -466,7 +466,7 @@ public abstract class GprState extends Cpu {
 
 	public final void doTEQ(final int rs, final int rt, final int inst,
 			final boolean delay) {
-		if (gpr[rs] == gpr[rt]) {
+		if (gpr[rs].read16() == gpr[rt].read16()) {
 
 			processor.processException(ExcCode.TRAP, inst, delay);
 		}
@@ -474,70 +474,77 @@ public abstract class GprState extends Cpu {
 
 	public final void doTNE(final int rs, final int rt, final int inst,
 			final boolean delay) {
-		if (gpr[rs] != gpr[rt]) {
+		if (gpr[rs].read16() != gpr[rt].read16()) {
 			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTNEI(final int rs, final short imm16, final int inst,
 			final boolean delay) {
-		if (gpr[rs].read64() != imm16) {
+		if (gpr[rs].read16() != imm16) {
+			processor.processException(ExcCode.TRAP, inst, delay);
+		}
+	}
+	
+	public final void doTEQI(final int rs, final short imm16, final int inst,
+			final boolean delay) {
+		if (gpr[rs].read16() == imm16) {
 			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTGE(final int rs, final int rt, final int inst,
 			final boolean delay) {
-		if (gpr[rs].read64() >= gpr[rt].read64()) {
+		if (gpr[rs].read16() >= gpr[rt].read16()) {
 			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTGEI(final int rs, final short imm16, final int inst,
 			final boolean delay) {
-		if (gpr[rs].read64() >= imm16) {
+		if (gpr[rs].read16() >= imm16) {
 			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTGEIU(final int rs, final short imm16, final int inst,
 			final boolean delay) {
-		if (Math.abs(gpr[rs].read64()) >= Math.abs(imm16)) {
+		if (Math.abs(gpr[rs].read16()) >= Math.abs(imm16)) {
 			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTGEU(final int rs, final int rt, final int inst,
 			final boolean delay) {
-		if (Math.abs(gpr[rs].read64()) >= Math.abs(gpr[rt].read64())) {
+		if (Math.abs(gpr[rs].read16()) >= Math.abs(gpr[rt].read16())) {
 			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTLT(final int rs, final int rt, final int inst,
 			final boolean delay) {
-		if (gpr[rs].read64() < gpr[rt].read64()) {
+		if (gpr[rs].read16() < gpr[rt].read16()) {
 			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTLTI(final int rs, final short imm16, final int inst,
 			final boolean delay) {
-		if (gpr[rs].read64() < imm16) {
+		if (gpr[rs].read16() < imm16) {
 			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTLTIU(final int rs, final short imm16, final int inst,
 			final boolean delay) {
-		if (Math.abs(gpr[rs].read64()) < Math.abs(imm16)) {
+		if (Math.abs(gpr[rs].read16()) < Math.abs(imm16)) {
 			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}
 
 	public final void doTLTU(final int rs, final int rt, final int inst,
 			final boolean delay) {
-		if (Math.abs(gpr[rs].read64()) < Math.abs(gpr[rt].read64())) {
+		if (Math.abs(gpr[rs].read16()) < Math.abs(gpr[rt].read16())) {
 			processor.processException(ExcCode.TRAP, inst, delay);
 		}
 	}

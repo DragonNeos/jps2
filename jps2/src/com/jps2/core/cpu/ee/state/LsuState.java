@@ -109,6 +109,21 @@ public abstract class LsuState extends MduState {
 			gpr[rt].write32(word);
 		}
 	}
+	
+	public void doLD(final int rt, final int rs, final int simm16) {
+		if (CHECK_ALIGNMENT) {
+			final int address = gpr[rs].read32() + simm16;
+			if ((address & 3) != 0) {
+				throw new RuntimeException(String.format(
+						"LW unaligned addr:0x%08x pc:0x%08x", address, pc));
+			}
+		}
+
+		final long doubleword = processor.memory.read64(gpr[rs].read32() + simm16);
+		if (rt != 0) {
+			gpr[rt].write64(doubleword);
+		}
+	}
 
 	private static final int[] lwrMask = { 0, 0xff000000, 0xffff0000,
 			0xffffff00 };
@@ -194,7 +209,7 @@ public abstract class LsuState extends MduState {
 		processor.memory.write32(address & 0xfffffffc, data);
 	}
 
-	public void doSW(final int rt, final int rs, final int simm16) {
+	public final void doSW(final int rt, final int rs, final int simm16) {
 		final int address = gpr[rs].read32() + simm16;
 
 		if (CHECK_ALIGNMENT && (address & 3) != 0) {
@@ -203,6 +218,17 @@ public abstract class LsuState extends MduState {
 		}
 
 		processor.memory.write32(address, gpr[rt].read32());
+	}
+	
+	public final void doSD(final int rt, final int rs, final int simm16) {
+		final int address = gpr[rs].read32() + simm16;
+
+		if (CHECK_ALIGNMENT && (address & 3) != 0) {
+			throw new RuntimeException(String.format(
+					"SW unaligned addr:0x%08x pc:0x%08x", address, pc));
+		}
+
+		processor.memory.write64(address, gpr[rt].read64());
 	}
 
 	private static final int[] swrMask = { 0, 0xff, 0xffff, 0xffffff };
@@ -217,6 +243,42 @@ public abstract class LsuState extends MduState {
 		data = (value << swrShift[offset]) | (data & swrMask[offset]);
 
 		processor.memory.write32(address & 0xfffffffc, data);
+	}
+
+	private static final long[] sdlMask = { 0xffffffffffffff00L,
+			0xffffffffffff0000L, 0xffffffffff000000L, 0xffffffff00000000L,
+			0xffffff0000000000L, 0xffff000000000000L, 0xff00000000000000L,
+			0x0000000000000000L };
+	private static final int[] sdlShift = { 56, 48, 40, 32, 24, 16, 8, 0 };
+
+	public final void doSDL(final int rt, final int rs, final int simm16) {
+		final int address = gpr[rs].read32() + simm16;
+		final int offset = address & 7;
+		long data = processor.memory.read64(address & ~7);
+
+		if (data != -1) {
+			processor.memory.write64(address & ~7,
+					(gpr[rt].read64() >> sdlShift[offset])
+							| (data & sdlMask[offset]));
+		}
+	}
+
+	private static final long[] sdrMask = { 0x0000000000000000L,
+			0x00000000000000ffL, 0x000000000000ffffL, 0x0000000000ffffffL,
+			0x00000000ffffffffL, 0x000000ffffffffffL, 0x0000ffffffffffffL,
+			0x00ffffffffffffffL };
+	private static final int[] sdrShift = { 0, 8, 16, 24, 32, 40, 48, 56 };
+
+	public final void doSDR(final int rt, final int rs, final int simm16) {
+		final int address = gpr[rs].read32() + simm16;
+		final int offset = address & 7;
+		long data = processor.memory.read64(address & ~7);
+
+		if (data != -1) {
+			processor.memory.write64(address & ~7,
+					(gpr[rt].read64() << sdrShift[offset])
+							| (data & sdrMask[offset]));
+		}
 	}
 
 	public void doLL(final int rt, final int rs, final int simm16) {

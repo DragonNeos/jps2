@@ -167,26 +167,7 @@ public class EEInstructions {
 		}
 
 	};
-	public static final Instruction MTIC = new Instruction(NO_FLAGS) {
 
-		@Override
-		public final String name() {
-			return "MTIC";
-		}
-
-		@Override
-		public final String category() {
-			return "CPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-
-			final int rt = (insn >> 21) & 31;
-			// TODO
-		}
-
-	};
 	public static final Instruction MFSA = new Instruction(NO_FLAGS) {
 
 		@Override
@@ -201,9 +182,66 @@ public class EEInstructions {
 
 		@Override
 		public void interpret(final int insn, final boolean delay) {
+			final int rd = (insn >> 11) & 31;
+			cpu.doMFSA(rd);
+		}
 
-			final int rt = (insn >> 21) & 31;
-			// TODO
+	};
+
+	public static final Instruction MTSA = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "MTSA";
+		}
+
+		@Override
+		public final String category() {
+			return "CPU";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			final int rd = (insn >> 11) & 31;
+			cpu.doMTSA(rd);
+		}
+
+	};
+
+	public static final Instruction EI = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "EI";
+		}
+
+		@Override
+		public final String category() {
+			return "MIPS I";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			cpu.doEI(delay);
+		}
+
+	};
+
+	public static final Instruction DI = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "DI";
+		}
+
+		@Override
+		public final String category() {
+			return "MIPS I";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			cpu.doDI(delay);
 		}
 
 	};
@@ -222,7 +260,6 @@ public class EEInstructions {
 
 		@Override
 		public void interpret(final int insn, final boolean delay) {
-			decodeRsRtRd(insn);
 			decodeRsRtRd(insn);
 
 			cpu.doADD(rd, rs, rt, insn, delay);
@@ -314,7 +351,7 @@ public class EEInstructions {
 		}
 
 	};
-	
+
 	public static final Instruction DADDI = new Instruction(NO_FLAGS) {
 
 		@Override
@@ -358,7 +395,7 @@ public class EEInstructions {
 		}
 
 	};
-	
+
 	public static final Instruction DADDIU = new Instruction(NO_FLAGS) {
 
 		@Override
@@ -976,6 +1013,30 @@ public class EEInstructions {
 		}
 
 	};
+
+	public static final Instruction TEQI = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "TEQI";
+		}
+
+		@Override
+		public final String category() {
+			return "MIPS II";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			final short imm16 = (short) ((insn >> 0) & 65535);
+			final int rs = (insn >> 21) & 31;
+
+			cpu.doTEQI(rs, imm16, insn, delay);
+
+		}
+
+	};
+
 	public static final Instruction TGE = new Instruction(NO_FLAGS) {
 
 		@Override
@@ -2514,102 +2575,7 @@ public class EEInstructions {
 		}
 
 	};
-	public static final Instruction BVF = new Instruction(
-			FLAGS_BRANCH_INSTRUCTION) {
 
-		@Override
-		public final String name() {
-			return "BVF";
-		}
-
-		@Override
-		public final String category() {
-			return "MIPS I/VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int imm16 = (insn >> 0) & 65535;
-			final int imm3 = (insn >> 18) & 7;
-
-			if (cpu.doBVF(imm3, (short) imm16))
-				cpu.processor.interpretDelayslot();
-
-		}
-
-	};
-	public static final Instruction BVT = new Instruction(
-			FLAGS_BRANCH_INSTRUCTION) {
-
-		@Override
-		public final String name() {
-			return "BVT";
-		}
-
-		@Override
-		public final String category() {
-			return "MIPS I/VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int imm16 = (insn >> 0) & 65535;
-			final int imm3 = (insn >> 18) & 7;
-
-			if (cpu.doBVT(imm3, (short) imm16))
-				cpu.processor.interpretDelayslot();
-
-		}
-
-	};
-	public static final Instruction BVFL = new Instruction(
-			FLAGS_BRANCH_INSTRUCTION) {
-
-		@Override
-		public final String name() {
-			return "BVFL";
-		}
-
-		@Override
-		public final String category() {
-			return "MIPS II/VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int imm16 = (insn >> 0) & 65535;
-			final int imm3 = (insn >> 18) & 7;
-
-			if (cpu.doBVFL(imm3, (short) imm16))
-				cpu.processor.interpretDelayslot();
-
-		}
-
-	};
-	public static final Instruction BVTL = new Instruction(
-			FLAGS_BRANCH_INSTRUCTION) {
-
-		@Override
-		public final String name() {
-			return "BVTL";
-		}
-
-		@Override
-		public final String category() {
-			return "MIPS II/VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int imm16 = (insn >> 0) & 65535;
-			final int imm3 = (insn >> 18) & 7;
-
-			if (cpu.doBVTL(imm3, (short) imm16))
-				cpu.processor.interpretDelayslot();
-
-		}
-
-	};
 	public static final Instruction LB = new Instruction(NO_FLAGS) {
 
 		@Override
@@ -2714,7 +2680,28 @@ public class EEInstructions {
 		}
 
 	};
-	
+
+	public static final Instruction LD = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "LD";
+		}
+
+		@Override
+		public final String category() {
+			return "MIPS IV";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			decodeRsRtImm16(insn);
+
+			cpu.doLD(rt, rs, (short) imm16);
+		}
+
+	};
+
 	public static final Instruction LWU = new Instruction(NO_FLAGS) {
 
 		@Override
@@ -2797,7 +2784,7 @@ public class EEInstructions {
 		}
 
 	};
-	
+
 	public static final Instruction LDL = new Instruction(NO_FLAGS) {
 
 		@Override
@@ -2819,7 +2806,7 @@ public class EEInstructions {
 		}
 
 	};
-	
+
 	public static final Instruction LQ = new Instruction(NO_FLAGS) {
 
 		@Override
@@ -2841,7 +2828,7 @@ public class EEInstructions {
 		}
 
 	};
-	
+
 	public static final Instruction SQ = new Instruction(NO_FLAGS) {
 
 		@Override
@@ -2863,8 +2850,7 @@ public class EEInstructions {
 		}
 
 	};
-	
-	
+
 	public static final Instruction SB = new Instruction(NO_FLAGS) {
 
 		@Override
@@ -2928,6 +2914,27 @@ public class EEInstructions {
 		}
 
 	};
+	public static final Instruction SD = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "SD";
+		}
+
+		@Override
+		public final String category() {
+			return "MIPS IV";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			decodeRsRtImm16(insn);
+
+			cpu.doSD(rt, rs, (short) imm16);
+
+		}
+
+	};
 	public static final Instruction SWL = new Instruction(NO_FLAGS) {
 
 		@Override
@@ -2966,6 +2973,50 @@ public class EEInstructions {
 			decodeRsRtImm16(insn);
 
 			cpu.doSWR(rt, rs, (short) imm16);
+
+		}
+
+	};
+
+	public static final Instruction SDL = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "SDL";
+		}
+
+		@Override
+		public final String category() {
+			return "MIPS IV";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			decodeRsRtImm16(insn);
+
+			cpu.doSDL(rt, rs, (short) imm16);
+
+		}
+
+	};
+
+	public static final Instruction SDR = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "SDR";
+		}
+
+		@Override
+		public final String category() {
+			return "MIPS IV";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			decodeRsRtImm16(insn);
+
+			cpu.doSDR(rt, rs, (short) imm16);
 
 		}
 
@@ -3037,102 +3088,7 @@ public class EEInstructions {
 		}
 
 	};
-	public static final Instruction LVS = new Instruction(NO_FLAGS) {
 
-		@Override
-		public final String name() {
-			return "LVS";
-		}
-
-		@Override
-		public final String category() {
-			return "MIPS I/VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vt2 = (insn >> 0) & 3;
-			final int imm14 = (insn >> 2) & 16383;
-			final int vt5 = (insn >> 16) & 31;
-			final int rs = (insn >> 21) & 31;
-
-			cpu.doLVS((vt5 + (vt2 << 32)), rs, (short) (imm14 << 2));
-
-		}
-
-	};
-	public static final Instruction LVLQ = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "LVLQ";
-		}
-
-		@Override
-		public final String category() {
-			return "MIPS I/VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vt1 = (insn >> 0) & 1;
-			final int imm14 = (insn >> 2) & 16383;
-			final int vt5 = (insn >> 16) & 31;
-			final int rs = (insn >> 21) & 31;
-
-			cpu.doLVLQ((vt5 + (vt1 << 32)), rs, (short) (imm14 << 2));
-
-		}
-
-	};
-	public static final Instruction LVRQ = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "LVRQ";
-		}
-
-		@Override
-		public final String category() {
-			return "MIPS I/VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vt1 = (insn >> 0) & 1;
-			final int imm14 = (insn >> 2) & 16383;
-			final int vt5 = (insn >> 16) & 31;
-			final int rs = (insn >> 21) & 31;
-
-			cpu.doLVRQ((vt5 + (vt1 << 32)), rs, (short) (imm14 << 2));
-
-		}
-
-	};
-	public static final Instruction LVQ = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "LVQ";
-		}
-
-		@Override
-		public final String category() {
-			return "MIPS I/VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vt1 = (insn >> 0) & 1;
-			final int imm14 = (insn >> 2) & 16383;
-			final int vt5 = (insn >> 16) & 31;
-			final int rs = (insn >> 21) & 31;
-
-			cpu.doLVQ((vt5 + (vt1 << 32)), rs, (((short) imm14) << 2));
-
-		}
-
-	};
 	public static final Instruction SC = new Instruction(NO_FLAGS) {
 
 		@Override
@@ -3173,126 +3129,6 @@ public class EEInstructions {
 			final int rs = (insn >> 21) & 31;
 
 			cpu.doSWC1(ft, rs, (short) imm16);
-
-		}
-
-	};
-	public static final Instruction SVS = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "SVS";
-		}
-
-		@Override
-		public final String category() {
-			return "MIPS I/VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vt2 = (insn >> 0) & 3;
-			final int imm14 = (insn >> 2) & 16383;
-			final int vt5 = (insn >> 16) & 31;
-			final int rs = (insn >> 21) & 31;
-
-			cpu.doSVS((vt5 + (vt2 << 32)), rs, (((short) imm14) << 2));
-
-		}
-
-	};
-	public static final Instruction SVLQ = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "SVLQ";
-		}
-
-		@Override
-		public final String category() {
-			return "MIPS I/VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vt1 = (insn >> 0) & 1;
-			final int imm14 = (insn >> 2) & 16383;
-			final int vt5 = (insn >> 16) & 31;
-			final int rs = (insn >> 21) & 31;
-
-			cpu.doSVLQ((vt5 + (vt1 << 32)), rs, (((short) imm14) << 2));
-
-		}
-
-	};
-	public static final Instruction SVRQ = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "SVRQ";
-		}
-
-		@Override
-		public final String category() {
-			return "MIPS I/VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vt1 = (insn >> 0) & 1;
-			final int imm14 = (insn >> 2) & 16383;
-			final int vt5 = (insn >> 16) & 31;
-			final int rs = (insn >> 21) & 31;
-
-			cpu.doSVRQ((vt5 + (vt1 << 32)), rs, (((short) imm14) << 2));
-
-		}
-
-	};
-	public static final Instruction SVQ = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "SVQ";
-		}
-
-		@Override
-		public final String category() {
-			return "MIPS I/VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vt1 = (insn >> 0) & 1;
-			final int imm14 = (insn >> 2) & 16383;
-			final int vt5 = (insn >> 16) & 31;
-			final int rs = (insn >> 21) & 31;
-
-			cpu.doSVQ((vt5 + (vt1 << 32)), rs, (((short) imm14) << 2));
-
-		}
-
-	};
-	public static final Instruction SWB = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "SWB";
-		}
-
-		@Override
-		public final String category() {
-			return "MIPS I/VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vt1 = (insn >> 0) & 1;
-			final int imm14 = (insn >> 2) & 16383;
-			final int vt5 = (insn >> 16) & 31;
-			final int rs = (insn >> 21) & 31;
-
-			cpu.doSVQ((vt5 + (vt1 << 32)), rs, (((short) imm14) << 2));
 
 		}
 
@@ -3885,2233 +3721,6 @@ public class EEInstructions {
 		}
 
 	};
-	public static final Instruction VADD = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VADD";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVADD(1 + one + (two << 1), vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VSUB = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VSUB";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVSUB(1 + one + (two << 1), vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VSBN = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VSBN";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVSBN(1 + one + (two << 1), vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VDIV = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VDIV";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVDIV(1 + one + (two << 1), vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VMUL = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VMUL";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVMUL(1 + one + (two << 1), vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VDOT = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VDOT";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVDOT(1 + one + (two << 1), vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VSCL = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VSCL";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVSCL(1 + one + (two << 1), vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VHDP = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VHDP";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVHDP(1 + one + (two << 1), vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VDET = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VDET";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVDET(1 + one + (two << 1), vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VCRS = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VCRS";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVCRS(1 + one + (two << 1), vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction MFV = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "MFV";
-		}
-
-		@Override
-		public final String category() {
-			return "MIPS I/VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int imm7 = (insn >> 0) & 127;
-			final int rt = (insn >> 16) & 31;
-
-			cpu.doMFV(rt, imm7);
-
-		}
-
-	};
-	public static final Instruction MFVC = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "MFVC";
-		}
-
-		@Override
-		public final String category() {
-			return "MIPS I/VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int imm7 = (insn >> 0) & 127;
-			final int rt = (insn >> 16) & 31;
-
-			cpu.doMFVC(rt, imm7);
-
-		}
-
-	};
-	public static final Instruction MTV = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "MTV";
-		}
-
-		@Override
-		public final String category() {
-			return "MIPS I/VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int imm7 = (insn >> 0) & 127;
-			final int rt = (insn >> 16) & 31;
-
-			cpu.doMTV(rt, imm7);
-
-		}
-
-	};
-	public static final Instruction MTVC = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "MTVC";
-		}
-
-		@Override
-		public final String category() {
-			return "MIPS I/VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int imm7 = (insn >> 0) & 127;
-			final int rt = (insn >> 16) & 31;
-
-			cpu.doMTVC(rt, imm7);
-
-		}
-
-	};
-	public static final Instruction VCMP = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VCMP";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int imm3 = (insn >> 0) & 7;
-			final int one = (insn >> 7) & 1;
-			final int vs = (insn >> 8) & 127;
-			final int two = (insn >> 15) & 1;
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVCMP(1 + one + (two << 1), vs, vt, imm3);
-
-		}
-
-	};
-	public static final Instruction VMIN = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VMIN";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVMIN(1 + one + (two << 1), vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VMAX = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VMAX";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVMAX(1 + one + (two << 1), vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VSCMP = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VSCMP";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVSCMP(1 + one + (two << 1), vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VSGE = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VSGE";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVSGE(1 + one + (two << 1), vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VSLT = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VSLT";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVSLT(1 + one + (two << 1), vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VMOV = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VMOV";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVMOV(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VABS = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VABS";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVABS(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VNEG = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VNEG";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVNEG(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VIDT = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VIDT";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vd = (insn >> 0) & 127;
-			final int one = (insn >> 7) & 1;
-			final int two = (insn >> 15) & 1;
-
-			cpu.doVIDT(1 + one + (two << 1), vd);
-
-		}
-
-	};
-	public static final Instruction VSAT0 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VSAT0";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVSAT0(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VSAT1 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VSAT1";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVSAT1(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VZERO = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VZERO";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vd = (insn >> 0) & 127;
-			final int one = (insn >> 7) & 1;
-			final int two = (insn >> 15) & 1;
-
-			cpu.doVZERO(1 + one + (two << 1), vd);
-
-		}
-
-	};
-	public static final Instruction VONE = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VONE";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vd = (insn >> 0) & 127;
-			final int one = (insn >> 7) & 1;
-			final int two = (insn >> 15) & 1;
-
-			cpu.doVONE(1 + one + (two << 1), vd);
-
-		}
-
-	};
-	public static final Instruction VRCP = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VRCP";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVRCP(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VRSQ = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VRSQ";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVRSQ(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VSIN = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VSIN";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVSIN(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VCOS = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VCOS";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVCOS(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VEXP2 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VEXP2";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVEXP2(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VLOG2 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VLOG2";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVLOG2(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VSQRT = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VSQRT";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVSQRT(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VASIN = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VASIN";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVASIN(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VNRCP = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VNRCP";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVNRCP(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VNSIN = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VNSIN";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVNSIN(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VREXP2 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VREXP2";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVREXP2(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VRNDS = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VRNDS";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int one = (insn >> 7) & 1;
-			final int vs = (insn >> 8) & 127;
-			final int two = (insn >> 15) & 1;
-
-			cpu.doVRNDS(1 + one + (two << 1), vs);
-
-		}
-
-	};
-	public static final Instruction VRNDI = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VRNDI";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vd = (insn >> 0) & 127;
-			final int one = (insn >> 7) & 1;
-			final int two = (insn >> 15) & 1;
-
-			cpu.doVRNDI(1 + one + (two << 1), vd);
-
-		}
-
-	};
-	public static final Instruction VRNDF1 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VRNDF1";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vd = (insn >> 0) & 127;
-			final int one = (insn >> 7) & 1;
-			final int two = (insn >> 15) & 1;
-
-			cpu.doVRNDF1(1 + one + (two << 1), vd);
-
-		}
-
-	};
-	public static final Instruction VRNDF2 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VRNDF2";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vd = (insn >> 0) & 127;
-			final int one = (insn >> 7) & 1;
-			final int two = (insn >> 15) & 1;
-
-			cpu.doVRNDF2(1 + one + (two << 1), vd);
-
-		}
-
-	};
-	public static final Instruction VF2H = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VF2H";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVF2H(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VH2F = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VH2F";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVH2F(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VSBZ = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VSBZ";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVSBZ(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VLGB = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VLGB";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVLGB(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VUC2I = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VUC2I";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVUC2I(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VC2I = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VC2I";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVC2I(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VUS2I = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VUS2I";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVUS2I(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VS2I = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VS2I";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVS2I(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VI2UC = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VI2UC";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVI2UC(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VI2C = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VI2C";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVI2C(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VI2US = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VI2US";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVI2US(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VI2S = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VI2S";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVI2S(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VSRT1 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VSRT1";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVSRT1(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VSRT2 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VSRT2";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVSRT2(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VBFY1 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VBFY1";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVBFY1(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VBFY2 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VBFY2";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVBFY2(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VOCP = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VOCP";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVOCP(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VSOCP = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VSOCP";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVSOCP(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VFAD = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VFAD";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVFAD(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VAVG = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VAVG";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVAVG(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VSRT3 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VSRT3";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVSRT3(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VSRT4 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VSRT4";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVSRT4(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VMFVC = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VMFVC";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vd = (insn >> 0) & 127;
-			final int imm7 = (insn >> 8) & 127;
-
-			cpu.doVMFVC(vd, imm7);
-
-		}
-
-	};
-	public static final Instruction VMTVC = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VMTVC";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int imm7 = (insn >> 0) & 127;
-			final int vs = (insn >> 8) & 127;
-
-			cpu.doVMTVC(vs, imm7);
-
-		}
-
-	};
-	public static final Instruction VT4444 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VT4444";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVT4444(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VT5551 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VT5551";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVT5551(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VT5650 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VT5650";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVT5650(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VCST = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VCST";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vd = (insn >> 0) & 127;
-			final int one = (insn >> 7) & 1;
-			final int two = (insn >> 15) & 1;
-			final int imm5 = (insn >> 16) & 31;
-
-			cpu.doVCST(1 + one + (two << 1), vd, imm5);
-
-		}
-
-	};
-	public static final Instruction VF2IN = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VF2IN";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int imm5 = (insn >> 16) & 31;
-
-			cpu.doVF2IN(1 + one + (two << 1), vd, vs, imm5);
-
-		}
-
-	};
-	public static final Instruction VF2IZ = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VF2IZ";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int imm5 = (insn >> 16) & 31;
-
-			cpu.doVF2IZ(1 + one + (two << 1), vd, vs, imm5);
-
-		}
-
-	};
-	public static final Instruction VF2IU = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VF2IU";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int imm5 = (insn >> 16) & 31;
-
-			cpu.doVF2IU(1 + one + (two << 1), vd, vs, imm5);
-
-		}
-
-	};
-	public static final Instruction VF2ID = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VF2ID";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int imm5 = (insn >> 16) & 31;
-
-			cpu.doVF2ID(1 + one + (two << 1), vd, vs, imm5);
-
-		}
-
-	};
-	public static final Instruction VI2F = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VI2F";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int imm5 = (insn >> 16) & 31;
-
-			cpu.doVI2F(1 + one + (two << 1), vd, vs, imm5);
-
-		}
-
-	};
-	public static final Instruction VCMOVT = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VCMOVT";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int imm3 = (insn >> 16) & 7;
-
-			cpu.doVCMOVT(1 + one + (two << 1), imm3, vd, vs);
-
-		}
-
-	};
-	public static final Instruction VCMOVF = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VCMOVF";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int imm3 = (insn >> 16) & 7;
-
-			cpu.doVCMOVF(1 + one + (two << 1), imm3, vd, vs);
-
-		}
-
-	};
-	public static final Instruction VWBN = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VWBN";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int imm8 = (insn >> 16) & 255;
-
-			cpu.doVWBN(1 + one + (two << 1), vd, vs, imm8);
-
-		}
-
-	};
-	public static final Instruction VPFXS = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VPFXS";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int swzx = (insn >> 0) & 3;
-			final int swzy = (insn >> 2) & 3;
-			final int swzz = (insn >> 4) & 3;
-			final int swzw = (insn >> 6) & 3;
-			final int absx = (insn >> 8) & 1;
-			final int absy = (insn >> 9) & 1;
-			final int absz = (insn >> 10) & 1;
-			final int absw = (insn >> 11) & 1;
-			final int cstx = (insn >> 12) & 1;
-			final int csty = (insn >> 13) & 1;
-			final int cstz = (insn >> 14) & 1;
-			final int cstw = (insn >> 15) & 1;
-			final int negx = (insn >> 16) & 1;
-			final int negy = (insn >> 17) & 1;
-			final int negz = (insn >> 18) & 1;
-			final int negw = (insn >> 19) & 1;
-
-			cpu.doVPFXS(negw, negz, negy, negx, cstw, cstz, csty, cstx, absw,
-					absz, absy, absx, swzw, swzz, swzy, swzx);
-
-		}
-
-	};
-	public static final Instruction VPFXT = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VPFXT";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int swzx = (insn >> 0) & 3;
-			final int swzy = (insn >> 2) & 3;
-			final int swzz = (insn >> 4) & 3;
-			final int swzw = (insn >> 6) & 3;
-			final int absx = (insn >> 8) & 1;
-			final int absy = (insn >> 9) & 1;
-			final int absz = (insn >> 10) & 1;
-			final int absw = (insn >> 11) & 1;
-			final int cstx = (insn >> 12) & 1;
-			final int csty = (insn >> 13) & 1;
-			final int cstz = (insn >> 14) & 1;
-			final int cstw = (insn >> 15) & 1;
-			final int negx = (insn >> 16) & 1;
-			final int negy = (insn >> 17) & 1;
-			final int negz = (insn >> 18) & 1;
-			final int negw = (insn >> 19) & 1;
-
-			cpu.doVPFXT(negw, negz, negy, negx, cstw, cstz, csty, cstx, absw,
-					absz, absy, absx, swzw, swzz, swzy, swzx);
-
-		}
-
-	};
-	public static final Instruction VPFXD = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VPFXD";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int satx = (insn >> 0) & 3;
-			final int saty = (insn >> 2) & 3;
-			final int satz = (insn >> 4) & 3;
-			final int satw = (insn >> 6) & 3;
-			final int mskx = (insn >> 8) & 1;
-			final int msky = (insn >> 9) & 1;
-			final int mskz = (insn >> 10) & 1;
-			final int mskw = (insn >> 11) & 1;
-
-			cpu.doVPFXD(mskw, mskz, msky, mskx, satw, satz, saty, satx);
-
-		}
-
-	};
-	public static final Instruction VIIM = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VIIM";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int imm16 = (insn >> 0) & 65535;
-			final int vd = (insn >> 16) & 127;
-
-			cpu.doVIIM(vd, imm16);
-
-		}
-
-	};
-	public static final Instruction VFIM = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VFIM";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int imm16 = (insn >> 0) & 65535;
-			final int vd = (insn >> 16) & 127;
-
-			cpu.doVFIM(vd, imm16);
-
-		}
-
-	};
-	public static final Instruction VMMUL = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VMMUL";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVMMUL(1 + one + (two << 1), vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VHTFM2 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VHTFM2";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vd = (insn >> 0) & 127;
-			final int vs = (insn >> 8) & 127;
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVHTFM2(vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VTFM2 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VTFM2";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vd = (insn >> 0) & 127;
-			final int vs = (insn >> 8) & 127;
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVTFM2(vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VHTFM3 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VHTFM3";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vd = (insn >> 0) & 127;
-			final int vs = (insn >> 8) & 127;
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVHTFM3(vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VTFM3 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VTFM3";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vd = (insn >> 0) & 127;
-			final int vs = (insn >> 8) & 127;
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVTFM3(vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VHTFM4 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VHTFM4";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vd = (insn >> 0) & 127;
-			final int vs = (insn >> 8) & 127;
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVHTFM4(vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VTFM4 = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VTFM4";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vd = (insn >> 0) & 127;
-			final int vs = (insn >> 8) & 127;
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVTFM4(vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VMSCL = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VMSCL";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVMSCL(1 + one + (two << 1), vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VQMUL = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VQMUL";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vd = (insn >> 0) & 127;
-			final int vs = (insn >> 8) & 127;
-			final int vt = (insn >> 16) & 127;
-
-			cpu.doVQMUL(vd, vs, vt);
-
-		}
-
-	};
-	public static final Instruction VMMOV = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VMMOV";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-
-			cpu.doVMMOV(1 + one + (two << 1), vd, vs);
-
-		}
-
-	};
-	public static final Instruction VMIDT = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VMIDT";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vd = (insn >> 0) & 127;
-			final int one = (insn >> 7) & 1;
-			final int two = (insn >> 15) & 1;
-
-			cpu.doVMIDT(1 + one + (two << 1), vd);
-
-		}
-
-	};
-	public static final Instruction VMZERO = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VMZERO";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vd = (insn >> 0) & 127;
-			final int one = (insn >> 7) & 1;
-			final int two = (insn >> 15) & 1;
-
-			cpu.doVMZERO(1 + one + (two << 1), vd);
-
-		}
-
-	};
-	public static final Instruction VMONE = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VMONE";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			final int vd = (insn >> 0) & 127;
-			final int one = (insn >> 7) & 1;
-			final int two = (insn >> 15) & 1;
-
-			cpu.doVMONE(1 + one + (two << 1), vd);
-
-		}
-
-	};
-	public static final Instruction VROT = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VROT";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			decodeTwoVsOneVd(insn);
-			final int imm5 = (insn >> 16) & 31;
-
-			cpu.doVROT(1 + one + (two << 1), vd, vs, imm5);
-
-		}
-
-	};
-	public static final Instruction VNOP = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VNOP";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-
-		}
-
-	};
-	public static final Instruction VFLUSH = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VFLUSH";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-
-		}
-
-	};
-	public static final Instruction VSYNC = new Instruction(NO_FLAGS) {
-
-		@Override
-		public final String name() {
-			return "VSYNC";
-		}
-
-		@Override
-		public final String category() {
-			return "VFPU";
-		}
-
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			// TODO
-//			throw new RuntimeException();
-		}
-
-	};
 
 	public static final Instruction DERET = new Instruction(NO_FLAGS) {
 
@@ -6148,6 +3757,27 @@ public class EEInstructions {
 		@Override
 		public void interpret(final int insn, final boolean delay) {
 			cpu.doWAIT();
+		}
+
+	};
+
+	public static final Instruction CACHE = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "CACHE";
+		}
+
+		@Override
+		public final String category() {
+			return "PROCESSOR";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			decodeRsRtImm16(insn);
+
+			cpu.doCACHE(rt, rs, (short) imm16);
 		}
 
 	};
@@ -6224,6 +3854,88 @@ public class EEInstructions {
 		@Override
 		public void interpret(final int insn, final boolean delay) {
 			cpu.doTLBWR();
+		}
+
+	};
+	public static final Instruction MTSAB = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "MTSAB";
+		}
+
+		@Override
+		public final String category() {
+			return "MIPS EE";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			final short imm16 = (short) ((insn >> 0) & 65535);
+			final int rs = (insn >> 21) & 31;
+
+			cpu.doMTSAB(rs, imm16);
+		}
+
+	};
+
+	public static final Instruction MTSAH = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "MTSAH";
+		}
+
+		@Override
+		public final String category() {
+			return "MIPS EE";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			final short imm16 = (short) ((insn >> 0) & 65535);
+			final int rs = (insn >> 21) & 31;
+
+			cpu.doMTSAH(rs, imm16);
+		}
+
+	};
+
+	public static final Instruction LQC2 = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "LQC2";
+		}
+
+		@Override
+		public final String category() {
+			return "CPU";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			// TODO
+			// cpu.doLQC2();
+		}
+
+	};
+	public static final Instruction SQC2 = new Instruction(NO_FLAGS) {
+
+		@Override
+		public final String name() {
+			return "SQC2";
+		}
+
+		@Override
+		public final String category() {
+			return "CPU";
+		}
+
+		@Override
+		public void interpret(final int insn, final boolean delay) {
+			// TODO
+			// cpu.doSQC2();
 		}
 
 	};

@@ -7,7 +7,7 @@ import com.jps2.core.cpu.ee.EEHardwareRegisters;
 import com.jps2.core.cpu.registers.CP0Register;
 import com.jps2.core.cpu.registers.CP0StatusRegister;
 
-public final class CpuState extends VfpuState {
+public final class CpuState extends SauState {
 
 	private static final Logger logger = Logger.getLogger(CpuState.class);
 
@@ -50,6 +50,22 @@ public final class CpuState extends VfpuState {
 
 	public final boolean isWriteLocked() {
 		return (statusReg.value & 0x10000) != 0;
+	}
+
+	public final void doDI(boolean delay) {
+		if (statusReg.getEDI() || statusReg.getEXL() || statusReg.getERL()
+				|| (statusReg.getKSU() == 0)) {
+			statusReg.setEIE(false);
+			updateCP0Status(delay);
+		}
+	}
+
+	public final void doEI(boolean delay) {
+		if (statusReg.getEDI() || statusReg.getEXL() || statusReg.getERL()
+				|| (statusReg.getKSU() == 0)) {
+			statusReg.setEIE(true);
+			updateCP0Status(delay);
+		}
 	}
 
 	public final void doMFC0(final int rt, final int c0dr) {
@@ -264,33 +280,34 @@ public final class CpuState extends VfpuState {
 		cpuTestDMACInts();
 		cpuTestTIMRInts(delay);
 	}
-	
-	public void rcntWcount(final int index, final int value)
-	{
-	        EECNT_LOG("EE Counter[%d] writeCount = %x,   oldcount=%x, target=%x", index, value, counters[index].count, counters[index].target );
 
-	        counters[index].count = value & 0xffff;
+	public void rcntWcount(final int index, final int value) {
+		EECNT_LOG("EE Counter[%d] writeCount = %x,   oldcount=%x, target=%x",
+				index, value, counters[index].count, counters[index].target);
 
-	        // reset the target, and make sure we don't get a premature target.
-	        counters[index].target &= 0xffff;
-	        if( counters[index].count > counters[index].target )
-	                counters[index].target |= EECNT_FUTURE_TARGET;
+		counters[index].count = value & 0xffff;
 
-	        // re-calculate the start cycle of the counter based on elapsed time since the last counter update:
-	        if(counters[index].mode.IsCounting) {
-	                if(counters[index].mode.ClockSource != 0x3) {
-	                        s32 change = cpuRegs.cycle - counters[index].sCycleT;
-	                        if( change > 0 ) {
-	                                change -= (change / counters[index].rate) * counters[index].rate;
-	                                counters[index].sCycleT = cpuRegs.cycle - change;
-	                        }
-	                }
-	        }
-	        else counters[index].sCycleT = cpuRegs.cycle;
+		// reset the target, and make sure we don't get a premature target.
+		counters[index].target &= 0xffff;
+		if (counters[index].count > counters[index].target)
+			counters[index].target |= EECNT_FUTURE_TARGET;
 
-	        _rcntSet( index );
+		// re-calculate the start cycle of the counter based on elapsed time
+		// since the last counter update:
+		if (counters[index].mode.IsCounting) {
+			if (counters[index].mode.ClockSource != 0x3) {
+				s32 change = cpuRegs.cycle - counters[index].sCycleT;
+				if (change > 0) {
+					change -= (change / counters[index].rate)
+							* counters[index].rate;
+					counters[index].sCycleT = cpuRegs.cycle - change;
+				}
+			}
+		} else
+			counters[index].sCycleT = cpuRegs.cycle;
+
+		_rcntSet(index);
 	}
-
 
 	public final void doTLBR() {
 
@@ -314,6 +331,10 @@ public final class CpuState extends VfpuState {
 
 	public final void doDERET() {
 
+	}
+
+	public final void doCACHE(final int base, final int opcode, final int offset) {
+		System.err.println(">>>>>>>>>>>>>>>>>CACHE<<<<<<<<<<<<<<<<<<<");
 	}
 
 	static final class PERFregs {
@@ -359,5 +380,5 @@ public final class CpuState extends VfpuState {
 			}
 		}
 	}
-	
+
 }

@@ -7,8 +7,6 @@ import com.jps2.core.cpu.registers.CP0Register;
 public class CpuState extends BcuState {
 	IOPCounter[] counters;
 
-	public int interrupt = 0;
-
 	@Override
 	void reset() {
 		resetAll();
@@ -29,10 +27,6 @@ public class CpuState extends BcuState {
 			counters[i] = new IOPCounter();
 		}
 		reset();
-	}
-
-	public int getPc() {
-		return pc;
 	}
 
 	public IOPCounter getCounter(final int index) {

@@ -475,7 +475,7 @@ public final class IOPHardwareRegisters extends FastMemory {
 
 		case 0x1450:
 			hard = super.read32(address);
-			logger.debug(String.format("%08X ICFG 32bit read %x", cpu.getPc(),
+			logger.debug(String.format("%08X ICFG 32bit read %x", cpu.pc,
 					hard));
 			return hard;
 
@@ -763,7 +763,7 @@ public final class IOPHardwareRegisters extends FastMemory {
 			// return;
 
 		case 0x1450:
-			logger.debug(String.format("%08X ICFG 16bit write %x", cpu.getPc(),
+			logger.debug(String.format("%08X ICFG 16bit write %x", cpu.pc,
 					data));
 			super.write16(address, data/* & (~0x8) */);
 			;
@@ -1324,7 +1324,7 @@ public final class IOPHardwareRegisters extends FastMemory {
 
 		case 0x1450:
 			// if (data != 0) {
-			logger.debug(String.format("%08X ICFG 32bit write %x", cpu.getPc(),
+			logger.debug(String.format("%08X ICFG 32bit write %x", cpu.pc,
 					data));
 			// }
 			/*
@@ -1457,7 +1457,7 @@ public final class IOPHardwareRegisters extends FastMemory {
 			return;
 
 		case 0x1450:
-			logger.debug(String.format("%08X ICFG 8bit write %x", cpu.getPc(),
+			logger.debug(String.format("%08X ICFG 8bit write %x", cpu.pc,
 					data));
 			super.write8(address, data);
 			return;

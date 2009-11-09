@@ -13,7 +13,7 @@ public abstract class Processor {
 	// cache controls
 	private final CacheLine[] instCache = new CacheLine[0x10000];
 	private final int cacheMask = instCache.length - 1;
-	private long insnCacheHits, insnCacheMisses, insnCount = 0;
+	public long insnCacheHits, insnCacheMisses, insnCount = 0;
 
 	public final Cpu cpu;
 	public final AbstractMemoryManager memory;
@@ -43,6 +43,7 @@ public abstract class Processor {
 //			e.printStackTrace();
 //		}
 //	}
+	long last = System.currentTimeMillis();
 	
 	private final CacheLine getFromCache() {
 		final CacheLine line = instCache[cpu.pc & cacheMask];
@@ -64,6 +65,12 @@ public abstract class Processor {
 //			e.printStackTrace();
 //		}
 		insnCount++;
+		if (insnCount % 1000000 == 0){
+			final long lastT = System.currentTimeMillis();
+			final long diff = lastT-last;
+			last = lastT;
+			System.err.println(">>>>>>>>>>>>>>>  " + (long)(1000000/(diff/1000d)));
+		}
 		return line;
 	}
 

@@ -1,11 +1,11 @@
 package com.jps2.core.cpu.iop.state;
 
-import com.jps2.core.cpu.Counter;
+import com.jps2.core.cpu.iop.IOPCounter;
 import com.jps2.core.cpu.iop.IOPHardwareRegisters;
 import com.jps2.core.cpu.registers.CP0Register;
 
 public class CpuState extends BcuState {
-	Counter[] counters;
+	IOPCounter[] counters;
 
 	public int interrupt = 0;
 
@@ -24,9 +24,9 @@ public class CpuState extends BcuState {
 		for (int i = 0; i < cp0.length; i++) {
 			cp0[i] = new CP0Register();
 		}
-		counters = new Counter[8];
+		counters = new IOPCounter[8];
 		for (int i = 0; i < counters.length; i++) {
-			counters[i] = new Counter();
+			counters[i] = new IOPCounter();
 		}
 		reset();
 	}
@@ -35,7 +35,7 @@ public class CpuState extends BcuState {
 		return pc;
 	}
 
-	public Counter getCounter(final int index) {
+	public IOPCounter getCounter(final int index) {
 		return counters[index];
 	}
 
@@ -107,7 +107,7 @@ public class CpuState extends BcuState {
 	}
 
 	public short psxRcntRcount16(final int index) {
-		final Counter counter = counters[index];
+		final IOPCounter counter = counters[index];
 		if ((counter.mode & 0x1000000) != 0) {
 			return (short) counter.count;
 		}
@@ -115,7 +115,7 @@ public class CpuState extends BcuState {
 	}
 
 	public int psxRcntRcount32(final int index) {
-		final Counter counter = counters[index];
+		final IOPCounter counter = counters[index];
 		if ((counter.mode & 0x1000000) != 0) {
 			return (int) counter.count;
 		}

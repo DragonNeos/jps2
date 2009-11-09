@@ -1,6 +1,6 @@
-package com.jps2.core.cpu;
+package com.jps2.core.cpu.iop;
 
-public class Counter {
+public class IOPCounter {
 	public long count;
 	public long target;
 	public int mode;

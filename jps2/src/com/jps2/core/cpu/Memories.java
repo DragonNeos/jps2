@@ -2,6 +2,7 @@ package com.jps2.core.cpu;
 
 import org.apache.log4j.Logger;
 
+import com.jps2.core.cpu.ee.EEHardwareRegisters;
 import com.jps2.core.cpu.iop.IOPCdvdRegisters;
 import com.jps2.core.cpu.iop.IOPHardwareRegisters;
 import com.jps2.core.memory.FastMemory;
@@ -12,7 +13,7 @@ public abstract class Memories {
 	public static final Logger logger = Logger.getLogger(Memories.class);
 
 	public static final FastMemory memoryRAM = new FastMemory("RAM", 0x01FFFFFF);
-	public static final FastMemory memoryREG = new FastMemory("REG", 0x0000FFFF);
+	public static final EEHardwareRegisters hwRegistersEE = new EEHardwareRegisters();
 	public static final FastMemory memoryPAD = new FastMemory("PAD", 0x0000FFFF);
 	public static final FastMemory memoryROM = new FastMemory("ROM", 0x003FFFFF);
 	public static final IOPHardwareRegisters hwRegistersIOP = new IOPHardwareRegisters();
@@ -34,7 +35,7 @@ public abstract class Memories {
 		logger.info("Bios file loaded.");
 		memoryRAM.allocate();
 		logger.info("RAM...OK.");
-		memoryREG.allocate();
+		hwRegistersEE.allocate();
 		logger.info("REG...OK.");
 		memoryPAD.allocate();
 		logger.info("PAD...OK.");

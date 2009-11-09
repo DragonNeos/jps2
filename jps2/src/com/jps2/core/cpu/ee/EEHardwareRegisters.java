@@ -1,5 +1,6 @@
 package com.jps2.core.cpu.ee;
 
+import com.jps2.core.cpu.ee.state.CpuState;
 import com.jps2.core.memory.FastMemory;
 
 public class EEHardwareRegisters extends FastMemory {
@@ -186,5 +187,11 @@ public class EEHardwareRegisters extends FastMemory {
 
 	public EEHardwareRegisters() {
 		super("EE Hardware Registers", 0xFFFF);
+	}
+	
+	public CpuState cpu;
+
+	public void setCpu(final CpuState cpu) {
+		this.cpu = cpu;
 	}
 }

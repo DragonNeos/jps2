@@ -169,6 +169,7 @@ public class Emulator {
 			setDaemon(true);
 			// send cpu to others objects in emulator
 			EEInstructions.setCpu((com.jps2.core.cpu.ee.state.CpuState) ee.cpu);
+			Memories.hwRegistersEE.setCpu((com.jps2.core.cpu.ee.state.CpuState) ee.cpu);
 			start();
 		}
 

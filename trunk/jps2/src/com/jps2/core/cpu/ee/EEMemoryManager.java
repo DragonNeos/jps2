@@ -12,7 +12,7 @@ public class EEMemoryManager extends AbstractMemoryManager {
 
 	/**
 	 * <pre>
-	 * 0x10000000 - 0x1000ffff REG Mirror Address.
+	 * 0x10000000 - 0x1000ffff hw EE REGs Mirror Address.
 	 * 0x11000000 - 0x1100ffff VUF Mirror Address.
 	 * 0x12000000 - 0x1200ffff GS  Mirror Address.
 	 * 0x00100000 - 0x01ffffff RAM Mirror Address. (cached)
@@ -28,19 +28,15 @@ public class EEMemoryManager extends AbstractMemoryManager {
 	 */
 	@Override
 	public Memory getMemoryByAddress(final int address, final boolean write) {
-		if (address == 0) {
-			logger.info("reset");
-		}
-
 		// verifica o primeiro bit do endereço
 		switch ((address >> 28 & 0xF)) {
 		// RAM
 		case 0x0:
 			if (address >= 0x00100000) {
+				if (write && Memories.hwRegistersEE.cpu.isWriteLocked()) {
+					return null;
+				}
 				Memories.memoryRAM.setOffset(0x00100000);
-				return Memories.memoryRAM;
-			} else {
-				Memories.memoryRAM.setOffset(0x00000000);
 				return Memories.memoryRAM;
 			}
 			// pode ser REG ,ROM, VUF ou GS
@@ -49,8 +45,8 @@ public class EEMemoryManager extends AbstractMemoryManager {
 			// REG
 			case 0x0:
 				logger.info("REG Memories.memory");
-				Memories.memoryREG.setOffset(0x10000000);
-				return Memories.memoryREG;
+				Memories.hwRegistersEE.setOffset(0x10000000);
+				return Memories.hwRegistersEE;
 			case 0x1:
 				logger.info("VUF Memories.memory");
 				break;
@@ -77,6 +73,9 @@ public class EEMemoryManager extends AbstractMemoryManager {
 		// RAM
 		case 0x2:
 			if (address >= 0x20100000) {
+				if (write && Memories.hwRegistersEE.cpu.isWriteLocked()) {
+					return null;
+				}
 				Memories.memoryRAM.setOffset(0x20100000);
 				return Memories.memoryRAM;
 			}
@@ -85,6 +84,9 @@ public class EEMemoryManager extends AbstractMemoryManager {
 		case 0x3:
 
 			if (address >= 0x30100000) {
+				if (write && Memories.hwRegistersEE.cpu.isWriteLocked()) {
+					return null;
+				}
 				Memories.memoryRAM.setOffset(0x30100000);
 				return Memories.memoryRAM;
 			}
@@ -99,6 +101,9 @@ public class EEMemoryManager extends AbstractMemoryManager {
 			break;
 		// KSEG 2
 		case 0x8:
+			if (write && Memories.hwRegistersEE.cpu.isWriteLocked()) {
+				return null;
+			}
 			Memories.memoryRAM.setOffset(0x80000000);
 			return Memories.memoryRAM;
 			// ROM
@@ -114,16 +119,19 @@ public class EEMemoryManager extends AbstractMemoryManager {
 			break;
 		// KSEG 1
 		case 0xA:
+			if (write && Memories.hwRegistersEE.cpu.isWriteLocked()) {
+				return null;
+			}
 			Memories.memoryRAM.setOffset(0xA0000000);
 			return Memories.memoryRAM;
 			// REG ou ROM
 		case 0xB:
 			switch ((address >> 20 & 0xF)) {
-			// REG
+			// EE HW REGISTERS
 			case 0x0:
 				if (address >= 0xB0000000) {
-					Memories.memoryREG.setOffset(0xB0000000);
-					return Memories.memoryREG;
+					Memories.hwRegistersEE.setOffset(0xB0000000);
+					return Memories.hwRegistersEE;
 				}
 				break;
 			// IOP
@@ -136,9 +144,6 @@ public class EEMemoryManager extends AbstractMemoryManager {
 			// ROM
 			case 0xC:
 				if (address >= 0xBFC00000) {
-					if (address == 0xBFC10000) {
-						logger.info("IOP START");
-					}
 					if (write) {
 						throw new RuntimeException(
 								"ReadOnly Memories.memory ROM "

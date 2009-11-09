@@ -3,7 +3,9 @@ package com.jps2.core.cpu.ee.state;
 import org.apache.log4j.Logger;
 
 import com.jps2.core.cpu.ExcCode;
+import com.jps2.core.cpu.ee.EECounter;
 import com.jps2.core.cpu.ee.EEHardwareRegisters;
+import com.jps2.core.cpu.ee.EESyncCounter;
 import com.jps2.core.cpu.registers.CP0Register;
 import com.jps2.core.cpu.registers.CP0StatusRegister;
 
@@ -11,6 +13,14 @@ public final class CpuState extends SauState {
 
 	private static final Logger logger = Logger.getLogger(CpuState.class);
 
+	final EECounter[] counters;
+	final EESyncCounter hSyncCounter;
+	final EESyncCounter vSyncCounter;
+
+	int nextsCounter; // records the cpuRegs.cycle value of the last call to
+	// rcntUpdate()
+	int nextCounter; // delta from nextsCounter, in cycles, until the next
+	// rcntUpdate()
 	int[] eCycle;
 	int[] sCycle; // for internal counters
 
@@ -44,6 +54,12 @@ public final class CpuState extends SauState {
 		}
 		eCycle = new int[32];
 		sCycle = new int[32];
+		counters = new EECounter[4];
+		for (int i = 0; i < counters.length; i++) {
+			counters[i] = new EECounter();
+		}
+		hSyncCounter = new EESyncCounter();
+		vSyncCounter = new EESyncCounter();
 		perfRegs = new PERFregs();
 		reset();
 	}
@@ -52,7 +68,7 @@ public final class CpuState extends SauState {
 		return (statusReg.value & 0x10000) != 0;
 	}
 
-	public final void doDI(boolean delay) {
+	public final void doDI(final boolean delay) {
 		if (statusReg.getEDI() || statusReg.getEXL() || statusReg.getERL()
 				|| (statusReg.getKSU() == 0)) {
 			statusReg.setEIE(false);
@@ -60,7 +76,7 @@ public final class CpuState extends SauState {
 		}
 	}
 
-	public final void doEI(boolean delay) {
+	public final void doEI(final boolean delay) {
 		if (statusReg.getEDI() || statusReg.getEXL() || statusReg.getERL()
 				|| (statusReg.getKSU() == 0)) {
 			statusReg.setEIE(true);
@@ -265,7 +281,6 @@ public final class CpuState extends SauState {
 		// A proper fix would schedule the TIMR to trigger at a specific cycle
 		// anytime
 		// the Count or Compare registers are modified.
-
 		if (((statusReg.value & 0x8000) != 0)
 				&& cp0[CP0_COUNT].value >= cp0[CP0_COMPARE].value
 				&& cp0[CP0_COUNT].value < cp0[CP0_COMPARE].value + 1000) {
@@ -281,32 +296,221 @@ public final class CpuState extends SauState {
 		cpuTestTIMRInts(delay);
 	}
 
-	public void rcntWcount(final int index, final int value) {
-		EECNT_LOG("EE Counter[%d] writeCount = %x,   oldcount=%x, target=%x",
-				index, value, counters[index].count, counters[index].target);
+	private final void rcntInit() {
+		int i;
+
+		for (i = 0; i < 4; i++) {
+			counters[i].rate = 2;
+			counters[i].target = 0xffff;
+		}
+		counters[0].interrupt = 9;
+		counters[1].interrupt = 10;
+		counters[2].interrupt = 11;
+		counters[3].interrupt = 12;
+
+		hSyncCounter.mode = EESyncCounter.MODE_HRENDER;
+		hSyncCounter.sCycle = cycle;
+		vSyncCounter.mode = EESyncCounter.MODE_VRENDER;
+		vSyncCounter.sCycle = cycle;
+
+		updateVSyncRate();
+
+		for (i = 0; i < 4; i++) {
+			rcntReset(i);
+		}
+		cpuRcntSet();
+	}
+	
+	private final  void cpuRcntSet()
+	{
+	        int i;
+
+	        nextsCounter = cycle;
+	        nextCounter = vSyncCounter.cycleT - (cycle - vSyncCounter.sCycle);
+
+	        for (i = 0; i < 4; i++){
+	                rcntSet( i );
+	        }
+
+	        // sanity check!
+	        if( nextCounter < 0 ) {
+	        	nextCounter = 0;
+	        }
+	}
+
+
+//	private static final String limiterMsg = "Framelimiter rate updated (UpdateVSyncRate): %d.%d fps";
+
+	private final int updateVSyncRate() {
+
+		// TODO - Dyorgio, implement for support video mode change
+		// // fixme - According to some docs, progressive-scan modes actually
+		// refresh slower than
+		// // interlaced modes. But I can't fathom how, since the refresh rate
+		// is a function of
+		// // the television and all the docs I found on TVs made no indication
+		// that they ever
+		// // run anything except their native refresh rate.
+		//
+		// //#define VBLANK_NTSC ((Config.PsxType & 2) ? 59.94 : 59.82) //59.94
+		// is more precise
+		// //#define VBLANK_PAL ((Config.PsxType & 2) ? 50.00 : 49.76)
+		//
+		// if( gsRegionMode == Region_PAL )
+		// {
+		// if( vSyncInfo.Framerate != FRAMERATE_PAL )
+		// vSyncInfoCalc( &vSyncInfo, FRAMERATE_PAL, SCANLINES_TOTAL_PAL );
+		// }
+		// else
+		// {
+		// if( vSyncInfo.Framerate != FRAMERATE_NTSC )
+		// vSyncInfoCalc( &vSyncInfo, FRAMERATE_NTSC, SCANLINES_TOTAL_NTSC );
+		// }
+		//
+		// hSyncCounter.cycleT = vSyncInfo.hRender; // Amount of cycles before
+		// the counter will be updated
+		// vSyncCounter.cycleT = vSyncInfo.Render; // Amount of cycles before
+		// the counter will be updated
+		//
+		// if( EmuConfig.Video.EnableFrameLimiting && (EmuConfig.Video.FpsLimit
+		// > 0) )
+		// {
+		// final s64 ticks = GetTickFrequency() / EmuConfig.Video.FpsLimit;
+		// if( m_iTicks != ticks )
+		// {
+		// m_iTicks = ticks;
+		// gsOnModeChanged( vSyncInfo.Framerate, m_iTicks );
+		// Console.Status( limiterMsg, EmuConfig.Video.FpsLimit, 0 );
+		// }
+		// }
+		// else
+		// {
+		// final s64 ticks = (GetTickFrequency() * 50) / vSyncInfo.Framerate;
+		// if( m_iTicks != ticks )
+		// {
+		// m_iTicks = ticks;
+		// gsOnModeChanged( vSyncInfo.Framerate, m_iTicks );
+		// Console.Status( limiterMsg, vSyncInfo.Framerate/50,
+		// (vSyncInfo.Framerate*2)%100 );
+		// }
+		// }
+		//
+		// m_iStart = GetCPUTicks();
+		// cpuRcntSet();
+		//
+		// return (u32)m_iTicks;
+		return 0;
+	}
+
+	private final void rcntReset(final int index) {
+		counters[index].count = 0;
+		counters[index].cycleT = cycle;
+	}
+
+	public final int rcntRcount(final int index) {
+		int ret;
+
+		// only count if the counter is turned on (0x80) and is not an hsync
+		// gate (!0x03)
+		if (counters[index].mode.isCounting()
+				&& (counters[index].mode.getClockSource() != 0x3)) {
+			ret = counters[index].count
+					+ ((cycle - counters[index].cycleT) / counters[index].rate);
+		} else {
+			ret = counters[index].count;
+		}
+
+		// Spams the Console.
+//		logger.debug(String.format("EE Counter[%d] readCount32 = %x", index,
+//				ret));
+		return ret;
+	}
+
+	public final void rcntWcount(final int index, final int value) {
+		logger.debug(String.format(
+				"EE Counter[%d] writeCount = %x,   oldcount=%x, target=%x",
+				index, value, counters[index].count, counters[index].target));
 
 		counters[index].count = value & 0xffff;
 
 		// reset the target, and make sure we don't get a premature target.
 		counters[index].target &= 0xffff;
 		if (counters[index].count > counters[index].target)
-			counters[index].target |= EECNT_FUTURE_TARGET;
+			counters[index].target |= EECounter.EECNT_FUTURE_TARGET;
 
 		// re-calculate the start cycle of the counter based on elapsed time
 		// since the last counter update:
-		if (counters[index].mode.IsCounting) {
-			if (counters[index].mode.ClockSource != 0x3) {
-				s32 change = cpuRegs.cycle - counters[index].sCycleT;
+		if (counters[index].mode.isCounting()) {
+			if (counters[index].mode.getClockSource() != 0x3) {
+				int change = cycle - counters[index].cycleT;
 				if (change > 0) {
 					change -= (change / counters[index].rate)
 							* counters[index].rate;
-					counters[index].sCycleT = cpuRegs.cycle - change;
+					counters[index].cycleT = cycle - change;
 				}
 			}
-		} else
-			counters[index].sCycleT = cpuRegs.cycle;
+		} else {
+			counters[index].cycleT = cycle;
+		}
 
-		_rcntSet(index);
+		rcntSet(index);
+	}
+
+	private final void rcntSet(final int cntidx) {
+
+		final EECounter counter = counters[cntidx];
+
+		// Stopped or special hsync gate?
+		if (!counter.mode.isCounting()
+				|| (counter.mode.getClockSource() == 0x3)) {
+			return;
+		}
+
+		// check for special cases where the overflow or target has just passed
+		// (we probably missed it because we're doing/checking other things)
+		if (counter.count > 0x10000 || counter.count > counter.target) {
+			nextCounter = 4;
+			return;
+		}
+
+		// nextCounter is relative to the cpuRegs.cycle when rcntUpdate() was
+		// last called.
+		// However, the current _rcntSet could be called at any cycle count, so
+		// we need to take
+		// that into account. Adding the difference from that cycle count to the
+		// current one
+		// will do the trick!
+		int c = ((0x10000 - counter.count) * counter.rate)
+				- (cycle - counter.cycleT);
+		// adjust for time passed since last
+		// rcntUpdate();
+		c += cycle - nextsCounter;
+		if (c < nextCounter) {
+			nextCounter = c;
+			// Need to update on counter
+			// resets/target changes
+			// cpuSetNextBranch(nextsCounter, nextCounter);
+		}
+
+		// Ignore target diff if target is currently disabled.
+		// (the overflow is all we care about since it goes first, and then the
+		// target will be turned on afterward, and handled in the next event
+		// test).
+		if ((counter.target & EECounter.EECNT_FUTURE_TARGET) != 0) {
+			return;
+		} else {
+			c = ((counter.target - counter.count) * counter.rate)
+					- (cycle - counter.cycleT);
+			// adjust for time passed since
+			// last rcntUpdate();
+			c += cycle - nextsCounter;
+			if (c < nextCounter) {
+				nextCounter = c;
+				// Need to update on counter
+				// resets/target changes
+				// cpuSetNextBranch(nextsCounter, nextCounter);
+			}
+		}
 	}
 
 	public final void doTLBR() {

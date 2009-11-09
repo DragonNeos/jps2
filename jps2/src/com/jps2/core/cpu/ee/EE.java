@@ -10,7 +10,7 @@ public class EE extends Processor {
 	public EE() {
 		super(new CpuState(), new EEMemoryManager());
 	}
-
+	
 	@Override
 	protected Instruction decode(final int opcode) {
 		return EEDecoder.instruction(opcode);

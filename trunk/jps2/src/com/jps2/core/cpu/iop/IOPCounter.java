@@ -1,12 +1,12 @@
 package com.jps2.core.cpu.iop;
 
 public class IOPCounter {
-	public long count;
-	public long target;
-	public int mode;
-	public int rate;
-	public int interrupt;
-	public int cycleT;
+	public long	count;
+	public long	target;
+	public int	mode;
+	public int	rate;
+	public int	interrupt;
+	public int	cycleT;
 
 	public void reset(final int cycle) {
 		count = 0;

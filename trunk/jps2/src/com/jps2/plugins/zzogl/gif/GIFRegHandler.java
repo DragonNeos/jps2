@@ -3,7 +3,7 @@ package com.jps2.plugins.zzogl.gif;
 import com.jps2.plugins.zzogl.GSInternal;
 
 public abstract class GIFRegHandler {
-	private final String name;
+	private final String	name;
 
 	GIFRegHandler(final String name) {
 		this.name = name;
@@ -13,5 +13,5 @@ public abstract class GIFRegHandler {
 		return name;
 	}
 
-	public abstract void handler(final GSInternal gs,int...data);
+	public abstract void handler(final GSInternal gs, int... data);
 }

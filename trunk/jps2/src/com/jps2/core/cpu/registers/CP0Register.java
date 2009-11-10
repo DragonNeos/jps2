@@ -4,7 +4,7 @@ import com.jps2.core.cpu.DataType;
 
 public class CP0Register implements Register32bits {
 
-	public int value;
+	public int	value;
 
 	@Override
 	public final DataType getType() {

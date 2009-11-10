@@ -4,7 +4,7 @@ import java.awt.Component;
 
 @SuppressWarnings("serial")
 public abstract class ConfigureComponent extends Component {
-	
+
 	/**
 	 * Save configuration.
 	 */

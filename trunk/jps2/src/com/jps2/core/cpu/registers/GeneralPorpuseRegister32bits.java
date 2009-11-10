@@ -4,10 +4,10 @@ import com.jps2.core.cpu.DataType;
 
 public class GeneralPorpuseRegister32bits implements Register32bits {
 
-	final int index;
-	private int word = 0x0;
+	final int			index;
+	private int			word	= 0x0;
 
-	private DataType type = DataType.WORD;
+	private DataType	type	= DataType.WORD;
 
 	public GeneralPorpuseRegister32bits(final int index) {
 		this.index = index;

@@ -9,25 +9,23 @@ public class Common {
 
 	public static abstract class Instruction {
 
-		protected int rt, rd, rs, sa, imm16, vd, one, vs, two;
+		protected int			rt, rd, rs, sa, imm16, vd, one, vs, two;
 
-		private int m_count = 0;
-		private int flags = 0;
-		public final static int NO_FLAGS = 0;
-		public final static int FLAG_INTERPRETED = (1 << 0);
-		public final static int FLAG_CANNOT_BE_SPLIT = (1 << 1);
-		public final static int FLAG_HAS_DELAY_SLOT = (1 << 2);
-		public final static int FLAG_IS_BRANCHING = (1 << 3);
-		public final static int FLAG_IS_JUMPING = (1 << 4);
-		public final static int FLAG_IS_CONDITIONAL = (1 << 5);
-		public final static int FLAG_STARTS_NEW_BLOCK = (1 << 6);
-		public final static int FLAG_ENDS_BLOCK = (1 << 7);
-		public final static int FLAGS_BRANCH_INSTRUCTION = FLAG_CANNOT_BE_SPLIT
-				| FLAG_HAS_DELAY_SLOT | FLAG_IS_BRANCHING | FLAG_IS_CONDITIONAL;
-		public final static int FLAGS_LINK_INSTRUCTION = FLAG_HAS_DELAY_SLOT
-				| FLAG_STARTS_NEW_BLOCK;
+		private int				m_count						= 0;
+		private int				flags						= 0;
+		public final static int	NO_FLAGS					= 0;
+		public final static int	FLAG_INTERPRETED			= (1 << 0);
+		public final static int	FLAG_CANNOT_BE_SPLIT		= (1 << 1);
+		public final static int	FLAG_HAS_DELAY_SLOT			= (1 << 2);
+		public final static int	FLAG_IS_BRANCHING			= (1 << 3);
+		public final static int	FLAG_IS_JUMPING				= (1 << 4);
+		public final static int	FLAG_IS_CONDITIONAL			= (1 << 5);
+		public final static int	FLAG_STARTS_NEW_BLOCK		= (1 << 6);
+		public final static int	FLAG_ENDS_BLOCK				= (1 << 7);
+		public final static int	FLAGS_BRANCH_INSTRUCTION	= FLAG_CANNOT_BE_SPLIT | FLAG_HAS_DELAY_SLOT | FLAG_IS_BRANCHING | FLAG_IS_CONDITIONAL;
+		public final static int	FLAGS_LINK_INSTRUCTION		= FLAG_HAS_DELAY_SLOT | FLAG_STARTS_NEW_BLOCK;
 
-		private int instruction;
+		private int				instruction;
 
 		public void setInstruction(final int instruction) {
 			this.instruction = instruction;
@@ -100,8 +98,7 @@ public class Common {
 			return (flags & testFlags) == testFlags;
 		}
 
-		private void appendFlagString(final StringBuffer result,
-				final String flagString) {
+		private void appendFlagString(final StringBuffer result, final String flagString) {
 			if (result.length() > 0) {
 				result.append(" | ");
 			}
@@ -140,7 +137,7 @@ public class Common {
 
 		@Override
 		public String toString() {
-			return name() ;//+ "(" + flagsToString() + ")";
+			return name();// + "(" + flagsToString() + ")";
 		}
 	}
 
@@ -170,46 +167,42 @@ public class Common {
 		}
 	}
 
-	public static final Instruction NOP = new Instruction(NO_FLAGS) {
+	public static final Instruction	NOP	= new Instruction(NO_FLAGS) {
 
-		@Override
-		public final String name() {
-			return "NOP";
-		}
+											@Override
+											public final String name() {
+												return "NOP";
+											}
 
-		@Override
-		public final String category() {
-			return "MIPS I";
-		}
+											@Override
+											public final String category() {
+												return "MIPS I";
+											}
 
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			// nothing to do
-		}
+											@Override
+											public void interpret(final int insn, final boolean delay) {
+												// nothing to do
+											}
 
-	};
+										};
 
 	/** Instrution unknow */
-	public static final Instruction UNK = new Instruction(Instruction.NO_FLAGS) {
-		DecimalFormat format = new DecimalFormat(
-				"00000000000000000000000000000000");
+	public static final Instruction	UNK	= new Instruction(Instruction.NO_FLAGS) {
+											DecimalFormat	format	= new DecimalFormat("00000000000000000000000000000000");
 
-		@Override
-		public void interpret(final int insn, final boolean delay) {
-			throw new RuntimeException(
-					"UNK function."
-							+ format.format(new BigInteger(Integer
-									.toBinaryString(insn))));
-		}
+											@Override
+											public void interpret(final int insn, final boolean delay) {
+												throw new RuntimeException("UNK function." + format.format(new BigInteger(Integer.toBinaryString(insn))));
+											}
 
-		@Override
-		public final String name() {
-			return "UNK";
-		}
+											@Override
+											public final String name() {
+												return "UNK";
+											}
 
-		@Override
-		public final String category() {
-			return "UNK";
-		}
-	};
+											@Override
+											public final String category() {
+												return "UNK";
+											}
+										};
 }

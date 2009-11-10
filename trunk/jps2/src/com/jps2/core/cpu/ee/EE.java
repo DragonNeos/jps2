@@ -10,15 +10,14 @@ public class EE extends Processor {
 	public EE() {
 		super(new CpuState(), new EEMemoryManager());
 	}
-	
+
 	@Override
 	protected Instruction decode(final int opcode) {
 		return EEDecoder.instruction(opcode);
 	}
 
 	@Override
-	public void processException(final ExcCode e, final int inst,
-			final boolean delay) {
+	public void processException(final ExcCode e, final int inst, final boolean delay) {
 		System.err.println(e);
 		// if (e == ExcCode.TRAP) {
 		// return;

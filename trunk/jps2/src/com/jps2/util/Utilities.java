@@ -48,9 +48,7 @@ public class Utilities {
 	}
 
 	public static String integerToBin(final int value) {
-		return Long.toBinaryString(
-				0x0000000100000000L | ((value) & 0x00000000FFFFFFFFL))
-				.substring(1);
+		return Long.toBinaryString(0x0000000100000000L | ((value) & 0x00000000FFFFFFFFL)).substring(1);
 	}
 
 	public static String integerToHex(final int value) {
@@ -62,8 +60,7 @@ public class Utilities {
 	}
 
 	public static long readUWord(final SeekableDataInput f) throws IOException {
-		final long l = (f.readUnsignedByte() | (f.readUnsignedByte() << 8)
-				| (f.readUnsignedByte() << 16) | (f.readUnsignedByte() << 24));
+		final long l = (f.readUnsignedByte() | (f.readUnsignedByte() << 8) | (f.readUnsignedByte() << 16) | (f.readUnsignedByte() << 24));
 		return (l & 0xFFFFFFFFL);
 	}
 
@@ -78,18 +75,14 @@ public class Utilities {
 	public static int readWord(final SeekableDataInput f) throws IOException {
 		// readByte() isn't more correct? (already exists one readUWord() method
 		// to unsign values)
-		return (f.readUnsignedByte() | (f.readUnsignedByte() << 8)
-				| (f.readUnsignedByte() << 16) | (f.readUnsignedByte() << 24));
+		return (f.readUnsignedByte() | (f.readUnsignedByte() << 8) | (f.readUnsignedByte() << 16) | (f.readUnsignedByte() << 24));
 	}
 
-	public static void readBytesToBuffer(final SeekableDataInput f,
-			final ByteBuffer buf, final int offset, final int size)
-			throws IOException {
+	public static void readBytesToBuffer(final SeekableDataInput f, final ByteBuffer buf, final int offset, final int size) throws IOException {
 		f.readFully(buf.array(), offset + buf.arrayOffset(), size);
 	}
 
-	public static String readStringZ(final SeekableDataInput f)
-			throws IOException {
+	public static String readStringZ(final SeekableDataInput f) throws IOException {
 		final StringBuffer sb = new StringBuffer();
 		int b;
 		for (; f.getFilePointer() < f.length();) {
@@ -151,8 +144,7 @@ public class Utilities {
 	// public static String readStringNZ(int address, int n) {
 	// return readStringNZ(Memory.getInstance(), address, n);
 	// }
-	public static void writeStringNZ(final Memory mem, final int address,
-			final int n, final String s) {
+	public static void writeStringNZ(final Memory mem, final int address, final int n, final String s) {
 		int offset = 0;
 		while (offset < s.length() && offset < n) {
 			mem.write8(address + offset, (byte) s.charAt(offset));
@@ -164,8 +156,7 @@ public class Utilities {
 		}
 	}
 
-	public static void writeStringZ(final Memory mem, final int address,
-			final String s) {
+	public static void writeStringZ(final Memory mem, final int address, final String s) {
 		int offset = 0;
 		while (offset < s.length()) {
 			mem.write8(address + offset, (byte) s.charAt(offset));
@@ -196,15 +187,13 @@ public class Utilities {
 	}
 
 	public static long readUWord(final ByteBuffer buf) throws IOException {
-		final long l = (getUnsignedByte(buf) | (getUnsignedByte(buf) << 8)
-				| (getUnsignedByte(buf) << 16) | (getUnsignedByte(buf) << 24));
+		final long l = (getUnsignedByte(buf) | (getUnsignedByte(buf) << 8) | (getUnsignedByte(buf) << 16) | (getUnsignedByte(buf) << 24));
 		return (l & 0xFFFFFFFFL);
 
 	}
 
 	public static int readWord(final ByteBuffer buf) throws IOException {
-		return (getUnsignedByte(buf) | (getUnsignedByte(buf) << 8)
-				| (getUnsignedByte(buf) << 16) | (getUnsignedByte(buf) << 24));
+		return (getUnsignedByte(buf) | (getUnsignedByte(buf) << 8) | (getUnsignedByte(buf) << 16) | (getUnsignedByte(buf) << 24));
 	}
 
 	public static void writeWord(final ByteBuffer buf, final long value) {
@@ -327,8 +316,7 @@ public class Utilities {
 	// }
 	// }
 
-	public static void bytePositionBuffer(final Buffer buffer,
-			final int bytePosition) {
+	public static void bytePositionBuffer(final Buffer buffer, final int bytePosition) {
 		buffer.position(bytePosition / bufferElementSize(buffer));
 	}
 

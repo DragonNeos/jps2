@@ -20,27 +20,24 @@ import java.io.InputStream;
 import java.util.logging.Logger;
 
 public abstract class Memory {
-	public static final Logger log = Logger.getLogger("memory");
-	protected boolean useSafeMemory = true;
-	protected int addressMask = 0x1FFFFFF;
-	protected int offset;
-	private final String name;
+	public static final Logger	log				= Logger.getLogger("memory");
+	protected boolean			useSafeMemory	= true;
+	protected int				addressMask		= 0x1FFFFFF;
+	protected int				offset;
+	private final String		name;
 
 	public Memory(final String name) {
 		this.name = name;
 	}
 
-	public abstract void copy(Memory memory, int positionSource,
-			int positionDest);
+	public abstract void copy(Memory memory, int positionSource, int positionDest);
 
 	public void setOffset(final int offset) {
 		this.offset = ~offset;
 	}
 
-	public void invalidMemoryAddress(final int address, final String prefix,
-			final int status) {
-		final String message = String.format(name
-				+ "-%s - Invalid memory address : 0x%X", prefix, address);
+	public void invalidMemoryAddress(final int address, final String prefix, final int status) {
+		final String message = String.format(name + "-%s - Invalid memory address : 0x%X", prefix, address);
 		Memory.log.severe(message);
 		throw new RuntimeException(message);
 	}
@@ -56,7 +53,7 @@ public abstract class Memory {
 	public abstract int read32(int address);
 
 	public abstract long read64(int address);
-	
+
 	public abstract long[] read128(int address);
 
 	public abstract void write8(int address, byte data);
@@ -66,7 +63,7 @@ public abstract class Memory {
 	public abstract void write32(int address, int data);
 
 	public abstract void write64(int address, long data);
-	
+
 	public abstract void write128(int address, long[] data);
 
 	public abstract void writeStream(int address, InputStream input);

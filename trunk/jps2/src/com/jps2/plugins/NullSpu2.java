@@ -32,7 +32,11 @@ public class NullSpu2 extends AbstractSpu2Plugin {
 
 	@Override
 	public int[] getVersion() {
-		return new int[] { 0, 0, 1 };
+		return new int[] {
+							0,
+							0,
+							1
+		};
 	}
 
 	@Override

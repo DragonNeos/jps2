@@ -21,9 +21,9 @@ public class FastMemory extends Memory {
 	// This implementation is performing very few checks for the validity of
 	// memory address references to achieve the highest performance.
 	//
-	private int[] all;
+	private int[]		all;
 
-	private final int size;
+	private final int	size;
 
 	public FastMemory(final String name, final int size) {
 		super(name);
@@ -55,12 +55,8 @@ public class FastMemory extends Memory {
 			} catch (final OutOfMemoryError e) {
 				// Not enough memory provided for this VM, cannot use FastMemory
 				// model
-				Memory.log
-						.warning("Cannot allocate FastMemory: add the option '-Xmx256m' to the Java Virtual Machine startup command to improve Performance");
-				Memory.log
-						.info("The current Java Virtual Machine has been started using '-Xmx"
-								+ (Runtime.getRuntime().maxMemory() / (1024 * 1024))
-								+ "m'");
+				Memory.log.warning("Cannot allocate FastMemory: add the option '-Xmx256m' to the Java Virtual Machine startup command to improve Performance");
+				Memory.log.info("The current Java Virtual Machine has been started using '-Xmx" + (Runtime.getRuntime().maxMemory() / (1024 * 1024)) + "m'");
 				return false;
 			}
 		} else {
@@ -82,15 +78,15 @@ public class FastMemory extends Memory {
 			address &= addressMask;
 			int data = all[(address / 4)];
 			switch ((address & 0x03)) {
-			case 1:
-				data >>= 8;
-				break;
-			case 2:
-				data >>= 16;
-				break;
-			case 3:
-				data >>= 24;
-				break;
+				case 1:
+					data >>= 8;
+					break;
+				case 2:
+					data >>= 16;
+					break;
+				case 3:
+					data >>= 24;
+					break;
 			}
 
 			return data & 0xFF;
@@ -135,8 +131,7 @@ public class FastMemory extends Memory {
 			address &= addressMask;
 			// return (all[(address / 4) + 1] << 32)
 			// | (all[(address / 4)] & 0xFFFFFFFFL);
-			return (all[(address / 4)] << 32)
-					| (all[(address / 4) + 1] & 0xFFFFFFFFL);
+			return (all[(address / 4)] << 32) | (all[(address / 4) + 1] & 0xFFFFFFFFL);
 		} catch (final Exception e) {
 			invalidMemoryAddress(address, "read64", 0);
 			return 0;
@@ -149,10 +144,9 @@ public class FastMemory extends Memory {
 			address &= offset;
 			address &= addressMask;
 			return new long[] {
-					(all[(address / 4)] << 32)
-							| (all[(address / 4) + 1] & 0xFFFFFFFFL),
-					(all[(address / 4) + 2] << 32)
-							| (all[(address / 4) + 3] & 0xFFFFFFFFL) };
+								(all[(address / 4)] << 32) | (all[(address / 4) + 1] & 0xFFFFFFFFL),
+								(all[(address / 4) + 2] << 32) | (all[(address / 4) + 3] & 0xFFFFFFFFL)
+			};
 		} catch (final Exception e) {
 			invalidMemoryAddress(address, "read64", 0);
 			return new long[2];
@@ -166,18 +160,18 @@ public class FastMemory extends Memory {
 			address &= addressMask;
 			int memData = all[(address / 4)];
 			switch ((address & 0x03)) {
-			case 0:
-				memData = (memData & 0xFFFFFF00) | ((data & 0xFF));
-				break;
-			case 1:
-				memData = (memData & 0xFFFF00FF) | ((data & 0xFF) << 8);
-				break;
-			case 2:
-				memData = (memData & 0xFF00FFFF) | ((data & 0xFF) << 16);
-				break;
-			case 3:
-				memData = (memData & 0x00FFFFFF) | ((data & 0xFF) << 24);
-				break;
+				case 0:
+					memData = (memData & 0xFFFFFF00) | ((data & 0xFF));
+					break;
+				case 1:
+					memData = (memData & 0xFFFF00FF) | ((data & 0xFF) << 8);
+					break;
+				case 2:
+					memData = (memData & 0xFF00FFFF) | ((data & 0xFF) << 16);
+					break;
+				case 3:
+					memData = (memData & 0x00FFFFFF) | ((data & 0xFF) << 24);
+					break;
 			}
 			all[(address / 4)] = memData;
 		} catch (final Exception e) {
@@ -255,8 +249,7 @@ public class FastMemory extends Memory {
 				}
 			}
 		} catch (final Exception e) {
-			throw new OutOfMemoryError("Invalid Address for memory ("
-					+ Long.toHexString(address) + ").");
+			throw new OutOfMemoryError("Invalid Address for memory (" + Long.toHexString(address) + ").");
 		}
 	}
 

@@ -27,24 +27,24 @@ import com.jps2.util.Utilities;
 
 public class Elf32Header {
 
-	private long e_magic;
-	private int e_class;
-	private int e_data;
-	private int e_idver;
-	private byte[] e_pad = new byte[9];
-	private int e_type;
-	private int e_machine;
-	private long e_version;
-	private long e_entry;
-	private long e_phoff;
-	private long e_shoff;
-	private long e_flags;
-	private int e_ehsize;
-	private int e_phentsize;
-	private int e_phnum;
-	private int e_shentsize;
-	private int e_shnum;
-	private int e_shstrndx;
+	private long	e_magic;
+	private int		e_class;
+	private int		e_data;
+	private int		e_idver;
+	private byte[]	e_pad	= new byte[9];
+	private int		e_type;
+	private int		e_machine;
+	private long	e_version;
+	private long	e_entry;
+	private long	e_phoff;
+	private long	e_shoff;
+	private long	e_flags;
+	private int		e_ehsize;
+	private int		e_phentsize;
+	private int		e_phnum;
+	private int		e_shentsize;
+	private int		e_shnum;
+	private int		e_shstrndx;
 
 	private void read(ByteBuffer f) throws IOException {
 		if (f.capacity() == 0)
@@ -74,8 +74,7 @@ public class Elf32Header {
 	}
 
 	public boolean isValid() {
-		return (Long.toHexString(getE_magic() & 0xFFFFFFFFL).toUpperCase()
-				.equals("464C457F"));
+		return (Long.toHexString(getE_magic() & 0xFFFFFFFFL).toUpperCase().equals("464C457F"));
 	}
 
 	public boolean isMIPSExecutable() {
@@ -94,74 +93,25 @@ public class Elf32Header {
 	public String toString() {
 		StringBuffer str = new StringBuffer();
 		str.append("-----ELF HEADER---------" + "\n");
-		str.append("e_magic "
-				+ "\t "
-				+ Utilities.formatString("long", Long.toHexString(
-						getE_magic() & 0xFFFFFFFFL).toUpperCase()) + "\n");
-		str.append("e_class " + "\t "
-				+ Utilities.integerToHex(getE_class() & 0xFF) + "\n");
+		str.append("e_magic " + "\t " + Utilities.formatString("long", Long.toHexString(getE_magic() & 0xFFFFFFFFL).toUpperCase()) + "\n");
+		str.append("e_class " + "\t " + Utilities.integerToHex(getE_class() & 0xFF) + "\n");
 		// str.append("e_class " + "\t " + Utilities.formatString("byte",
 		// Integer.toHexString(e_class & 0xFF ).toUpperCase())+ "\n");
-		str.append("e_data "
-				+ "\t\t "
-				+ Utilities.formatString("byte", Integer.toHexString(
-						getE_data() & 0xFF).toUpperCase()) + "\n");
-		str.append("e_idver "
-				+ "\t "
-				+ Utilities.formatString("byte", Integer.toHexString(
-						getE_idver() & 0xFF).toUpperCase()) + "\n");
-		str.append("e_type "
-				+ "\t\t "
-				+ Utilities.formatString("short", Integer.toHexString(
-						getE_type() & 0xFFFF).toUpperCase()) + "\n");
-		str.append("e_machine "
-				+ "\t "
-				+ Utilities.formatString("short", Integer.toHexString(
-						getE_machine() & 0xFFFF).toUpperCase()) + "\n");
-		str.append("e_version "
-				+ "\t "
-				+ Utilities.formatString("long", Long.toHexString(
-						getE_version() & 0xFFFFFFFFL).toUpperCase()) + "\n");
-		str.append("e_entry "
-				+ "\t "
-				+ Utilities.formatString("long", Long.toHexString(
-						getE_entry() & 0xFFFFFFFFL).toUpperCase()) + "\n");
-		str.append("e_phoff "
-				+ "\t "
-				+ Utilities.formatString("long", Long.toHexString(
-						getE_phoff() & 0xFFFFFFFFL).toUpperCase()) + "\n");
-		str.append("e_shoff "
-				+ "\t "
-				+ Utilities.formatString("long", Long.toHexString(
-						getE_shoff() & 0xFFFFFFFFL).toUpperCase()) + "\n");
-		str.append("e_flags "
-				+ "\t "
-				+ Utilities.formatString("long", Long.toHexString(
-						getE_flags() & 0xFFFFFFFFL).toUpperCase()) + "\n");
-		str.append("e_ehsize "
-				+ "\t "
-				+ Utilities.formatString("short", Integer.toHexString(
-						getE_ehsize() & 0xFFFF).toUpperCase()) + "\n");
-		str.append("e_phentsize "
-				+ "\t "
-				+ Utilities.formatString("short", Integer.toHexString(
-						getE_phentsize() & 0xFFFF).toUpperCase()) + "\n");
-		str.append("e_phnum "
-				+ "\t "
-				+ Utilities.formatString("short", Integer.toHexString(
-						getE_phnum() & 0xFFFF).toUpperCase()) + "\n");
-		str.append("e_shentsize "
-				+ "\t "
-				+ Utilities.formatString("short", Integer.toHexString(
-						getE_shentsize() & 0xFFFF).toUpperCase()) + "\n");
-		str.append("e_shnum "
-				+ "\t "
-				+ Utilities.formatString("short", Integer.toHexString(
-						getE_shnum() & 0xFFFF).toUpperCase()) + "\n");
-		str.append("e_shstrndx "
-				+ "\t "
-				+ Utilities.formatString("short", Integer.toHexString(
-						getE_shstrndx() & 0xFFFF).toUpperCase()) + "\n");
+		str.append("e_data " + "\t\t " + Utilities.formatString("byte", Integer.toHexString(getE_data() & 0xFF).toUpperCase()) + "\n");
+		str.append("e_idver " + "\t " + Utilities.formatString("byte", Integer.toHexString(getE_idver() & 0xFF).toUpperCase()) + "\n");
+		str.append("e_type " + "\t\t " + Utilities.formatString("short", Integer.toHexString(getE_type() & 0xFFFF).toUpperCase()) + "\n");
+		str.append("e_machine " + "\t " + Utilities.formatString("short", Integer.toHexString(getE_machine() & 0xFFFF).toUpperCase()) + "\n");
+		str.append("e_version " + "\t " + Utilities.formatString("long", Long.toHexString(getE_version() & 0xFFFFFFFFL).toUpperCase()) + "\n");
+		str.append("e_entry " + "\t " + Utilities.formatString("long", Long.toHexString(getE_entry() & 0xFFFFFFFFL).toUpperCase()) + "\n");
+		str.append("e_phoff " + "\t " + Utilities.formatString("long", Long.toHexString(getE_phoff() & 0xFFFFFFFFL).toUpperCase()) + "\n");
+		str.append("e_shoff " + "\t " + Utilities.formatString("long", Long.toHexString(getE_shoff() & 0xFFFFFFFFL).toUpperCase()) + "\n");
+		str.append("e_flags " + "\t " + Utilities.formatString("long", Long.toHexString(getE_flags() & 0xFFFFFFFFL).toUpperCase()) + "\n");
+		str.append("e_ehsize " + "\t " + Utilities.formatString("short", Integer.toHexString(getE_ehsize() & 0xFFFF).toUpperCase()) + "\n");
+		str.append("e_phentsize " + "\t " + Utilities.formatString("short", Integer.toHexString(getE_phentsize() & 0xFFFF).toUpperCase()) + "\n");
+		str.append("e_phnum " + "\t " + Utilities.formatString("short", Integer.toHexString(getE_phnum() & 0xFFFF).toUpperCase()) + "\n");
+		str.append("e_shentsize " + "\t " + Utilities.formatString("short", Integer.toHexString(getE_shentsize() & 0xFFFF).toUpperCase()) + "\n");
+		str.append("e_shnum " + "\t " + Utilities.formatString("short", Integer.toHexString(getE_shnum() & 0xFFFF).toUpperCase()) + "\n");
+		str.append("e_shstrndx " + "\t " + Utilities.formatString("short", Integer.toHexString(getE_shstrndx() & 0xFFFF).toUpperCase()) + "\n");
 		return str.toString();
 	}
 

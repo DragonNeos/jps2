@@ -9,14 +9,14 @@ import com.jps2.core.memory.AbstractMemoryManager;
 
 public abstract class Processor {
 
-	private static final boolean ENABLE_INSN_EXECUTE_COUNT = false;
+	private static final boolean		ENABLE_INSN_EXECUTE_COUNT	= false;
 	// cache controls
-	private final CacheLine[] instCache = new CacheLine[0x10000];
-	private final int cacheMask = instCache.length - 1;
-	public long insnCacheHits, insnCacheMisses, insnCount = 0;
+	private final CacheLine[]			instCache					= new CacheLine[0x10000];
+	private final int					cacheMask					= instCache.length - 1;
+	public long							insnCacheHits, insnCacheMisses, insnCount = 0;
 
-	public final Cpu cpu;
-	public final AbstractMemoryManager memory;
+	public final Cpu					cpu;
+	public final AbstractMemoryManager	memory;
 
 	public Processor(final Cpu cpu, final AbstractMemoryManager memory) {
 		this.cpu = cpu;
@@ -34,17 +34,17 @@ public abstract class Processor {
 		return line;
 	}
 
-//	private  FileOutputStream out;
-//	{
-//		try {
-//			out = new FileOutputStream("/work/JPS2/logs/jps2-log-IOP.txt");
-//		} catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//	}
-	long last = System.currentTimeMillis();
-	
+	// private FileOutputStream out;
+	// {
+	// try {
+	// out = new FileOutputStream("/work/JPS2/logs/jps2-log-IOP.txt");
+	// } catch (FileNotFoundException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// }
+	long	last	= System.currentTimeMillis();
+
 	private final CacheLine getFromCache() {
 		final CacheLine line = instCache[cpu.pc & cacheMask];
 		if (!line.valid || line.address != cpu.pc) {
@@ -56,20 +56,21 @@ public abstract class Processor {
 		} else {
 			insnCacheHits++;
 		}
-//		try {
-//			out.write(("I/" + debugFormater(cpu.pc) + " "
-//					+ debugFormater((int) insnCount) + ": " + debugFormater(cpu.pc)
-//					+ " " + debugFormater(line.opcode) + ": " + line.insn + "\r\n").getBytes());
-//		} catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		// try {
+		// out.write(("I/" + debugFormater(cpu.pc) + " "
+		// + debugFormater((int) insnCount) + ": " + debugFormater(cpu.pc)
+		// + " " + debugFormater(line.opcode) + ": " + line.insn +
+		// "\r\n").getBytes());
+		// } catch (IOException e) {
+		// // TODO Auto-generated catch block
+		// e.printStackTrace();
+		// }
 		insnCount++;
-		if (insnCount % 1000000 == 0){
+		if (insnCount % 1000000 == 0) {
 			final long lastT = System.currentTimeMillis();
-			final long diff = lastT-last;
+			final long diff = lastT - last;
 			last = lastT;
-			System.err.println(">>>>>>>>>>>>>>>  " + (long)(1000000/(diff/1000d)));
+			System.err.println(">>>>>>>>>>>>>>>  " + (long) (1000000 / (diff / 1000d)));
 		}
 		return line;
 	}
@@ -78,7 +79,7 @@ public abstract class Processor {
 
 	private CacheLine fetchDecodedInstruction() {
 		final CacheLine line = getFromCache();
-		
+
 		// by default, the next instruction to emulate is at the next address
 		cpu.pc = cpu.npc = cpu.pc + 4;
 		return line;
@@ -100,13 +101,13 @@ public abstract class Processor {
 		interpret();
 	}
 
-//	private static final String debugFormater(int code) {
-//		StringBuilder builder = new StringBuilder(Integer.toHexString(code));
-//		while (builder.length() < 8) {
-//			builder.insert(0, 0);
-//		}
-//		return builder.toString();
-//	}
+	// private static final String debugFormater(int code) {
+	// StringBuilder builder = new StringBuilder(Integer.toHexString(code));
+	// while (builder.length() < 8) {
+	// builder.insert(0, 0);
+	// }
+	// return builder.toString();
+	// }
 
 	public void interpret() {
 		cpu.cycle++;
@@ -118,13 +119,12 @@ public abstract class Processor {
 		}
 	}
 
-	public abstract void processException(final ExcCode e, final int inst,
-			final boolean delay);
+	public abstract void processException(final ExcCode e, final int inst, final boolean delay);
 
 	private final static class CacheLine {
-		boolean valid;
-		int address;
-		int opcode;
-		Common.Instruction insn;
+		boolean				valid;
+		int					address;
+		int					opcode;
+		Common.Instruction	insn;
 	}
 }

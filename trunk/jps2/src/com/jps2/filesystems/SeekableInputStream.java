@@ -11,8 +11,7 @@ import java.io.*;
  * 
  * @author gigaherz
  */
-public abstract class SeekableInputStream extends InputStream implements
-		SeekableDataInput {
+public abstract class SeekableInputStream extends InputStream implements SeekableDataInput {
 
 	@Override
 	abstract public void seek(long position) throws IOException;
@@ -60,8 +59,7 @@ public abstract class SeekableInputStream extends InputStream implements
 	abstract public String readLine() throws IOException;
 
 	@Override
-	abstract public void readFully(byte[] b, int off, int len)
-			throws IOException;
+	abstract public void readFully(byte[] b, int off, int len) throws IOException;
 
 	@Override
 	abstract public void readFully(byte[] b) throws IOException;

@@ -17,7 +17,7 @@ import com.jps2.filesystems.umdiso.UmdIsoReader;
  */
 public class Iso9660Handler extends Iso9660Directory {
 
-	private final Iso9660Directory internalDir;
+	private final Iso9660Directory	internalDir;
 
 	public Iso9660Handler(final UmdIsoReader r) throws IOException {
 		super(r, 0, 0);
@@ -39,8 +39,7 @@ public class Iso9660Handler extends Iso9660Directory {
 	}
 
 	@Override
-	public Iso9660File getEntryByIndex(final int index)
-			throws ArrayIndexOutOfBoundsException {
+	public Iso9660File getEntryByIndex(final int index) throws ArrayIndexOutOfBoundsException {
 		return internalDir.getEntryByIndex(index);
 	}
 

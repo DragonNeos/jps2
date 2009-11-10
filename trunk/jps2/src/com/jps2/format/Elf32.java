@@ -27,19 +27,24 @@ import com.jps2.util.Utilities;
 public class Elf32 {
 
 	// File offset
-	private final int elfOffset;
+	private final int							elfOffset;
 
 	// Headers
-	private Elf32Header header;
-	private List<Elf32ProgramHeader> programHeaderList;
-	private List<Elf32SectionHeader> sectionHeaderList;
-	private HashMap<String, Elf32SectionHeader> sectionHeaderMap;
-	private Elf32SectionHeader shstrtab;
+	private Elf32Header							header;
+	private List<Elf32ProgramHeader>			programHeaderList;
+	private List<Elf32SectionHeader>			sectionHeaderList;
+	private HashMap<String, Elf32SectionHeader>	sectionHeaderMap;
+	private Elf32SectionHeader					shstrtab;
 
 	// Debug info
-	private String ElfInfo; // ELF header
-	private String ProgInfo; // ELF program headers
-	private String SectInfo; // ELF section headers
+	private String								ElfInfo;			// ELF
+																	// header
+	private String								ProgInfo;			// ELF
+																	// program
+																	// headers
+	private String								SectInfo;			// ELF
+																	// section
+																	// headers
 
 	public Elf32(final ByteBuffer f) throws IOException {
 		elfOffset = f.position();
@@ -60,8 +65,7 @@ public class Elf32 {
 		final StringBuffer sb = new StringBuffer();
 
 		for (int i = 0; i < header.getE_phnum(); i++) {
-			f.position((int) (elfOffset + header.getE_phoff() + (i * header
-					.getE_phentsize())));
+			f.position((int) (elfOffset + header.getE_phoff() + (i * header.getE_phentsize())));
 			final Elf32ProgramHeader phdr = new Elf32ProgramHeader(f);
 
 			// Save loaded header
@@ -83,8 +87,7 @@ public class Elf32 {
 		// - save headers
 		// - find .shstrtab
 		for (int i = 0; i < header.getE_shnum(); i++) {
-			f.position((int) (elfOffset + header.getE_shoff() + (i * header
-					.getE_shentsize())));
+			f.position((int) (elfOffset + header.getE_shoff() + (i * header.getE_shentsize())));
 			final Elf32SectionHeader shdr = new Elf32SectionHeader(f);
 
 			// Save loaded header
@@ -110,15 +113,12 @@ public class Elf32 {
 		final StringBuffer sb = new StringBuffer();
 		int SectionCounter = 0;
 		for (final Elf32SectionHeader shdr : sectionHeaderList) {
-			final int position = (int) (elfOffset + shstrtab.getSh_offset() + shdr
-					.getSh_name());
+			final int position = (int) (elfOffset + shstrtab.getSh_offset() + shdr.getSh_name());
 			f.position(position); // removed past end of file check
 			// (fiveofhearts 18/10/08)
 
 			// Number the section
-			sb
-					.append("-----SECTION HEADER #" + SectionCounter + "-----"
-							+ "\n");
+			sb.append("-----SECTION HEADER #" + SectionCounter + "-----" + "\n");
 
 			final String SectionName = Utilities.readStringZ(f); // removed
 			// readStringZ

@@ -4,11 +4,14 @@ import com.jps2.core.cpu.DataType;
 
 public class GeneralPorpuseRegister128bits implements Register128bits {
 
-	long[] quadword = { 0, 0 };
-	long doubleword = 0;
-	int word = 0;
+	long[]		quadword	= {
+						0,
+						0
+							};
+	long		doubleword	= 0;
+	int			word		= 0;
 
-	DataType type = DataType.WORD;
+	DataType	type		= DataType.WORD;
 
 	public final DataType getType() {
 		return type;

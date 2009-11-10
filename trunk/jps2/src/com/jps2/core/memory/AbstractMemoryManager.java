@@ -4,8 +4,7 @@ import org.apache.log4j.Logger;
 
 public abstract class AbstractMemoryManager {
 
-	public static final Logger logger = Logger
-			.getLogger(AbstractMemoryManager.class);
+	public static final Logger	logger	= Logger.getLogger(AbstractMemoryManager.class);
 
 	public abstract Memory getMemoryByAddress(int address, boolean write);
 
@@ -24,7 +23,7 @@ public abstract class AbstractMemoryManager {
 	public long read64(final int address) {
 		return getMemoryByAddress(address, false).read64(address);
 	}
-	
+
 	public long[] read128(final int address) {
 		return getMemoryByAddress(address, false).read128(address);
 	}
@@ -53,7 +52,7 @@ public abstract class AbstractMemoryManager {
 	public void write64(final int address, final long data) {
 		getMemoryByAddress(address, true).write64(address, data);
 	}
-	
+
 	public void write128(final int address, final long[] data) {
 		getMemoryByAddress(address, true).write128(address, data);
 	}

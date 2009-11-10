@@ -4,10 +4,13 @@ import com.jps2.core.cpu.DataType;
 
 public final class ZeroRegister128bits implements Register128bits {
 
-	private static final byte ZERO_DOUBLEWORD =  0;
-	private static final long[] ZERO_QUADWORD = { ZERO_DOUBLEWORD, ZERO_DOUBLEWORD };
-	
-	DataType type = DataType.QUADWORD;
+	private static final byte	ZERO_DOUBLEWORD	= 0;
+	private static final long[]	ZERO_QUADWORD	= {
+						ZERO_DOUBLEWORD,
+						ZERO_DOUBLEWORD
+												};
+
+	DataType					type			= DataType.QUADWORD;
 
 	@Override
 	public final DataType getType() {

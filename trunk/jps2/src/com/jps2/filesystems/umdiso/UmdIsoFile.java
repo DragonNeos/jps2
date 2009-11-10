@@ -17,20 +17,19 @@ import com.jps2.filesystems.SeekableInputStream;
  * @author gigaherz
  */
 public class UmdIsoFile extends SeekableInputStream {
-	public static final int sectorLength = 2048;
-	private final int startSectorNumber;
-	private int currentSectorNumber;
-	private long currentOffset;
-	private final long maxOffset;
-	private final Date timestamp;
+	public static final int	sectorLength	= 2048;
+	private final int		startSectorNumber;
+	private int				currentSectorNumber;
+	private long			currentOffset;
+	private final long		maxOffset;
+	private final Date		timestamp;
 
-	private byte[] currentSector;
-	private int sectorOffset;
+	private byte[]			currentSector;
+	private int				sectorOffset;
 
-	UmdIsoReader internalReader;
+	UmdIsoReader			internalReader;
 
-	public UmdIsoFile(final UmdIsoReader reader, final int startSector,
-			final long lengthInBytes, final Date timestamp) throws IOException {
+	public UmdIsoFile(final UmdIsoReader reader, final int startSector, final long lengthInBytes, final Date timestamp) throws IOException {
 		startSectorNumber = startSector;
 		currentSectorNumber = startSectorNumber;
 		currentOffset = 0;
@@ -62,7 +61,7 @@ public class UmdIsoFile extends SeekableInputStream {
 		currentOffset++;
 
 		final int debuggingVariable = Ubyte(currentSector[sectorOffset++]); // make
-																			// unsigned
+		// unsigned
 
 		assert (debuggingVariable >= 0);
 
@@ -101,8 +100,7 @@ public class UmdIsoFile extends SeekableInputStream {
 
 		final int oldSectorNumber = currentSectorNumber;
 		final long newOffset = endOffset;
-		final int newSectorNumber = startSectorNumber
-				+ (int) (newOffset / sectorLength);
+		final int newSectorNumber = startSectorNumber + (int) (newOffset / sectorLength);
 		if (oldSectorNumber != newSectorNumber) {
 			currentSector = internalReader.readSector(newSectorNumber);
 		}
@@ -131,8 +129,7 @@ public class UmdIsoFile extends SeekableInputStream {
 
 	@Override
 	public int readInt() throws IOException {
-		return (readUnsignedByte() | ((readUnsignedByte()) << 8)
-				| ((readUnsignedByte()) << 16) | ((readByte()) << 24));
+		return (readUnsignedByte() | ((readUnsignedByte()) << 8) | ((readUnsignedByte()) << 16) | ((readByte()) << 24));
 	}
 
 	@Override
@@ -214,8 +211,7 @@ public class UmdIsoFile extends SeekableInputStream {
 	}
 
 	@Override
-	public void readFully(final byte[] b, final int off, final int len)
-			throws IOException {
+	public void readFully(final byte[] b, final int off, final int len) throws IOException {
 		if (currentOffset >= maxOffset)
 			throw new EOFException();
 
@@ -243,8 +239,7 @@ public class UmdIsoFile extends SeekableInputStream {
 		return startSectorNumber;
 	}
 
-	private int readInternal(final byte[] b, final int off, int len)
-			throws IOException {
+	private int readInternal(final byte[] b, final int off, int len) throws IOException {
 		if (len > 0) {
 			if (len > (maxOffset - currentOffset)) {
 				len = (int) (maxOffset - currentOffset);
@@ -276,8 +271,7 @@ public class UmdIsoFile extends SeekableInputStream {
 
 		int totalLength = 0;
 
-		final int firstSector = readInternal(b, off, Math.min(len, sectorLength
-				- sectorOffset));
+		final int firstSector = readInternal(b, off, Math.min(len, sectorLength - sectorOffset));
 		off += firstSector;
 		len -= firstSector;
 		totalLength += firstSector;

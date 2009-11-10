@@ -16,13 +16,13 @@ import java.util.TimeZone;
  */
 public class Iso9660File {
 
-	private int fileLBA;
-	private int fileSize;
-	private int fileProperties;
+	private int		fileLBA;
+	private int		fileSize;
+	private int		fileProperties;
 	// padding: byte[3]
-	private String fileName; // [128+1];
+	private String	fileName;		// [128+1];
 	// Iso9660Date date; // byte[7]
-	private Date timestamp;
+	private Date	timestamp;
 
 	private int Ubyte(byte b) {
 		return ((int) b) & 255;
@@ -39,10 +39,8 @@ public class Iso9660File {
 		 * (33+LEN_FI) File Identifier (34 + LEN_FI) Padding Field
 		 */
 
-		fileLBA = Ubyte(data[1]) | (Ubyte(data[2]) << 8)
-				| (Ubyte(data[3]) << 16) | (data[4] << 24);
-		fileSize = Ubyte(data[9]) | (Ubyte(data[10]) << 8)
-				| (Ubyte(data[11]) << 16) | (data[12] << 24);
+		fileLBA = Ubyte(data[1]) | (Ubyte(data[2]) << 8) | (Ubyte(data[3]) << 16) | (data[4] << 24);
+		fileSize = Ubyte(data[9]) | (Ubyte(data[10]) << 8) | (Ubyte(data[11]) << 16) | (data[12] << 24);
 		int year = Ubyte(data[17]);
 		int month = Ubyte(data[18]);
 		int day = Ubyte(data[19]);
@@ -50,8 +48,8 @@ public class Iso9660File {
 		int minute = Ubyte(data[21]);
 		int second = Ubyte(data[22]);
 		int gmtOffset = data[23]; // Offset from Greenwich Mean Time in number
-									// of 15 min intervals from -48 (West) to +
-									// 52 (East)
+		// of 15 min intervals from -48 (West) to +
+		// 52 (East)
 
 		int gmtOffsetHours = gmtOffset / 4;
 		int gmtOffsetMinutes = (gmtOffset % 4) * 15;
@@ -71,8 +69,7 @@ public class Iso9660File {
 		TimeZone timeZone = TimeZone.getTimeZone(timeZoneName);
 
 		Calendar timestampCalendar = Calendar.getInstance(timeZone);
-		timestampCalendar
-				.set(1900 + year, month - 1, day, hour, minute, second);
+		timestampCalendar.set(1900 + year, month - 1, day, hour, minute, second);
 		timestamp = timestampCalendar.getTime();
 
 		fileProperties = data[24];

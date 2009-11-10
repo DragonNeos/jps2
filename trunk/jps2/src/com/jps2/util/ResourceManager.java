@@ -12,10 +12,8 @@ import javax.swing.ImageIcon;
  */
 public final class ResourceManager {
 
-	private static final ResourceBundle resourceBundleDefault = ResourceBundle
-			.getBundle("com.jps2.resources.lang", Locale.US);
-	private static final ResourceBundle resourceBundle = ResourceBundle
-			.getBundle("com.jps2.resources.lang");
+	private static final ResourceBundle	resourceBundleDefault	= ResourceBundle.getBundle("com.jps2.resources.lang", Locale.US);
+	private static final ResourceBundle	resourceBundle			= ResourceBundle.getBundle("com.jps2.resources.lang");
 	{
 
 	}
@@ -24,8 +22,7 @@ public final class ResourceManager {
 	}
 
 	public static final String getString(final String key) {
-		return resourceBundle.containsKey(key) ? resourceBundle.getString(key)
-				: resourceBundleDefault.getString(key);
+		return resourceBundle.containsKey(key) ? resourceBundle.getString(key) : resourceBundleDefault.getString(key);
 	}
 
 	public static final ImageIcon getIcon(final String icon) {

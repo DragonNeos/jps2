@@ -15,17 +15,17 @@ public abstract class FpuState extends BcuState {
 
 	public static final class Fcr0 {
 
-		public static final int imp = 0; /* FPU design number */
+		public static final int	imp	= 0;	/* FPU design number */
 
-		public static final int rev = 0; /* FPU revision bumber */
+		public static final int	rev	= 0;	/* FPU revision bumber */
 
 	}
 
 	public class Fcr31 {
 
-		public int rm;
-		public boolean c;
-		public boolean fs;
+		public int		rm;
+		public boolean	c;
+		public boolean	fs;
 
 		public void reset() {
 			rm = 0;
@@ -44,8 +44,8 @@ public abstract class FpuState extends BcuState {
 		}
 	}
 
-	public double[] fpr;
-	public Fcr31 fcr31;
+	public double[]	fpr;
+	public Fcr31	fcr31;
 
 	@Override
 	public void reset() {
@@ -82,8 +82,7 @@ public abstract class FpuState extends BcuState {
 	}
 
 	public void doMFC1(final int rt, final int c1dr) {
-		gpr[rt]
-				.write32((int) (Double.doubleToRawLongBits(fpr[c1dr]) & 0xFFFFFFFF));
+		gpr[rt].write32((int) (Double.doubleToRawLongBits(fpr[c1dr]) & 0xFFFFFFFF));
 	}
 
 	public void doDMFC1(final int rt, final int c1dr) {
@@ -93,18 +92,16 @@ public abstract class FpuState extends BcuState {
 	public void doCFC1(final int rt, final int c1cr) {
 		if (rt != 0) {
 			switch (c1cr) {
-			case 0:
-				gpr[rt].write32((Fcr0.imp << 8) | (Fcr0.rev));
-				break;
+				case 0:
+					gpr[rt].write32((Fcr0.imp << 8) | (Fcr0.rev));
+					break;
 
-			case 31:
-				gpr[rt].write32((fcr31.fs ? (1 << 24) : 0)
-						| (fcr31.c ? (1 << 23) : 0) | (fcr31.rm & 3));
-				break;
+				case 31:
+					gpr[rt].write32((fcr31.fs ? (1 << 24) : 0) | (fcr31.c ? (1 << 23) : 0) | (fcr31.rm & 3));
+					break;
 
-			default:
-				doUNK("Unsupported cfc1 instruction for fcr"
-						+ Integer.toString(c1cr));
+				default:
+					doUNK("Unsupported cfc1 instruction for fcr" + Integer.toString(c1cr));
 			}
 		}
 	}
@@ -119,17 +116,16 @@ public abstract class FpuState extends BcuState {
 
 	public void doCTC1(final int rt, final int c1cr) {
 		switch (c1cr) {
-		case 31:
-			int bits = (gpr[rt].read32() & 0x01800003);
-			fcr31.rm = bits & 3;
-			bits >>= 23;
-			fcr31.fs = (bits > 1);
-			fcr31.c = (bits >> 1) == 1;
-			break;
+			case 31:
+				int bits = (gpr[rt].read32() & 0x01800003);
+				fcr31.rm = bits & 3;
+				bits >>= 23;
+				fcr31.fs = (bits > 1);
+				fcr31.c = (bits >> 1) == 1;
+				break;
 
-		default:
-			doUNK("Unsupported ctc1 instruction for fcr"
-					+ Integer.toString(c1cr));
+			default:
+				doUNK("Unsupported ctc1 instruction for fcr" + Integer.toString(c1cr));
 		}
 	}
 
@@ -217,26 +213,25 @@ public abstract class FpuState extends BcuState {
 
 	public void doCVTWS(final int fd, final int fs) {
 		switch (fcr31.rm) {
-		case 1:
-			fpr[fd] = Float.intBitsToFloat((int) (fpr[fs]));
-			break;
-		case 2:
-			fpr[fd] = Float.intBitsToFloat((int) Math.ceil(fpr[fs]));
-			break;
-		case 3:
-			fpr[fd] = Float.intBitsToFloat((int) Math.floor(fpr[fs]));
-			break;
-		default:
-			fpr[fd] = Float.intBitsToFloat((int) Math.rint(fpr[fs]));
-			break;
+			case 1:
+				fpr[fd] = Float.intBitsToFloat((int) (fpr[fs]));
+				break;
+			case 2:
+				fpr[fd] = Float.intBitsToFloat((int) Math.ceil(fpr[fs]));
+				break;
+			case 3:
+				fpr[fd] = Float.intBitsToFloat((int) Math.floor(fpr[fs]));
+				break;
+			default:
+				fpr[fd] = Float.intBitsToFloat((int) Math.rint(fpr[fs]));
+				break;
 		}
 	}
 
 	public void doCCONDS(final int fs, final int ft, final int cond) {
 		final double x = fpr[fs];
 		final double y = fpr[ft];
-		final boolean unordered = ((cond & 1) != 0)
-				&& (Double.isNaN(x) || Double.isNaN(y));
+		final boolean unordered = ((cond & 1) != 0) && (Double.isNaN(x) || Double.isNaN(y));
 
 		if (unordered) {
 			fcr31.c = true;
@@ -249,18 +244,14 @@ public abstract class FpuState extends BcuState {
 	}
 
 	public void doLWC1(final int ft, final int rs, final int simm16) {
-		fpr[ft] = Float.intBitsToFloat(processor.memory.read32(gpr[rs].read32()
-				+ simm16));
+		fpr[ft] = Float.intBitsToFloat(processor.memory.read32(gpr[rs].read32() + simm16));
 	}
 
 	public void doLWXC1(final int base, final int index, final int fd) {
-		fpr[fd] = Float.intBitsToFloat(processor.memory.read32(gpr[base]
-				.read32()
-				+ gpr[index].read32()));
+		fpr[fd] = Float.intBitsToFloat(processor.memory.read32(gpr[base].read32() + gpr[index].read32()));
 	}
 
 	public void doSWC1(final int ft, final int rs, final int simm16) {
-		processor.memory.write32(gpr[rs].read32() + simm16, (int) Double
-				.doubleToRawLongBits(fpr[ft]));
+		processor.memory.write32(gpr[rs].read32() + simm16, (int) Double.doubleToRawLongBits(fpr[ft]));
 	}
 }

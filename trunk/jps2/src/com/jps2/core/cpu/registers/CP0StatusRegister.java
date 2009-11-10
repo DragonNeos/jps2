@@ -38,16 +38,16 @@ public class CP0StatusRegister extends CP0Register {
 	public boolean getEIE() {
 		return (value & 0x00008000) != 0;
 	}
-	
-	public void setEIE(boolean enabled){
+
+	public void setEIE(boolean enabled) {
 		value = (value & 0xFFFF7FFF) | (enabled ? 0x00008000 : 0x0);
 	}
-	
-	public byte getKSU(){
-		return (byte)((value >> 3) & 0x3);
+
+	public byte getKSU() {
+		return (byte) ((value >> 3) & 0x3);
 	}
-	
-	public boolean getEDI(){
+
+	public boolean getEDI() {
 		return (value & 0x00020000) != 0;
 	}
 }

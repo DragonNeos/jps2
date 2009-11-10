@@ -1,5 +1,7 @@
 package com.jps2.plugins;
 
+import com.jps2.gui.ConfigureComponent;
+
 /**
  * Plugin interface.
  * 
@@ -45,9 +47,16 @@ public interface Plugin {
 	boolean close();
 
 	/**
-	 * Get version of plugin
+	 * Get version of plugin.
 	 * 
 	 * @return
 	 */
 	int[] getVersion();
+
+	/**
+	 * Get component for configure this plugin.
+	 * 
+	 * @return Component for configure this plugin.
+	 */
+	ConfigureComponent configure();
 }

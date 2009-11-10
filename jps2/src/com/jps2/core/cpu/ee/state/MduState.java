@@ -2,7 +2,7 @@ package com.jps2.core.cpu.ee.state;
 
 public abstract class MduState extends GprState {
 
-	public long hilo;
+	public long	hilo;
 
 	public void setHi(final int value) {
 		hilo = (hilo & 0xffffffffL) | (((long) value) << 32);
@@ -84,8 +84,7 @@ public abstract class MduState extends GprState {
 	}
 
 	public final void doMULTU(final int rs, final int rt) {
-		hilo = ((long) Math.abs(gpr[rs].read32()))
-				* ((long) Math.abs(gpr[rt].read32()));
+		hilo = ((long) Math.abs(gpr[rs].read32())) * ((long) Math.abs(gpr[rt].read32()));
 	}
 
 	public final void doDMULTU(final int rs, final int rt) {
@@ -137,8 +136,7 @@ public abstract class MduState extends GprState {
 	}
 
 	public final void doMADDU(final int rs, final int rt) {
-		hilo += ((gpr[rs].read32()) & 0xffffffffL)
-				* ((gpr[rt].read32()) & 0xffffffffL);
+		hilo += ((gpr[rs].read32()) & 0xffffffffL) * ((gpr[rt].read32()) & 0xffffffffL);
 	}
 
 	public final void doMSUB(final int rs, final int rt) {
@@ -146,8 +144,7 @@ public abstract class MduState extends GprState {
 	}
 
 	public final void doMSUBU(final int rs, final int rt) {
-		hilo -= ((gpr[rs].read32()) & 0xffffffffL)
-				* ((gpr[rt].read32()) & 0xffffffffL);
+		hilo -= ((gpr[rs].read32()) & 0xffffffffL) * ((gpr[rt].read32()) & 0xffffffffL);
 	}
 
 }

@@ -11,25 +11,42 @@ import com.jps2.core.cpu.registers.CP0StatusRegister;
 
 public final class CpuState extends SauState {
 
-	private static final Logger logger = Logger.getLogger(CpuState.class);
+	private static final Logger	logger			= Logger.getLogger(CpuState.class);
 
-	final EECounter[] counters;
-	final EESyncCounter hSyncCounter;
-	final EESyncCounter vSyncCounter;
+	final EECounter[]			counters;
+	final EESyncCounter			hSyncCounter;
+	final EESyncCounter			vSyncCounter;
 
-	int nextsCounter; // records the cpuRegs.cycle value of the last call to
+	int							nextsCounter;										// records
+																					// the
+																					// cpuRegs.cycle
+																					// value
+																					// of
+																					// the
+																					// last
+																					// call
+																					// to
 	// rcntUpdate()
-	int nextCounter; // delta from nextsCounter, in cycles, until the next
+	int							nextCounter;										// delta
+																					// from
+																					// nextsCounter,
+																					// in
+																					// cycles,
+																					// until
+																					// the
+																					// next
 	// rcntUpdate()
-	int[] eCycle;
-	int[] sCycle; // for internal counters
+	int[]						eCycle;
+	int[]						sCycle;											// for
+																					// internal
+																					// counters
 
-	int lastCp0Cycle = 0;
-	final int[] lastPERFCycle = new int[2];
+	int							lastCp0Cycle	= 0;
+	final int[]					lastPERFCycle	= new int[2];
 
-	final PERFregs perfRegs;
+	final PERFregs				perfRegs;
 
-	final CP0StatusRegister statusReg;
+	final CP0StatusRegister		statusReg;
 
 	@Override
 	public void reset() {
@@ -69,16 +86,14 @@ public final class CpuState extends SauState {
 	}
 
 	public final void doDI(final boolean delay) {
-		if (statusReg.getEDI() || statusReg.getEXL() || statusReg.getERL()
-				|| (statusReg.getKSU() == 0)) {
+		if (statusReg.getEDI() || statusReg.getEXL() || statusReg.getERL() || (statusReg.getKSU() == 0)) {
 			statusReg.setEIE(false);
 			updateCP0Status(delay);
 		}
 	}
 
 	public final void doEI(final boolean delay) {
-		if (statusReg.getEDI() || statusReg.getEXL() || statusReg.getERL()
-				|| (statusReg.getKSU() == 0)) {
+		if (statusReg.getEDI() || statusReg.getEXL() || statusReg.getERL() || (statusReg.getKSU() == 0)) {
 			statusReg.setEIE(true);
 			updateCP0Status(delay);
 		}
@@ -90,46 +105,44 @@ public final class CpuState extends SauState {
 		}
 	}
 
-	public final void doMTC0(final int rd, final int rt, final int imm,
-			final boolean delay) {
+	public final void doMTC0(final int rd, final int rt, final int imm, final boolean delay) {
 		switch (rd) {
-		case 9:
-			lastCp0Cycle = cycle;
-			cp0[9].value = gpr[rt].read32();
-			break;
-
-		case 12:
-			writeCP0Status(gpr[rt].read32(), delay);
-			break;
-
-		case 24:
-			System.err.println(String.format(
-					"MTC0 Breakpoint debug Registers code = %x", imm));
-			break;
-
-		case 25:
-			switch (imm) {
-			case 0: // MTPS [LSB is clear]
-				// Updates PCRs and sets the PCCR.
-				updatePCCR();
-				perfRegs.pccr.val = gpr[rt].read32();
+			case 9:
+				lastCp0Cycle = cycle;
+				cp0[9].value = gpr[rt].read32();
 				break;
 
-			case 1: // MTPC [LSB is set] - set PCR0
-				perfRegs.pcr0 = gpr[rt].read32();
-				lastPERFCycle[0] = cycle;
+			case 12:
+				writeCP0Status(gpr[rt].read32(), delay);
 				break;
 
-			case 3: // MTPC [LSB is set] - set PCR0
-				perfRegs.pcr1 = gpr[rt].read32();
-				lastPERFCycle[1] = cycle;
+			case 24:
+				System.err.println(String.format("MTC0 Breakpoint debug Registers code = %x", imm));
 				break;
-			}
-			break;
 
-		default:
-			cp0[rd].value = gpr[rt].read32();
-			break;
+			case 25:
+				switch (imm) {
+					case 0: // MTPS [LSB is clear]
+						// Updates PCRs and sets the PCCR.
+						updatePCCR();
+						perfRegs.pccr.val = gpr[rt].read32();
+						break;
+
+					case 1: // MTPC [LSB is set] - set PCR0
+						perfRegs.pcr0 = gpr[rt].read32();
+						lastPERFCycle[0] = cycle;
+						break;
+
+					case 3: // MTPC [LSB is set] - set PCR0
+						perfRegs.pcr1 = gpr[rt].read32();
+						lastPERFCycle[1] = cycle;
+						break;
+				}
+				break;
+
+			default:
+				cp0[rd].value = gpr[rt].read32();
+				break;
 		}
 
 	}
@@ -145,29 +158,31 @@ public final class CpuState extends SauState {
 
 	static boolean shouldPerfCountEvent(final int evt) {
 		switch (evt) {
-		// This is a rough table of actions for various PCR modes. Some of these
-		// can be implemented more accurately later. Others (WBBs in particular)
-		// probably cannot without some severe complications.
+			// This is a rough table of actions for various PCR modes. Some of
+			// these
+			// can be implemented more accurately later. Others (WBBs in
+			// particular)
+			// probably cannot without some severe complications.
 
-		// left sides are PCR0 / right sides are PCR1
+			// left sides are PCR0 / right sides are PCR1
 
-		case 1: // cpu cycle counter.
-		case 2: // single/dual instruction issued
-		case 3: // Branch issued / Branch mispredicated
-		case 12: // Instruction completed
-		case 13: // non-delayslot instruction completed
-		case 14: // COP2/COP1 instruction complete
-		case 15: // Load/Store completed
-			return true;
-		case 4: // BTAC/TLB miss
-		case 5: // ITLB/DTLB miss
-		case 6: // Data/Instruction cache miss
-		case 7: // Access to DTLB / WBB single request fail
-		case 8: // Non-blocking load / WBB burst request fail
-		case 9:
-		case 10:
-		case 11: // CPU address bus busy / CPU data bus busy
-			return false;
+			case 1: // cpu cycle counter.
+			case 2: // single/dual instruction issued
+			case 3: // Branch issued / Branch mispredicated
+			case 12: // Instruction completed
+			case 13: // non-delayslot instruction completed
+			case 14: // COP2/COP1 instruction complete
+			case 15: // Load/Store completed
+				return true;
+			case 4: // BTAC/TLB miss
+			case 5: // ITLB/DTLB miss
+			case 6: // Data/Instruction cache miss
+			case 7: // Access to DTLB / WBB single request fail
+			case 8: // Non-blocking load / WBB burst request fail
+			case 9:
+			case 10:
+			case 11: // CPU address bus busy / CPU data bus busy
+				return false;
 		}
 
 		return false;
@@ -208,8 +223,7 @@ public final class CpuState extends SauState {
 	public final void cpuTestINTCInts() {
 		if ((interrupt & (1 << 30)) == 0) {
 			if (cpuIntsEnabled()) {
-				if ((processor.memory.read32(EEHardwareRegisters.INTC_STAT) & processor.memory
-						.read32(EEHardwareRegisters.INTC_MASK)) != 0) {
+				if ((processor.memory.read32(EEHardwareRegisters.INTC_STAT) & processor.memory.read32(EEHardwareRegisters.INTC_MASK)) != 0) {
 					interrupt |= 1 << 30;
 					sCycle[30] = cycle;
 					eCycle[30] = 4; // Needs to be 4 to account for bus
@@ -232,16 +246,13 @@ public final class CpuState extends SauState {
 	}
 
 	final boolean cpuIntsEnabled() {
-		return statusReg.getEIE() && statusReg.getIE() && !statusReg.getEXL()
-				&& !statusReg.getERL();
+		return statusReg.getEIE() && statusReg.getIE() && !statusReg.getEXL() && !statusReg.getERL();
 	}
 
 	public final void cpuTestDMACInts() {
 		if ((interrupt & (1 << 31)) == 0) {
 			if ((statusReg.value & 0x10807) == 0x10801) {
-				if (((processor.memory.read16(0x1000e012) & processor.memory
-						.read16(0x1000e010)) != 0)
-						&& ((processor.memory.read16(0x1000e010) & 0x8000) != 0)) {
+				if (((processor.memory.read16(0x1000e012) & processor.memory.read16(0x1000e010)) != 0) && ((processor.memory.read16(0x1000e010) & 0x8000) != 0)) {
 					interrupt |= 1 << 31;
 					sCycle[31] = cycle;
 					eCycle[31] = 4; // Needs to be 4 to account for bus
@@ -281,11 +292,8 @@ public final class CpuState extends SauState {
 		// A proper fix would schedule the TIMR to trigger at a specific cycle
 		// anytime
 		// the Count or Compare registers are modified.
-		if (((statusReg.value & 0x8000) != 0)
-				&& cp0[CP0_COUNT].value >= cp0[CP0_COMPARE].value
-				&& cp0[CP0_COUNT].value < cp0[CP0_COMPARE].value + 1000) {
-			logger.error(String.format("timr intr: %x, %x",
-					cp0[CP0_COUNT].value, cp0[CP0_COMPARE].value));
+		if (((statusReg.value & 0x8000) != 0) && cp0[CP0_COUNT].value >= cp0[CP0_COMPARE].value && cp0[CP0_COUNT].value < cp0[CP0_COMPARE].value + 1000) {
+			logger.error(String.format("timr intr: %x, %x", cp0[CP0_COUNT].value, cp0[CP0_COMPARE].value));
 			processor.processException(ExcCode.MACHINE_CHECK, 0x808000, delay);
 		}
 	}
@@ -320,26 +328,25 @@ public final class CpuState extends SauState {
 		}
 		cpuRcntSet();
 	}
-	
-	private final  void cpuRcntSet()
-	{
-	        int i;
 
-	        nextsCounter = cycle;
-	        nextCounter = vSyncCounter.cycleT - (cycle - vSyncCounter.sCycle);
+	private final void cpuRcntSet() {
+		int i;
 
-	        for (i = 0; i < 4; i++){
-	                rcntSet( i );
-	        }
+		nextsCounter = cycle;
+		nextCounter = vSyncCounter.cycleT - (cycle - vSyncCounter.sCycle);
 
-	        // sanity check!
-	        if( nextCounter < 0 ) {
-	        	nextCounter = 0;
-	        }
+		for (i = 0; i < 4; i++) {
+			rcntSet(i);
+		}
+
+		// sanity check!
+		if (nextCounter < 0) {
+			nextCounter = 0;
+		}
 	}
 
-
-//	private static final String limiterMsg = "Framelimiter rate updated (UpdateVSyncRate): %d.%d fps";
+	// private static final String limiterMsg =
+	// "Framelimiter rate updated (UpdateVSyncRate): %d.%d fps";
 
 	private final int updateVSyncRate() {
 
@@ -412,24 +419,20 @@ public final class CpuState extends SauState {
 
 		// only count if the counter is turned on (0x80) and is not an hsync
 		// gate (!0x03)
-		if (counters[index].mode.isCounting()
-				&& (counters[index].mode.getClockSource() != 0x3)) {
-			ret = counters[index].count
-					+ ((cycle - counters[index].cycleT) / counters[index].rate);
+		if (counters[index].mode.isCounting() && (counters[index].mode.getClockSource() != 0x3)) {
+			ret = counters[index].count + ((cycle - counters[index].cycleT) / counters[index].rate);
 		} else {
 			ret = counters[index].count;
 		}
 
 		// Spams the Console.
-//		logger.debug(String.format("EE Counter[%d] readCount32 = %x", index,
-//				ret));
+		// logger.debug(String.format("EE Counter[%d] readCount32 = %x", index,
+		// ret));
 		return ret;
 	}
 
 	public final void rcntWcount(final int index, final int value) {
-		logger.debug(String.format(
-				"EE Counter[%d] writeCount = %x,   oldcount=%x, target=%x",
-				index, value, counters[index].count, counters[index].target));
+		logger.debug(String.format("EE Counter[%d] writeCount = %x,   oldcount=%x, target=%x", index, value, counters[index].count, counters[index].target));
 
 		counters[index].count = value & 0xffff;
 
@@ -444,8 +447,7 @@ public final class CpuState extends SauState {
 			if (counters[index].mode.getClockSource() != 0x3) {
 				int change = cycle - counters[index].cycleT;
 				if (change > 0) {
-					change -= (change / counters[index].rate)
-							* counters[index].rate;
+					change -= (change / counters[index].rate) * counters[index].rate;
 					counters[index].cycleT = cycle - change;
 				}
 			}
@@ -461,8 +463,7 @@ public final class CpuState extends SauState {
 		final EECounter counter = counters[cntidx];
 
 		// Stopped or special hsync gate?
-		if (!counter.mode.isCounting()
-				|| (counter.mode.getClockSource() == 0x3)) {
+		if (!counter.mode.isCounting() || (counter.mode.getClockSource() == 0x3)) {
 			return;
 		}
 
@@ -480,8 +481,7 @@ public final class CpuState extends SauState {
 		// that into account. Adding the difference from that cycle count to the
 		// current one
 		// will do the trick!
-		int c = ((0x10000 - counter.count) * counter.rate)
-				- (cycle - counter.cycleT);
+		int c = ((0x10000 - counter.count) * counter.rate) - (cycle - counter.cycleT);
 		// adjust for time passed since last
 		// rcntUpdate();
 		c += cycle - nextsCounter;
@@ -499,8 +499,7 @@ public final class CpuState extends SauState {
 		if ((counter.target & EECounter.EECNT_FUTURE_TARGET) != 0) {
 			return;
 		} else {
-			c = ((counter.target - counter.count) * counter.rate)
-					- (cycle - counter.cycleT);
+			c = ((counter.target - counter.count) * counter.rate) - (cycle - counter.cycleT);
 			// adjust for time passed since
 			// last rcntUpdate();
 			c += cycle - nextsCounter;
@@ -564,12 +563,12 @@ public final class CpuState extends SauState {
 		// u32 Reserved:11;
 		// u32 CTE:1; // Counter enable bit, no counting if set to zero.
 		//
-		final PCCR pccr = new PCCR();
-		int pcr0, pcr1, pad;
-		final int[] r = new int[4];
+		final PCCR	pccr	= new PCCR();
+		int			pcr0, pcr1, pad;
+		final int[]	r		= new int[4];
 
 		static final class PCCR {
-			int val;
+			int	val;
 
 			public int getEvent0() {
 				return (val >> 22) & 0x1F;

@@ -2,15 +2,15 @@ package com.jps2.core.cpu.ee;
 
 public class EECounter {
 
-	public static final int EECNT_FUTURE_TARGET = 0x10000000;
+	public static final int		EECNT_FUTURE_TARGET	= 0x10000000;
 
-	public int count;
-	public int target;
-	public int hold;
-	public int rate;
-	public int interrupt;
-	public int cycleT;
-	public final EECounterMode mode = new EECounterMode();
+	public int					count;
+	public int					target;
+	public int					hold;
+	public int					rate;
+	public int					interrupt;
+	public int					cycleT;
+	public final EECounterMode	mode				= new EECounterMode();
 
 	/**
 	 * <pre>
@@ -61,7 +61,7 @@ public class EECounter {
 	 * 
 	 */
 	public class EECounterMode {
-		public int value;
+		public int	value;
 
 		public boolean isCounting() {
 			return (value & 0x80) != 0;

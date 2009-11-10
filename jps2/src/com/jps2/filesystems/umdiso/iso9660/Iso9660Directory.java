@@ -18,13 +18,11 @@ import com.jps2.filesystems.umdiso.UmdIsoReader;
  */
 public class Iso9660Directory {
 
-	private final Vector<Iso9660File> files;
+	private final Vector<Iso9660File>	files;
 
-	public Iso9660Directory(final UmdIsoReader r, final int directorySector,
-			int directorySize) throws IOException {
+	public Iso9660Directory(final UmdIsoReader r, final int directorySector, int directorySize) throws IOException {
 		// parse directory sector
-		final UmdIsoFile dataStream = new UmdIsoFile(r, directorySector,
-				directorySize, null);
+		final UmdIsoFile dataStream = new UmdIsoFile(r, directorySector, directorySize, null);
 
 		files = new Vector<Iso9660File>();
 
@@ -51,8 +49,7 @@ public class Iso9660Directory {
 
 	}
 
-	public Iso9660File getEntryByIndex(final int index)
-			throws ArrayIndexOutOfBoundsException {
+	public Iso9660File getEntryByIndex(final int index) throws ArrayIndexOutOfBoundsException {
 		return files.get(index);
 	}
 
@@ -64,8 +61,7 @@ public class Iso9660Directory {
 			}
 		}
 
-		throw new FileNotFoundException("File " + fileName
-				+ " not found in directory.");
+		throw new FileNotFoundException("File " + fileName + " not found in directory.");
 	}
 
 	public String[] getFileList() throws FileNotFoundException {

@@ -12,8 +12,7 @@ public class Bios {
 	public static void load(final Memory memory) {
 		try {
 			if (isValid(ConfigManager.getBiosFile())) {
-				final FileInputStream is = new FileInputStream(ConfigManager
-						.getBiosFile());
+				final FileInputStream is = new FileInputStream(ConfigManager.getBiosFile());
 				memory.writeStream(0, is);
 				is.close();
 			} else {
@@ -25,7 +24,7 @@ public class Bios {
 	}
 
 	// supported bios MD5
-	private static final HashSet<String> knowBios = new HashSet<String>();
+	private static final HashSet<String>	knowBios	= new HashSet<String>();
 	static {
 		// scph39001
 		knowBios.add("d5ce2c7d119f563ce04bc04dbc3a323e");
@@ -53,8 +52,7 @@ public class Bios {
 			String hexPart;
 			for (final byte b : buffer) {
 				hexPart = "0" + Integer.toHexString(b);
-				hexMd5.append(hexPart.substring(hexPart.length() - 2, hexPart
-						.length()));
+				hexMd5.append(hexPart.substring(hexPart.length() - 2, hexPart.length()));
 			}
 
 			// for new bios uncomment and add in hashset

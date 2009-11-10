@@ -25,17 +25,17 @@ import static com.jps2.util.Utilities.*;
 
 public class Elf32SectionHeader {
 
-	private String sh_namez = "";
-	private long sh_name;
-	private int sh_type;
-	private int sh_flags;
-	private long sh_addr;
-	private long sh_offset;
-	private long sh_size;
-	private int sh_link;
-	private int sh_info;
-	private int sh_addralign;
-	private long sh_entsize;
+	private String	sh_namez	= "";
+	private long	sh_name;
+	private int		sh_type;
+	private int		sh_flags;
+	private long	sh_addr;
+	private long	sh_offset;
+	private long	sh_size;
+	private int		sh_link;
+	private int		sh_info;
+	private int		sh_addralign;
+	private long	sh_entsize;
 
 	private static int sizeof() {
 		return 40;
@@ -69,38 +69,16 @@ public class Elf32SectionHeader {
 
 	public String toString() {
 		StringBuffer str = new StringBuffer();
-		str.append("sh_name "
-				+ "\t "
-				+ formatString("long", Long.toHexString(
-						getSh_name() & 0xFFFFFFFFL).toUpperCase()) + "\n");
-		str.append("sh_type "
-				+ "\t "
-				+ formatString("long", Long.toHexString(
-						getSh_type() & 0xFFFFFFFFL).toUpperCase()) + "\n");
-		str.append("sh_flags " + "\t " + integerToHex(getSh_flags() & 0xFF)
-				+ "\n");
-		str.append("sh_addr "
-				+ "\t "
-				+ formatString("long", Long.toHexString(
-						getSh_addr() & 0xFFFFFFFFL).toUpperCase()) + "\n");
-		str.append("sh_offset "
-				+ "\t "
-				+ formatString("long", Long.toHexString(
-						getSh_offset() & 0xFFFFFFFFL).toUpperCase()) + "\n");
-		str.append("sh_size "
-				+ "\t "
-				+ formatString("long", Long.toHexString(
-						getSh_size() & 0xFFFFFFFFL).toUpperCase()) + "\n");
-		str.append("sh_link " + "\t " + integerToHex(getSh_link() & 0xFF)
-				+ "\n");
-		str.append("sh_info " + "\t " + integerToHex(getSh_info() & 0xFF)
-				+ "\n");
-		str.append("sh_addralign " + "\t "
-				+ integerToHex(getSh_addralign() & 0xFF) + "\n");
-		str.append("sh_entsize "
-				+ "\t "
-				+ formatString("long", Long.toHexString(
-						getSh_entsize() & 0xFFFFFFFFL).toUpperCase()) + "\n");
+		str.append("sh_name " + "\t " + formatString("long", Long.toHexString(getSh_name() & 0xFFFFFFFFL).toUpperCase()) + "\n");
+		str.append("sh_type " + "\t " + formatString("long", Long.toHexString(getSh_type() & 0xFFFFFFFFL).toUpperCase()) + "\n");
+		str.append("sh_flags " + "\t " + integerToHex(getSh_flags() & 0xFF) + "\n");
+		str.append("sh_addr " + "\t " + formatString("long", Long.toHexString(getSh_addr() & 0xFFFFFFFFL).toUpperCase()) + "\n");
+		str.append("sh_offset " + "\t " + formatString("long", Long.toHexString(getSh_offset() & 0xFFFFFFFFL).toUpperCase()) + "\n");
+		str.append("sh_size " + "\t " + formatString("long", Long.toHexString(getSh_size() & 0xFFFFFFFFL).toUpperCase()) + "\n");
+		str.append("sh_link " + "\t " + integerToHex(getSh_link() & 0xFF) + "\n");
+		str.append("sh_info " + "\t " + integerToHex(getSh_info() & 0xFF) + "\n");
+		str.append("sh_addralign " + "\t " + integerToHex(getSh_addralign() & 0xFF) + "\n");
+		str.append("sh_entsize " + "\t " + formatString("long", Long.toHexString(getSh_entsize() & 0xFFFFFFFFL).toUpperCase()) + "\n");
 		return str.toString();
 	}
 
@@ -153,23 +131,23 @@ public class Elf32SectionHeader {
 	}
 
 	// Flags
-	public static final int SHF_NONE = 0x00000000;
-	public static final int SHF_WRITE = 0x00000001;
-	public static final int SHF_ALLOCATE = 0x00000002;
-	public static final int SHF_EXECUTE = 0x00000004;
+	public static final int	SHF_NONE		= 0x00000000;
+	public static final int	SHF_WRITE		= 0x00000001;
+	public static final int	SHF_ALLOCATE	= 0x00000002;
+	public static final int	SHF_EXECUTE		= 0x00000004;
 
 	// Types
-	public static final int SHT_NULL = 0x00000000;
-	public static final int SHT_PROGBITS = 0x00000001;
-	public static final int SHT_SYMTAB = 0x00000002;
-	public static final int SHT_STRTAB = 0x00000003;
-	public static final int SHT_RELA = 0x00000004;
-	public static final int SHT_HASH = 0x00000005;
-	public static final int SHT_DYNAMIC = 0x00000006;
-	public static final int SHT_NOTE = 0x00000007;
-	public static final int SHT_NOBITS = 0x00000008;
-	public static final int SHT_REL = 0x00000009;
-	public static final int SHT_SHLIB = 0x0000000A;
-	public static final int SHT_DYNSYM = 0x0000000B;
-	public static final int SHT_PRXREL = 0x700000A0;
+	public static final int	SHT_NULL		= 0x00000000;
+	public static final int	SHT_PROGBITS	= 0x00000001;
+	public static final int	SHT_SYMTAB		= 0x00000002;
+	public static final int	SHT_STRTAB		= 0x00000003;
+	public static final int	SHT_RELA		= 0x00000004;
+	public static final int	SHT_HASH		= 0x00000005;
+	public static final int	SHT_DYNAMIC		= 0x00000006;
+	public static final int	SHT_NOTE		= 0x00000007;
+	public static final int	SHT_NOBITS		= 0x00000008;
+	public static final int	SHT_REL			= 0x00000009;
+	public static final int	SHT_SHLIB		= 0x0000000A;
+	public static final int	SHT_DYNSYM		= 0x0000000B;
+	public static final int	SHT_PRXREL		= 0x700000A0;
 }

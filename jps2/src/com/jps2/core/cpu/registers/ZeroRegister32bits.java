@@ -4,7 +4,7 @@ import com.jps2.core.cpu.DataType;
 
 public final class ZeroRegister32bits implements Register32bits {
 
-	DataType type = DataType.WORD;
+	DataType	type	= DataType.WORD;
 
 	@Override
 	public final DataType getType() {

@@ -7,62 +7,62 @@ import com.jps2.core.cpu.iop.state.CpuState;
 
 public class SIO {
 	// Status Flags
-	private static final int TX_RDY = 0x0001;
-	private static final int RX_RDY = 0x0002;
-	private static final int TX_EMPTY = 0x0004;
-	private static final int PARITY_ERR = 0x0008;
-	private static final int RX_OVERRUN = 0x0010;
-	private static final int FRAMING_ERR = 0x0020;
-	private static final int SYNC_DETECT = 0x0040;
-	private static final int DSR = 0x0080;
-	private static final int CTS = 0x0100;
-	private static final int IRQ = 0x0200;
+	private static final int	TX_RDY		= 0x0001;
+	private static final int	RX_RDY		= 0x0002;
+	private static final int	TX_EMPTY	= 0x0004;
+	private static final int	PARITY_ERR	= 0x0008;
+	private static final int	RX_OVERRUN	= 0x0010;
+	private static final int	FRAMING_ERR	= 0x0020;
+	private static final int	SYNC_DETECT	= 0x0040;
+	private static final int	DSR			= 0x0080;
+	private static final int	CTS			= 0x0100;
+	private static final int	IRQ			= 0x0200;
 
 	// Control Flags
-	private static final int TX_PERM = 0x0001;
-	private static final int DTR = 0x0002;
-	private static final int RX_PERM = 0x0004;
-	private static final int BREAK = 0x0008;
-	private static final int RESET_ERR = 0x0010;
-	private static final int RTS = 0x0020;
-	private static final int SIO_RESET = 0x0040;
+	private static final int	TX_PERM		= 0x0001;
+	private static final int	DTR			= 0x0002;
+	private static final int	RX_PERM		= 0x0004;
+	private static final int	BREAK		= 0x0008;
+	private static final int	RESET_ERR	= 0x0010;
+	private static final int	RTS			= 0x0020;
+	private static final int	SIO_RESET	= 0x0040;
 
-	public short statReg;
-	public short modeReg;
-	public short ctrlReg;
-	public short baudReg;
+	public short				statReg;
+	public short				modeReg;
+	public short				ctrlReg;
+	public short				baudReg;
 
-	public final byte[] buffer = new byte[256];
-	public int bufcount;
-	public int parp;
-	public int mcdst;
-	public int rdwr;
-	public byte adrH;
-	public byte adrL;
-	public int padst;
-	public int mtapst;
-	public int packetsize;
+	public final byte[]			buffer		= new byte[256];
+	public int					bufcount;
+	public int					parp;
+	public int					mcdst;
+	public int					rdwr;
+	public byte					adrH;
+	public byte					adrL;
+	public int					padst;
+	public int					mtapst;
+	public int					packetsize;
 
-	public byte terminator;
-	public byte mode;
-	public byte mcCommand;
-	public int lastsector;
-	public int sector;
-	public int k;
-	public int count;
-	
-	private CpuState cpu;
-	
+	public byte					terminator;
+	public byte					mode;
+	public byte					mcCommand;
+	public int					lastsector;
+	public int					sector;
+	public int					k;
+	public int					count;
+
+	private CpuState			cpu;
+
 	public void setCpu(final CpuState cpu) {
 		this.cpu = cpu;
 	}
 
 	// Active pad slot for each port. Not sure if these automatically reset
 	// after each read or not.
-	public final byte[] activePadSlot = new byte[2];
+	public final byte[]	activePadSlot		= new byte[2];
 	// Active memcard slot for each port. Not sure if these automatically reset
 	// after each read or not.
-	public final byte[] activeMemcardSlot = new byte[2];
+	public final byte[]	activeMemcardSlot	= new byte[2];
 
 	public final int getMemcardIndex() {
 		return (ctrlReg & 0x2000) >> 13;
@@ -123,7 +123,6 @@ public class SIO {
 			cpu.interrupt &= ~(1 << IOPHardwareRegisters.IOP_EVT_SIO);
 		}
 
-		
 	}
 
 	public void sioInterrupt() {
@@ -132,106 +131,107 @@ public class SIO {
 
 	public void initializeSIO(final byte value) {
 		switch (value) {
-		case 0x01: // start pad
-			statReg &= ~TX_EMPTY; // Now the Buffer is not empty
-			statReg |= RX_RDY; // Transfer is Ready
+			case 0x01: // start pad
+				statReg &= ~TX_EMPTY; // Now the Buffer is not empty
+				statReg |= RX_RDY; // Transfer is Ready
 
-			bufcount = 4; // Default size, when no pad connected.
-			parp = 0;
-			padst = 1;
-			packetsize = 1;
-			count = 0;
-			sio2.packet.recvVal1 = 0x1100; // Pad is present
+				bufcount = 4; // Default size, when no pad connected.
+				parp = 0;
+				padst = 1;
+				packetsize = 1;
+				count = 0;
+				sio2.packet.recvVal1 = 0x1100; // Pad is present
 
-			if ((ctrlReg & 2) == 2) {
-				int padslot = (ctrlReg >> 12) & 2; // move 0x2000 bitmask into
-													// leftmost bits
-				if (padslot != 1) {
-					padslot >>= 1; // transform 0/2 to be 0/1 values
+				if ((ctrlReg & 2) == 2) {
+					int padslot = (ctrlReg >> 12) & 2; // move 0x2000 bitmask
+														// into
+					// leftmost bits
+					if (padslot != 1) {
+						padslot >>= 1; // transform 0/2 to be 0/1 values
 
-					if (!PADsetSlot(padslot + 1, 1 + activePadSlot[padslot])
-							&& activePadSlot[padslot]) {
-						// Pad is not present. Don't send poll, just return a
-						// bunch of 0's.
-						sio2.packet.recvVal1 = 0x1D100;
-						padst = 3;
-					} else {
-						buffer[0] = PADstartPoll(padslot + 1);
+						if (!PADsetSlot(padslot + 1, 1 + activePadSlot[padslot]) && activePadSlot[padslot]) {
+							// Pad is not present. Don't send poll, just return
+							// a
+							// bunch of 0's.
+							sio2.packet.recvVal1 = 0x1D100;
+							padst = 3;
+						} else {
+							buffer[0] = PADstartPoll(padslot + 1);
+						}
 					}
 				}
-			}
 
-			SIO_INT();
-			break;
+				SIO_INT();
+				break;
 
-		case 0x21: // start mtap
-			statReg &= ~TX_EMPTY; // Now the Buffer is not empty
-			statReg |= RX_RDY; // Transfer is Ready
-			parp = 0;
-			packetsize = 1;
-			mtapst = 1;
-			count = 0;
-			sio2.packet.recvVal1 = 0x1D100; // Mtap is not connected :(
-			if ((ctrlReg & 2) != 0) // No idea if this test is needed. Pads use
-									// it, memcards don't.
-			{
-				final int port = getMultitapPort();
-				if (!IsMtapPresent(port)) {
-					// If "unplug" multitap mid game, set active slots to 0.
-					activePadSlot[port] = 0;
-					activeMemcardSlot[port] = 0;
-				} else {
-					bufcount = 3;
-					buffer[0] = (byte) 0xFF;
-					buffer[1] = (byte) 0x80; // Have no idea if this is correct.
-												// From PSX mtap.
-					buffer[2] = 0x5A;
-					sio2.packet.recvVal1 = 0x1100; // Mtap is connected :)
+			case 0x21: // start mtap
+				statReg &= ~TX_EMPTY; // Now the Buffer is not empty
+				statReg |= RX_RDY; // Transfer is Ready
+				parp = 0;
+				packetsize = 1;
+				mtapst = 1;
+				count = 0;
+				sio2.packet.recvVal1 = 0x1D100; // Mtap is not connected :(
+				if ((ctrlReg & 2) != 0) // No idea if this test is needed. Pads
+										// use
+				// it, memcards don't.
+				{
+					final int port = getMultitapPort();
+					if (!IsMtapPresent(port)) {
+						// If "unplug" multitap mid game, set active slots to 0.
+						activePadSlot[port] = 0;
+						activeMemcardSlot[port] = 0;
+					} else {
+						bufcount = 3;
+						buffer[0] = (byte) 0xFF;
+						buffer[1] = (byte) 0x80; // Have no idea if this is
+													// correct.
+						// From PSX mtap.
+						buffer[2] = 0x5A;
+						sio2.packet.recvVal1 = 0x1100; // Mtap is connected :)
+					}
 				}
-			}
-			SIO_INT();
-			break;
+				SIO_INT();
+				break;
 
-		case 0x61: // start remote control sensor
-			statReg &= ~TX_EMPTY; // Now the Buffer is not empty
-			statReg |= RX_RDY; // Transfer is Ready
-			parp = 0;
-			packetsize = 1;
-			count = 0;
-			sio2.packet.recvVal1 = 0x1100; // Pad is present
-			SIO_INT();
-			break;
-		case (byte) 0x81: // start memcard
-			statReg &= ~TX_EMPTY;
-			statReg |= RX_RDY;
-			memcpy(buffer, cardh, 4);
-			parp = 0;
-			bufcount = 8;
-			mcdst = 1;
-			packetsize = 1;
-			rdwr = 0;
-			count = 0;
+			case 0x61: // start remote control sensor
+				statReg &= ~TX_EMPTY; // Now the Buffer is not empty
+				statReg |= RX_RDY; // Transfer is Ready
+				parp = 0;
+				packetsize = 1;
+				count = 0;
+				sio2.packet.recvVal1 = 0x1100; // Pad is present
+				SIO_INT();
+				break;
+			case (byte) 0x81: // start memcard
+				statReg &= ~TX_EMPTY;
+				statReg |= RX_RDY;
+				memcpy(buffer, cardh, 4);
+				parp = 0;
+				bufcount = 8;
+				mcdst = 1;
+				packetsize = 1;
+				rdwr = 0;
+				count = 0;
 
-			// Memcard presence reporting!
-			// Note:
-			// 0x01100 means Memcard is present
-			// 0x1D100 means Memcard is missing.
+				// Memcard presence reporting!
+				// Note:
+				// 0x01100 means Memcard is present
+				// 0x1D100 means Memcard is missing.
 
-			final int port = getMemcardIndex();
-			final int slot = activeMemcardSlot[port];
+				final int port = getMemcardIndex();
+				final int slot = activeMemcardSlot[port];
 
-			if (SysPlugins.McdIsPresent(port, slot)) {
-				sio2.packet.recvVal1 = 0x1100;
-				PAD_LOG("START MEMCARD [port:%d, slot:%d] - Present", port,
-						slot);
-			} else {
-				sio2.packet.recvVal1 = 0x1D100;
-				PAD_LOG("START MEMCARD [port:%d, slot:%d] - Missing", port,
-						slot);
-			}
+				if (SysPlugins.McdIsPresent(port, slot)) {
+					sio2.packet.recvVal1 = 0x1100;
+					PAD_LOG("START MEMCARD [port:%d, slot:%d] - Present", port, slot);
+				} else {
+					sio2.packet.recvVal1 = 0x1D100;
+					PAD_LOG("START MEMCARD [port:%d, slot:%d] - Missing", port, slot);
+				}
 
-			SIO_INT();
-			break;
+				SIO_INT();
+				break;
 		}
 	}
 

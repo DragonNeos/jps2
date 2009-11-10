@@ -4,7 +4,7 @@ import com.jps2.core.cpu.DataType;
 
 public final class ZeroRegister64bits implements Register64bits {
 
-	DataType type = DataType.DOUBLEWORD;
+	DataType	type	= DataType.DOUBLEWORD;
 
 	@Override
 	public final DataType getType() {

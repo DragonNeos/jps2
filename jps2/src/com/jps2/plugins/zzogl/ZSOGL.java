@@ -10,7 +10,7 @@ import com.jps2.plugins.zzogl.info.PathInfo;
 
 public class ZSOGL extends AbstractGSPlugin {
 
-	private final GSInternal gs = new GSInternal();
+	private final GSInternal	gs	= new GSInternal();
 
 	@Override
 	public final long getLastTag() {
@@ -282,7 +282,11 @@ public class ZSOGL extends AbstractGSPlugin {
 
 	@Override
 	public int[] getVersion() {
-		return new int[] { 0, 0, 1 };
+		return new int[] {
+							0,
+							0,
+							1
+		};
 	}
 
 	@Override

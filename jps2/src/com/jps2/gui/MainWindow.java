@@ -35,15 +35,14 @@ import com.jps2.util.ResourceManager;
 @SuppressWarnings("serial")
 public class MainWindow extends JFrame {
 
-	private static MainWindow instance;
+	private static MainWindow	instance;
 
-	private final AWTGLCanvas canvas;
+	private final AWTGLCanvas	canvas;
 
 	private MainWindow() {
 		super("JPS2 - Java PS2 emulator");
 		try {
-			setIconImages(Arrays.asList(ResourceManager.getIcon(
-					"/icons/16x16/joystick.png").getImage(),/**/
+			setIconImages(Arrays.asList(ResourceManager.getIcon("/icons/16x16/joystick.png").getImage(),/**/
 			ResourceManager.getIcon("/icons/32x32/joystick.png").getImage(),/**/
 			ResourceManager.getIcon("/icons/48x48/joystick.png").getImage(),/**/
 			ResourceManager.getIcon("/icons/128x128/joystick.png").getImage(),/**/
@@ -52,9 +51,7 @@ public class MainWindow extends JFrame {
 			setMinimumSize(new Dimension(300, 240));
 			if (Utilities.isMac()) {
 				try {
-					new MacApplication(this, getClass().getDeclaredMethod(
-							"about"), null, null, ResourceManager.getIcon(
-							"/icons/256x256/joystick.png").getImage());
+					new MacApplication(this, getClass().getDeclaredMethod("about"), null, null, ResourceManager.getIcon("/icons/256x256/joystick.png").getImage());
 				} catch (final Exception e) {
 					throw new RuntimeException(e);
 				}
@@ -65,12 +62,11 @@ public class MainWindow extends JFrame {
 				{
 					setPreferredSize(new Dimension(256, 256));
 				}
-				float angle = 0;
-				boolean resized = true;
+				float	angle	= 0;
+				boolean	resized	= true;
 
 				@Override
-				protected void processComponentEvent(
-						final java.awt.event.ComponentEvent e) {
+				protected void processComponentEvent(final java.awt.event.ComponentEvent e) {
 					if (e.getID() == ComponentEvent.COMPONENT_RESIZED) {
 						resized = true;
 					}
@@ -158,9 +154,7 @@ public class MainWindow extends JFrame {
 
 		final JMenu fileMenu = new JMenu(ResourceManager.getString("menu.file"));
 
-		final JMenuItem exitMenu = new JMenuItem(ResourceManager
-				.getString("menu.file.exit"), ResourceManager
-				.getIcon("/icons/16x16/exit.png"));
+		final JMenuItem exitMenu = new JMenuItem(ResourceManager.getString("menu.file.exit"), ResourceManager.getIcon("/icons/16x16/exit.png"));
 		exitMenu.addActionListener(new ActionListener() {
 
 			@Override
@@ -172,12 +166,9 @@ public class MainWindow extends JFrame {
 
 		menuBar.add(fileMenu);
 
-		final JMenu configMenu = new JMenu(ResourceManager
-				.getString("menu.config"));
+		final JMenu configMenu = new JMenu(ResourceManager.getString("menu.config"));
 
-		final JMenuItem pluginsMenuItem = new JMenuItem(ResourceManager
-				.getString("menu.config.plugins"), ResourceManager
-				.getIcon("/icons/16x16/config.png"));
+		final JMenuItem pluginsMenuItem = new JMenuItem(ResourceManager.getString("menu.config.plugins"), ResourceManager.getIcon("/icons/16x16/config.png"));
 		pluginsMenuItem.addActionListener(new ActionListener() {
 
 			@Override
@@ -192,9 +183,7 @@ public class MainWindow extends JFrame {
 		final JMenu helpMenu = new JMenu(ResourceManager.getString("menu.help"));
 		// if not is mac
 		if (!Utilities.isMac()) {
-			final JMenuItem aboutMenuItem = new JMenuItem(ResourceManager
-					.getString("menu.help.about"), ResourceManager
-					.getIcon("/icons/16x16/about.png"));
+			final JMenuItem aboutMenuItem = new JMenuItem(ResourceManager.getString("menu.help.about"), ResourceManager.getIcon("/icons/16x16/about.png"));
 			aboutMenuItem.addActionListener(new ActionListener() {
 
 				@Override
@@ -213,13 +202,10 @@ public class MainWindow extends JFrame {
 	// contruct toolbar
 	private void makeToolBar() {
 
-		final JButton playButton = new JButton(ResourceManager
-				.getIcon("/icons/16x16/play.png"));
-		final JButton pauseButton = new JButton(ResourceManager
-				.getIcon("/icons/16x16/pause.png"));
+		final JButton playButton = new JButton(ResourceManager.getIcon("/icons/16x16/play.png"));
+		final JButton pauseButton = new JButton(ResourceManager.getIcon("/icons/16x16/pause.png"));
 		pauseButton.setEnabled(false);
-		final JButton stopButton = new JButton(ResourceManager
-				.getIcon("/icons/16x16/stop.png"));
+		final JButton stopButton = new JButton(ResourceManager.getIcon("/icons/16x16/stop.png"));
 		stopButton.setEnabled(false);
 		playButton.addActionListener(new ActionListener() {
 
@@ -240,8 +226,7 @@ public class MainWindow extends JFrame {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				Emulator.getInstance()
-						.pause(!Emulator.getInstance().isPaused());
+				Emulator.getInstance().pause(!Emulator.getInstance().isPaused());
 			}
 		});
 
@@ -294,16 +279,13 @@ public class MainWindow extends JFrame {
 			toolBar.installWindowDraggerOnWindow(this);
 			final Box layoutBox = Box.createHorizontalBox();
 
-			playButton.putClientProperty("JButton.buttonType",
-					"segmentedTextured");
+			playButton.putClientProperty("JButton.buttonType", "segmentedTextured");
 			playButton.putClientProperty("JButton.segmentPosition", "first");
 			layoutBox.add(playButton);
-			pauseButton.putClientProperty("JButton.buttonType",
-					"segmentedTextured");
+			pauseButton.putClientProperty("JButton.buttonType", "segmentedTextured");
 			pauseButton.putClientProperty("JButton.segmentPosition", "middle");
 			layoutBox.add(pauseButton);
-			stopButton.putClientProperty("JButton.buttonType",
-					"segmentedTextured");
+			stopButton.putClientProperty("JButton.buttonType", "segmentedTextured");
 			stopButton.putClientProperty("JButton.segmentPosition", "last");
 			layoutBox.add(stopButton);
 			toolBar.addComponentToLeft(layoutBox);

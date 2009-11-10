@@ -13,7 +13,7 @@ import com.jps2.gui.MainWindow;
 
 public abstract class ConfigManager {
 
-	private static final Properties props = new Properties();
+	private static final Properties	props	= new Properties();
 
 	private ConfigManager() {
 	}
@@ -33,22 +33,19 @@ public abstract class ConfigManager {
 
 	public static final void save() {
 		try {
-			props.store(new FileOutputStream("jps2.properties"),
-					"jps2 configuration file");
+			props.store(new FileOutputStream("jps2.properties"), "jps2 configuration file");
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private static final String biosKey = "bios.file";
+	private static final String	biosKey	= "bios.file";
 
 	public static final File getBiosFile() {
 		File file = null;
-		if (props.getProperty(biosKey) == null
-				|| !(file = new File(props.getProperty(biosKey))).exists()) {
+		if (props.getProperty(biosKey) == null || !(file = new File(props.getProperty(biosKey))).exists()) {
 			final JFileChooser fileChooser = new JFileChooser();
-			fileChooser.setDialogTitle(ResourceManager
-					.getString("bios.select.title"));
+			fileChooser.setDialogTitle(ResourceManager.getString("bios.select.title"));
 			fileChooser.setAcceptAllFileFilterUsed(false);
 			fileChooser.setFileFilter(new FileFilter() {
 
@@ -67,11 +64,8 @@ public abstract class ConfigManager {
 			fileChooser.showOpenDialog(MainWindow.getInstance());
 			file = fileChooser.getSelectedFile();
 			if (file == null) {
-				JOptionPane.showMessageDialog(MainWindow.getInstance(),
-						ResourceManager.getString("bios.notfound"), "Erro",
-						JOptionPane.ERROR_MESSAGE);
-				throw new RuntimeException(ResourceManager
-						.getString("bios.notfound"));
+				JOptionPane.showMessageDialog(MainWindow.getInstance(), ResourceManager.getString("bios.notfound"), "Erro", JOptionPane.ERROR_MESSAGE);
+				throw new RuntimeException(ResourceManager.getString("bios.notfound"));
 			} else {
 				props.setProperty(biosKey, file.getAbsolutePath());
 				save();

@@ -2,7 +2,7 @@ package com.jps2.core.cpu.iop.state;
 
 public abstract class MduState extends GprState {
 
-	long hilo;
+	long	hilo;
 
 	void setHi(final int value) {
 		hilo = (hilo & 0xffffffffL) | (((long) value) << 32);
@@ -72,8 +72,7 @@ public abstract class MduState extends GprState {
 	}
 
 	public final void doMULTU(final int rs, final int rt) {
-		hilo = ((long) Math.abs(gpr[rs].read32()))
-				* ((long) Math.abs(gpr[rt].read32()));
+		hilo = ((long) Math.abs(gpr[rs].read32())) * ((long) Math.abs(gpr[rt].read32()));
 	}
 
 	public final void doDIV(final int rs, final int rt) {

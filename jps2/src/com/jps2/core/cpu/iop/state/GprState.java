@@ -14,7 +14,7 @@ import com.jps2.core.cpu.registers.ZeroRegister32bits;
  */
 abstract class GprState extends Cpu {
 
-	Register32bits[] gpr;
+	Register32bits[]	gpr;
 
 	void reset() {
 		gpr[0] = new ZeroRegister32bits();
@@ -102,20 +102,16 @@ abstract class GprState extends Cpu {
 		}
 	}
 
-	public final void doSUB(final int rd, final int rs, final int rt,
-			final int inst, final boolean delay) {
-		final BigInteger sub = BigInteger.valueOf(gpr[rs].read32()).subtract(
-				BigInteger.valueOf(gpr[rt].read32()));
+	public final void doSUB(final int rd, final int rs, final int rt, final int inst, final boolean delay) {
+		final BigInteger sub = BigInteger.valueOf(gpr[rs].read32()).subtract(BigInteger.valueOf(gpr[rt].read32()));
 		if (sub.bitCount() > 32) {
-			processor
-					.processException(ExcCode.ARITHMETIC_OVERFLOW, inst, delay);
+			processor.processException(ExcCode.ARITHMETIC_OVERFLOW, inst, delay);
 		} else {
 			gpr[rd].write32(sub.intValue());
 		}
 	}
 
-	public final void doSUBU(final int rd, final int rs, final int rt,
-			final int inst, final boolean delay) {
+	public final void doSUBU(final int rd, final int rs, final int rt, final int inst, final boolean delay) {
 		gpr[rd].write32(gpr[rs].read32() - gpr[rt].read32());
 	}
 
@@ -145,8 +141,7 @@ abstract class GprState extends Cpu {
 
 	public final void doSLTU(final int rd, final int rs, final int rt) {
 		if (rd != 0) {
-			gpr[rd]
-					.write32(unsignedCompare(gpr[rs].read32(), gpr[rt].read32()));
+			gpr[rd].write32(unsignedCompare(gpr[rs].read32(), gpr[rt].read32()));
 		}
 	}
 
@@ -192,13 +187,10 @@ abstract class GprState extends Cpu {
 		}
 	}
 
-	public final void doADD(final int rd, final int rs, final int rt,
-			final int inst, final boolean delay) {
-		final BigInteger sum = BigInteger.valueOf(gpr[rs].read32()).add(
-				BigInteger.valueOf(gpr[rt].read32()));
+	public final void doADD(final int rd, final int rs, final int rt, final int inst, final boolean delay) {
+		final BigInteger sum = BigInteger.valueOf(gpr[rs].read32()).add(BigInteger.valueOf(gpr[rt].read32()));
 		if (sum.bitCount() > 32) {
-			processor
-					.processException(ExcCode.ARITHMETIC_OVERFLOW, inst, delay);
+			processor.processException(ExcCode.ARITHMETIC_OVERFLOW, inst, delay);
 		} else {
 			gpr[rd].write32(sum.intValue());
 		}

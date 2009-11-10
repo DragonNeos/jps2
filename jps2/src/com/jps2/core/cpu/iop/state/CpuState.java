@@ -5,7 +5,7 @@ import com.jps2.core.cpu.iop.IOPHardwareRegisters;
 import com.jps2.core.cpu.registers.CP0Register;
 
 public class CpuState extends BcuState {
-	IOPCounter[] counters;
+	IOPCounter[]	counters;
 
 	@Override
 	void reset() {
@@ -36,8 +36,7 @@ public class CpuState extends BcuState {
 	public void iopTestIntc() {
 		if (processor.memory.read32(0x1F801078) == 0)
 			return;
-		if ((processor.memory.read32(0x1F801070) & processor.memory
-				.read32(0x1FB01074)) == 0)
+		if ((processor.memory.read32(0x1F801070) & processor.memory.read32(0x1FB01074)) == 0)
 			return;
 
 		// if( !eeEventTestIsActive )
@@ -121,8 +120,7 @@ public class CpuState extends BcuState {
 	}
 
 	public final void doRFE() {
-		cp0[CP0_STATUS].value = (cp0[CP0_STATUS].value & 0xfffffff0)
-				| ((cp0[CP0_STATUS].value & 0x3c) >> 2);
+		cp0[CP0_STATUS].value = (cp0[CP0_STATUS].value & 0xfffffff0) | ((cp0[CP0_STATUS].value & 0x3c) >> 2);
 	}
 
 	public final void doMFC0(final int rt, final int c0dr) {

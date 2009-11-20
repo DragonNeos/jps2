@@ -31,7 +31,7 @@ abstract class GprState extends Cpu {
 	}
 
 	GprState() {
-		gpr = new Register32bits[32];
+		gpr = new Register32bits[34];
 	}
 
 	void copy(final GprState that) {

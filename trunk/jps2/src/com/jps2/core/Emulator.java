@@ -7,6 +7,7 @@ import com.jps2.core.cpu.ee.EE;
 import com.jps2.core.cpu.ee.EEInstructions;
 import com.jps2.core.cpu.iop.IOP;
 import com.jps2.core.cpu.iop.IOPInstructions;
+import com.jps2.core.hardware.SIO;
 import com.jps2.plugins.PluginManager;
 
 public class Emulator {
@@ -99,7 +100,6 @@ public class Emulator {
 				}
 			}
 			PluginManager.closeAll();
-			Memories.clear();
 			sio = null;
 			System.gc();
 			if (listener != null) {

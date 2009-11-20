@@ -71,7 +71,8 @@ public class UmdIsoReader {
 		fileReader.seek(0);
 		fileReader.read(id);
 
-		if ((((char) id[0]) == 'C') && (((char) id[1]) == 'I') && (((char) id[2]) == 'S') && (((char) id[3]) == 'O')) {
+		if (new String(id,0,4).equals("CISO")) {
+//		if ((((char) id[0]) == 'C') && (((char) id[1]) == 'I') && (((char) id[2]) == 'S') && (((char) id[3]) == 'O')) {
 			format = FileFormat.CompressedCSO;
 
 			final int lenInbytes = BytesToInt(id, 8);
@@ -106,7 +107,8 @@ public class UmdIsoReader {
 		final UmdIsoFile f = new UmdIsoFile(this, 16, 2048, null);
 		f.read(id);
 
-		if ((((char) id[1]) == 'C') && (((char) id[2]) == 'D') && (((char) id[3]) == '0') && (((char) id[4]) == '0') && (((char) id[5]) == '1')) {
+		if (new String(id,1,5).equals("CD001")) {
+//		if ((((char) id[1]) == 'C') && (((char) id[2]) == 'D') && (((char) id[3]) == '0') && (((char) id[4]) == '0') && (((char) id[5]) == '1')) {
 			if (format == FileFormat.Uncompressed) {
 				numSectors = (int) (fileReader.length() / 2048);
 			}

@@ -70,8 +70,8 @@ public class EEDecoder {
 
 							@Override
 							public Instruction instance(final int insn) {
-								// return mmiTable[insn];
-								throw new RuntimeException("MMI not supported.");
+								return mmiTable[(insn >> 21) & 0x0000001F].instance(insn);
+//								throw new RuntimeException("MMI not supported.");
 							}
 						},
 						Common.UNK,
@@ -223,93 +223,236 @@ public class EEDecoder {
 						Common.UNK
 														};
 
-	// private static final Instruction[] mmiTable = { EEInstructions.MADD,
-	// EEInstructions.MADDU, Common.UNK, Common.UNK, EEInstructions.PLZCW,
-	// Common.UNK, Common.UNK, Common.UNK, new STUB() {
-	//
-	// @Override
-	// public Instruction instance(final int insn) {
-	// return mmi0Table[insn];
-	// }
-	// }, new STUB() {
-	//
-	// @Override
-	// public Instruction instance(final int insn) {
-	// return mmi2Table[insn];
-	// }
-	// }, Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
-	// Common.UNK, EEInstructions.MFHI1, EEInstructions.MTHI1,
-	// EEInstructions.MFLO1, EEInstructions.MTLO1, Common.UNK, Common.UNK,
-	// Common.UNK, Common.UNK, EEInstructions.MULT1,
-	// EEInstructions.MULTU1, EEInstructions.DIV1, EEInstructions.DIVU1,
-	// Common.UNK, Common.UNK, Common.UNK, Common.UNK,
-	// EEInstructions.MADD1, EEInstructions.MADDU1, Common.UNK,
-	// Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
-	// new STUB() {
-	//
-	// @Override
-	// public Instruction instance(final int insn) {
-	// return mmi1Table[insn];
-	// }
-	// }, new STUB() {
-	//
-	// @Override
-	// public Instruction instance(final int insn) {
-	// return mmi3Table[insn];
-	// }
-	// }, Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
-	// Common.UNK, EEInstructions.PMFHL, EEInstructions.PMTHL, Common.UNK,
-	// Common.UNK, EEInstructions.PSLLH, Common.UNK, EEInstructions.PSRLH,
-	// EEInstructions.PSRAH, Common.UNK, Common.UNK, Common.UNK,
-	// Common.UNK, EEInstructions.PSLLW, Common.UNK, EEInstructions.PSRLW,
-	// EEInstructions.PSRAW };
-	//
-	// private static final Instruction[] mmi0Table = { EEInstructions.PADDW,
-	// EEInstructions.PSUBW, EEInstructions.PCGTW, EEInstructions.PMAXW,
-	// EEInstructions.PADDH, EEInstructions.PSUBH, EEInstructions.PCGTH,
-	// EEInstructions.PMAXH, EEInstructions.PADDB, EEInstructions.PSUBB,
-	// EEInstructions.PCGTB, Common.UNK, Common.UNK, Common.UNK,
-	// Common.UNK, Common.UNK, EEInstructions.PADDSW,
-	// EEInstructions.PSUBSW, EEInstructions.PEXTLW, EEInstructions.PPACW,
-	// EEInstructions.PADDSH, EEInstructions.PSUBSH,
-	// EEInstructions.PEXTLH, EEInstructions.PPACH, EEInstructions.PADDSB,
-	// EEInstructions.PSUBSB, EEInstructions.PEXTLB, EEInstructions.PPACB,
-	// Common.UNK, Common.UNK, EEInstructions.PEXT5, EEInstructions.PPAC5 };
-	//
-	// private static final Instruction[] mmi1Table = { Common.UNK,
-	// EEInstructions.PABSW, EEInstructions.PCEQW, EEInstructions.PMINW,
-	// EEInstructions.PADSBH, EEInstructions.PABSH, EEInstructions.PCEQH,
-	// EEInstructions.PMINH, Common.UNK, Common.UNK, EEInstructions.PCEQB,
-	// Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
-	// EEInstructions.PADDUW, EEInstructions.PSUBUW,
-	// EEInstructions.PEXTUW, Common.UNK, EEInstructions.PADDUH,
-	// EEInstructions.PSUBUH, EEInstructions.PEXTUH, Common.UNK,
-	// EEInstructions.PADDUB, EEInstructions.PSUBUB,
-	// EEInstructions.PEXTUB, EEInstructions.QFSRV, Common.UNK,
-	// Common.UNK, Common.UNK, Common.UNK };
-	//
-	// private static final Instruction[] mmi2Table = { EEInstructions.PMADDW,
-	// Common.UNK, EEInstructions.PSLLVW, EEInstructions.PSRLVW,
-	// EEInstructions.PMSUBW, Common.UNK, Common.UNK, Common.UNK,
-	// EEInstructions.PMFHI, EEInstructions.PMFLO, EEInstructions.PINTH,
-	// Common.UNK, EEInstructions.PMULTW, EEInstructions.PDIVW,
-	// EEInstructions.PCPYLD, Common.UNK, EEInstructions.PMADDH,
-	// EEInstructions.PHMADH, EEInstructions.PAND, EEInstructions.PXOR,
-	// EEInstructions.PMSUBH, EEInstructions.PHMSBH, Common.UNK,
-	// Common.UNK, Common.UNK, Common.UNK, EEInstructions.PEXEH,
-	// EEInstructions.PREVH, EEInstructions.PMULTH, EEInstructions.PDIVBW,
-	// EEInstructions.PEXEW, EEInstructions.PROT3W };
-	//
-	// private static final Instruction[] mmi3Table = { EEInstructions.PMADDUW,
-	// Common.UNK, Common.UNK, EEInstructions.PSRAVW, Common.UNK,
-	// Common.UNK, Common.UNK, Common.UNK, EEInstructions.PMTHI,
-	// EEInstructions.PMTLO, EEInstructions.PINTEH, Common.UNK,
-	// EEInstructions.PMULTUW, EEInstructions.PDIVUW,
-	// EEInstructions.PCPYUD, Common.UNK, Common.UNK, Common.UNK,
-	// EEInstructions.POR, EEInstructions.PNOR, Common.UNK, Common.UNK,
-	// Common.UNK, Common.UNK, Common.UNK, Common.UNK,
-	// EEInstructions.PEXCH, EEInstructions.PCPYH, Common.UNK, Common.UNK,
-	// EEInstructions.PEXCW, Common.UNK, };
+	private static final Instruction[]	mmiTable		= {
+						EEInstructions.MADD,
+						EEInstructions.MADDU,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.PLZCW,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						new STUB() {
+
+							@Override
+							public Instruction instance(final int insn) {
+								return mmi0Table[insn];
+							}
+						},
+						new STUB() {
+
+							@Override
+							public Instruction instance(final int insn) {
+								return mmi2Table[insn];
+							}
+						},
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.MFHI1,
+						EEInstructions.MTHI1,
+						EEInstructions.MFLO1,
+						EEInstructions.MTLO1,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.MULT1,
+						EEInstructions.MULTU1,
+						EEInstructions.DIV1,
+						EEInstructions.DIVU1,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.MADD1,
+						EEInstructions.MADDU1,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						new STUB() {
+
+							@Override
+							public Instruction instance(final int insn) {
+								return mmi1Table[insn];
+							}
+						},
+						new STUB() {
+
+							@Override
+							public Instruction instance(final int insn) {
+								return mmi3Table[insn];
+							}
+						},
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.PMFHL,
+						EEInstructions.PMTHL,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.PSLLH,
+						Common.UNK,
+						EEInstructions.PSRLH,
+						EEInstructions.PSRAH,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.PSLLW,
+						Common.UNK,
+						EEInstructions.PSRLW,
+						EEInstructions.PSRAW
+														};
+
+	private static final Instruction[]	mmi0Table		= {
+						EEInstructions.PADDW,
+						EEInstructions.PSUBW,
+						EEInstructions.PCGTW,
+						EEInstructions.PMAXW,
+						EEInstructions.PADDH,
+						EEInstructions.PSUBH,
+						EEInstructions.PCGTH,
+						EEInstructions.PMAXH,
+						EEInstructions.PADDB,
+						EEInstructions.PSUBB,
+						EEInstructions.PCGTB,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.PADDSW,
+						EEInstructions.PSUBSW,
+						EEInstructions.PEXTLW,
+						EEInstructions.PPACW,
+						EEInstructions.PADDSH,
+						EEInstructions.PSUBSH,
+						EEInstructions.PEXTLH,
+						EEInstructions.PPACH,
+						EEInstructions.PADDSB,
+						EEInstructions.PSUBSB,
+						EEInstructions.PEXTLB,
+						EEInstructions.PPACB,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.PEXT5,
+						EEInstructions.PPAC5
+														};
+
+	private static final Instruction[]	mmi1Table		= {
+						Common.UNK,
+						EEInstructions.PABSW,
+						EEInstructions.PCEQW,
+						EEInstructions.PMINW,
+						EEInstructions.PADSBH,
+						EEInstructions.PABSH,
+						EEInstructions.PCEQH,
+						EEInstructions.PMINH,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.PCEQB,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.PADDUW,
+						EEInstructions.PSUBUW,
+						EEInstructions.PEXTUW,
+						Common.UNK,
+						EEInstructions.PADDUH,
+						EEInstructions.PSUBUH,
+						EEInstructions.PEXTUH,
+						Common.UNK,
+						EEInstructions.PADDUB,
+						EEInstructions.PSUBUB,
+						EEInstructions.PEXTUB,
+						EEInstructions.QFSRV,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK
+														};
+
+	private static final Instruction[]	mmi2Table		= {
+						EEInstructions.PMADDW,
+						Common.UNK,
+						EEInstructions.PSLLVW,
+						EEInstructions.PSRLVW,
+						EEInstructions.PMSUBW,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.PMFHI,
+						EEInstructions.PMFLO,
+						EEInstructions.PINTH,
+						Common.UNK,
+						EEInstructions.PMULTW,
+						EEInstructions.PDIVW,
+						EEInstructions.PCPYLD,
+						Common.UNK,
+						EEInstructions.PMADDH,
+						EEInstructions.PHMADH,
+						EEInstructions.PAND,
+						EEInstructions.PXOR,
+						EEInstructions.PMSUBH,
+						EEInstructions.PHMSBH,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.PEXEH,
+						EEInstructions.PREVH,
+						EEInstructions.PMULTH,
+						EEInstructions.PDIVBW,
+						EEInstructions.PEXEW,
+						EEInstructions.PROT3W
+														};
+
+	private static final Instruction[]	mmi3Table		= {
+						EEInstructions.PMADDUW,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.PSRAVW,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.PMTHI,
+						EEInstructions.PMTLO,
+						EEInstructions.PINTEH,
+						Common.UNK,
+						EEInstructions.PMULTUW,
+						EEInstructions.PDIVUW,
+						EEInstructions.PCPYUD,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.POR,
+						EEInstructions.PNOR,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.PEXCH,
+						EEInstructions.PCPYH,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.PEXCW,
+						Common.UNK,
+														};
 
 	private static final STUB			c0Stub			= new STUB() {
 															@Override
@@ -321,10 +464,7 @@ public class EEDecoder {
 	private static final STUB			bc0Stub			= new STUB() {
 															@Override
 															public Instruction instance(final int insn) {
-																// return
-																// bc0Table[(insn
-																// >> 16) &
-																// 0x1f];
+//																return bc0Table[(insn >> 16) & 0x1f];
 																throw new RuntimeException("BC0 not supported.");
 															}
 														};
@@ -363,15 +503,40 @@ public class EEDecoder {
 						Common.UNK,
 						Common.UNK
 														};
-	//
-	// private static final Instruction bc0Table[] = { EEInstructions.BC0F,
-	// EEInstructions.BC0T, EEInstructions.BC0FL, EEInstructions.BC0TL,
-	// Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
-	// Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
-	// Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
-	// Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
-	// Common.UNK, Common.UNK, Common.UNK, Common.UNK, Common.UNK,
-	// Common.UNK, Common.UNK, Common.UNK };
+
+//	private static final Instruction	bc0Table[]		= {
+//						EEInstructions.BC0F,
+//						EEInstructions.BC0T,
+//						EEInstructions.BC0FL,
+//						EEInstructions.BC0TL,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK,
+//						Common.UNK };
 
 	private static final Instruction	c0Table[]		= {
 						Common.UNK,

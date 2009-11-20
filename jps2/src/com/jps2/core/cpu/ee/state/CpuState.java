@@ -9,7 +9,7 @@ import com.jps2.core.cpu.ee.EESyncCounter;
 import com.jps2.core.cpu.registers.CP0Register;
 import com.jps2.core.cpu.registers.CP0StatusRegister;
 
-public final class CpuState extends SauState {
+public final class CpuState extends MmiState {
 
 	private static final Logger	logger			= Logger.getLogger(CpuState.class);
 

@@ -3900,6 +3900,7 @@ public class EEInstructions {
 													public void interpret(final int insn, final boolean delay) {
 														// TODO
 														// cpu.doLQC2();
+														throw new RuntimeException();
 													}
 
 												};
@@ -3919,6 +3920,27 @@ public class EEInstructions {
 													public void interpret(final int insn, final boolean delay) {
 														// TODO
 														// cpu.doSQC2();
+														throw new RuntimeException();
+													}
+
+												};
+
+	public static final Instruction	PLZCW		= new Instruction(NO_FLAGS) {
+
+													@Override
+													public final String name() {
+														return "PLZCW";
+													}
+
+													@Override
+													public final String category() {
+														return "MMI";
+													}
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPLZCW(rs, rd);
 													}
 
 												};

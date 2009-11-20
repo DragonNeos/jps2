@@ -15,20 +15,20 @@ public abstract class AbstractGSPlugin implements Plugin {
 
 	public abstract void vSync(int field);
 
-	public abstract void gifTransfer1(int[] mem, int addr);
+	public abstract void gifTransfer1(int mem, int addr);
 
-	public abstract void gifTransfer2(int[] mem, int size);
+	public abstract void gifTransfer2(int mem, int size);
 
-	public abstract void gifTransfer3(int[] mem, int size);
+	public abstract void gifTransfer3(int mem, int size);
 
 	// returns the last tag processed (64 bits)
 	public abstract long getLastTag();
 
 	public abstract void gifSoftReset(int mask);
 
-	public abstract void readFIFO(long[] mem);
+	public abstract void readFIFO(int mem);
 
-	public abstract void readFIFO2(long[] mem, int qwc);
+	public abstract void readFIFO2(int mem, int qwc);
 
 	// keyEvent gets called when there is a keyEvent from the PAD plugin
 	public abstract void keyEvent(KeyEvent evt);
@@ -57,5 +57,7 @@ public abstract class AbstractGSPlugin implements Plugin {
 	 * GSsetWindowInfo(winInfo *info); #endif s32 CALLBACK GSfreeze(final int
 	 * mode, freezeData *data);
 	 */
-
+	
+	
+	
 }

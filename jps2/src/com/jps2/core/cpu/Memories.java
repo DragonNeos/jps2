@@ -1,10 +1,13 @@
 package com.jps2.core.cpu;
 
+import java.util.Arrays;
+
 import org.apache.log4j.Logger;
 
 import com.jps2.core.cpu.ee.EEHardwareRegisters;
 import com.jps2.core.cpu.iop.IOPCdvdRegisters;
 import com.jps2.core.cpu.iop.IOPHardwareRegisters;
+import com.jps2.core.hardware.GS;
 import com.jps2.core.memory.FastMemory;
 import com.jps2.util.Bios;
 
@@ -20,6 +23,7 @@ public abstract class Memories {
 	public static final IOPCdvdRegisters		cdvdRegistersIOP	= new IOPCdvdRegisters();
 	public static final FastMemory				memoryIOP			= new FastMemory("IOP RAM", 0x001FFFFF);
 	public static final FastMemory				memorySysInfo		= new FastMemory("SysInfo", 0x160);
+	public static final GS						memoryGS			= new GS();
 
 	private Memories() {
 	}
@@ -42,11 +46,10 @@ public abstract class Memories {
 		logger.info("IOP...OK.");
 		memorySysInfo.allocate();
 		cdvdRegistersIOP.allocate();
+		memoryGS.allocate();
+		logger.info("GS...OK.");
 		// cache config
 		Memories.memorySysInfo.write32(0x0130, 0x1edd8); // CACHE_CONFIG
 		// memoryManager.write32(0x1f801450, 0x8); // PS1 mode
-	}
-
-	public static final void clear() {
 	}
 }

@@ -1,4 +1,4 @@
-package com.jps2.core;
+package com.jps2.core.hardware;
 
 import java.util.Arrays;
 

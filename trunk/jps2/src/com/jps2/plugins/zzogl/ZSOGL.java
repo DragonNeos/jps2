@@ -50,7 +50,7 @@ public class ZSOGL extends AbstractGSPlugin {
 
 	}
 
-	private final void gifTransferInternal(final PathInfo path, final  int[]  pMem,final int size){
+	private final void gifTransferInternal(final PathInfo path, final  int  pMem,final int size){
 		while(size > 0){
 			if (path.tag.nloop == 0) {
 				GIFtag(path, pMem);
@@ -105,7 +105,7 @@ public class ZSOGL extends AbstractGSPlugin {
 				{
 					final int reg = (int)((path.regs >> path.regn) & 0xf);
 					
-					GIFDecoder.handlerPackedReg(reg,pMem);
+					GIFDecoder.handlerPackedReg(gs,reg,pMem);
 
 					path.regn += 4;
 					if (path.tag.nreg == path.regn) 
@@ -129,7 +129,7 @@ public class ZSOGL extends AbstractGSPlugin {
 				for(; size > 0; pMem+= 2, size--)
 				{
 					final int reg = (int)((path.regs >> path.regn) & 0xf);
-					GIFDecoder.handlerReg(reg,pMem);
+					GIFDecoder.handlerReg(gs,reg,pMem);
 					path.regn += 4;
 					if (path.tag.nreg == path.regn) 
 					{
@@ -158,15 +158,16 @@ public class ZSOGL extends AbstractGSPlugin {
 
 					if( process > 0 ) 
 					{
-						if ( gs.imageTransfer ) 
+						if ( gs.imageTransfer != 0 ) {
 //							ZeroGS::TransferLocalHost(pMem, process);
-						else 
+						}else {
 //							ZeroGS::TransferHostLocal(pMem, process*4);
-
+						}
 						path.tag.nloop -= process;
-						pMem += process*4; size -= process;
+						pMem += process*4;
+						size -= process;
 
-						assert( size == 0 || path->tag.nloop == 0 );
+						assert( size == 0 || path.tag.nloop == 0 );
 					}
 					break;
 				}
@@ -188,7 +189,7 @@ public class ZSOGL extends AbstractGSPlugin {
 				break;
 			}
 
-			if( path == gs.path1 && path.tag.eop )
+			if( path == gs.path1 && path.tag.eop  != 0)
 				return;
 		}
 
@@ -201,7 +202,7 @@ public class ZSOGL extends AbstractGSPlugin {
 		}
 	}
 
-	private final void GIFtag(final PathInfo path, final int[] data) {
+	private final void GIFtag(final PathInfo path, final int address) {
 		path.tag.nloop	= data[0] & 0x7fff;
 		path.tag.eop	= (data[0] >> 15) & 0x1;
 		final int tagpre		= (data[1] >> 14) & 0x1;

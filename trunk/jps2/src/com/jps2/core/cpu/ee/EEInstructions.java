@@ -16,18 +16,7 @@ import com.jps2.core.cpu.ee.state.CpuState;
 
 public class EEInstructions {
 
-	public static final Instruction	PREF		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "PREF";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
-
+	public static final Instruction	PREF		= new Instruction("PREF", NO_FLAGS) {
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														System.err.println("PREF");
@@ -35,35 +24,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	NOP			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "NOP";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
-
-													@Override
-													public void interpret(final int insn, final boolean delay) {
-														// nothing to do
-													}
-
-												};
-	public static final Instruction	SYSCALL		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SYSCALL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	SYSCALL		= new Instruction("SYSCALL", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -72,17 +33,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	ERET		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "ERET";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS III";
-													}
+	public static final Instruction	ERET		= new Instruction("ERET", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -91,17 +42,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BREAK		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "BREAK";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	BREAK		= new Instruction("BREAK", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -110,17 +51,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SYNC		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SYNC";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	SYNC		= new Instruction("SYNC", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -128,17 +59,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	HALT		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "HALT";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	HALT		= new Instruction("HALT", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -147,78 +68,38 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	MFIC		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MFIC";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	MFIC		= new Instruction("MFIC", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 
 														final int rt = (insn >> 21) & 31;
-
+														// TODO
 													}
 
 												};
 
-	public static final Instruction	MFSA		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MFSA";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	MFSA		= new Instruction("MFSA", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
-														final int rd = (insn >> 11) & 31;
+														rd = (insn >> 11) & 31;
 														cpu.doMFSA(rd);
 													}
 
 												};
 
-	public static final Instruction	MTSA		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MTSA";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	MTSA		= new Instruction("MTSA", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
-														final int rd = (insn >> 11) & 31;
+														rd = (insn >> 11) & 31;
 														cpu.doMTSA(rd);
 													}
 
 												};
 
-	public static final Instruction	EI			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "EI";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	EI			= new Instruction("EI", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -227,17 +108,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	DI			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DI";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	DI			= new Instruction("DI", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -246,17 +117,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	ADD			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "ADD";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	ADD			= new Instruction("ADD", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -266,17 +127,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	DADD		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DADD";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	DADD		= new Instruction("DADD", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -289,17 +140,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	ADDU		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "ADDU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	ADDU		= new Instruction("ADDU", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -310,17 +151,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	DADDU		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DADDU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	DADDU		= new Instruction("DADDU", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -331,17 +162,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	ADDI		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "ADDI";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	ADDI		= new Instruction("ADDI", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -356,17 +177,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	DADDI		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DADDI";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS IV";
-													}
+	public static final Instruction	DADDI		= new Instruction("DADDI", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -380,17 +191,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	ADDIU		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "ADDIU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	ADDIU		= new Instruction("ADDIU", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -402,17 +203,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	DADDIU		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DADDIU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS IV";
-													}
+	public static final Instruction	DADDIU		= new Instruction("DADDIU", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -423,17 +214,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	AND			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "AND";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	AND			= new Instruction("AND", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -444,17 +225,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	ANDI		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "ANDI";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	ANDI		= new Instruction("ANDI", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -465,17 +236,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	NOR			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "NOR";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	NOR			= new Instruction("NOR", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -486,17 +247,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	OR			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "OR";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	OR			= new Instruction("OR", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -507,17 +258,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	ORI			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "ORI";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	ORI			= new Instruction("ORI", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -528,17 +269,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	XOR			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "XOR";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	XOR			= new Instruction("XOR", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -549,17 +280,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	XORI		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "XORI";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	XORI		= new Instruction("XORI", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -570,17 +291,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SLL			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SLL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	SLL			= new Instruction("SLL", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -591,17 +302,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	DSLL		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DSLL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	DSLL		= new Instruction("DSLL", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -612,17 +313,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	DSLL32		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DSLL32";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	DSLL32		= new Instruction("DSLL32", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -633,17 +324,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SLLV		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SLLV";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	SLLV		= new Instruction("SLLV", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -654,17 +335,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	DSLLV		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DSLLV";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	DSLLV		= new Instruction("DSLLV", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -675,17 +346,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SRA			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SRA";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	SRA			= new Instruction("SRA", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -696,17 +357,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	DSRA		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DSRA";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	DSRA		= new Instruction("DSRA", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -717,17 +368,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	DSRA32		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DSRA32";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	DSRA32		= new Instruction("DSRA32", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -738,17 +379,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SRAV		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SRAV";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	SRAV		= new Instruction("SRAV", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -760,17 +391,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	DSRAV		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DSRAV";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	DSRAV		= new Instruction("DSRAV", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -781,17 +402,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SRL			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SRL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	SRL			= new Instruction("SRL", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -802,17 +413,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	DSRL		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DSRL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	DSRL		= new Instruction("DSRL", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -824,17 +425,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	DSRL32		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DSRL32";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	DSRL32		= new Instruction("DSRL32", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -845,17 +436,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SRLV		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SRLV";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	SRLV		= new Instruction("SRLV", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -867,17 +448,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	DSRLV		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DSRLV";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	DSRLV		= new Instruction("DSRLV", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -889,17 +460,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	SLT			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SLT";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	SLT			= new Instruction("SLT", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -910,17 +471,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SLTI		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SLTI";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	SLTI		= new Instruction("SLTI", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -931,17 +482,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SLTU		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SLTU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	SLTU		= new Instruction("SLTU", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -952,44 +493,24 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	TEQ			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "TEQ";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	TEQ			= new Instruction("TEQ", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doTEQ(rs, rt, insn, delay);
 
 													}
 
 												};
-	public static final Instruction	TNE			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "TNE";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	TNE			= new Instruction("TNE", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doTNE(rs, rt, insn, delay);
 
@@ -997,22 +518,12 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	TNEI		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "TNEI";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	TNEI		= new Instruction("TNEI", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final short imm16 = (short) ((insn >> 0) & 65535);
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doTNEI(rs, imm16, insn, delay);
 
@@ -1020,22 +531,12 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	TEQI		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "TEQI";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	TEQI		= new Instruction("TEQI", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final short imm16 = (short) ((insn >> 0) & 65535);
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doTEQI(rs, imm16, insn, delay);
 
@@ -1043,22 +544,12 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	TGE			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "TGE";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	TGE			= new Instruction("TGE", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doTGE(rs, rt, insn, delay);
 
@@ -1066,22 +557,12 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	TGEI		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "TGEI";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	TGEI		= new Instruction("TGEI", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final short imm16 = (short) ((insn >> 0) & 65535);
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doTGEI(rs, imm16, insn, delay);
 
@@ -1089,22 +570,12 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	TGEIU		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "TGEIU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	TGEIU		= new Instruction("TGEIU", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final short imm16 = (short) ((insn >> 0) & 65535);
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doTGEIU(rs, imm16, insn, delay);
 
@@ -1112,22 +583,12 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	TGEU		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "TGEU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	TGEU		= new Instruction("TGEU", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doTGEU(rs, rt, insn, delay);
 
@@ -1135,101 +596,51 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	TLT			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "TLT";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	TLT			= new Instruction("TLT", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doTLT(rs, rt, insn, delay);
 													}
 												};
 
-	public static final Instruction	TLTI		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "TLTI";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	TLTI		= new Instruction("TLTI", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final short imm16 = (short) ((insn >> 0) & 65535);
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doTLTI(rs, imm16, insn, delay);
 													}
 												};
 
-	public static final Instruction	TLTIU		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "TLTIU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	TLTIU		= new Instruction("TLTIU", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final short imm16 = (short) ((insn >> 0) & 65535);
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doTLTIU(rs, imm16, insn, delay);
 													}
 												};
 
-	public static final Instruction	TLTU		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "TLTU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	TLTU		= new Instruction("TLTU", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doTLTU(rs, rt, insn, delay);
 													}
 												};
 
-	public static final Instruction	SLTIU		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SLTIU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	SLTIU		= new Instruction("SLTIU", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -1240,17 +651,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SUB			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SUB";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	SUB			= new Instruction("SUB", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -1261,17 +662,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	DSUB		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DSUB";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	DSUB		= new Instruction("DSUB", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -1284,17 +675,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SUBU		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SUBU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	SUBU		= new Instruction("SUBU", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -1302,17 +683,7 @@ public class EEInstructions {
 														cpu.doSUBU(rd, rs, rt, insn, delay);
 													}
 												};
-	public static final Instruction	DSUBU		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DSUBU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	DSUBU		= new Instruction("DSUBU", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -1323,17 +694,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	LUI			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "LUI";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	LUI			= new Instruction("LUI", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -1345,43 +706,23 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SEB			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SEB";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	SEB			= new Instruction("SEB", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
-														final int rd = (insn >> 11) & 31;
-														final int rt = (insn >> 16) & 31;
+														rd = (insn >> 11) & 31;
+														rt = (insn >> 16) & 31;
 
 														cpu.doSEB(rd, rt);
 
 													}
 
 												};
-	public static final Instruction	SEH			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SEH";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	SEH			= new Instruction("SEH", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
-														final int rd = (insn >> 11) & 31;
+														rd = (insn >> 11) & 31;
 														final int rt = (insn >> 16) & 31;
 
 														cpu.doSEH(rd, rt);
@@ -1389,21 +730,11 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BITREV		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "BITREV";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	BITREV		= new Instruction("BITREV", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
-														final int rd = (insn >> 11) & 31;
+														rd = (insn >> 11) & 31;
 														final int rt = (insn >> 16) & 31;
 
 														cpu.doBITREV(rd, rt);
@@ -1411,21 +742,11 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	WSBH		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "WSBH";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	WSBH		= new Instruction("WSBH", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
-														final int rd = (insn >> 11) & 31;
+														rd = (insn >> 11) & 31;
 														final int rt = (insn >> 16) & 31;
 
 														cpu.doWSBH(rd, rt);
@@ -1433,21 +754,11 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	WSBW		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "WSBW";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	WSBW		= new Instruction("WSBW", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
-														final int rd = (insn >> 11) & 31;
+														rd = (insn >> 11) & 31;
 														final int rt = (insn >> 16) & 31;
 
 														cpu.doWSBW(rd, rt);
@@ -1455,17 +766,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	MOVZ		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MOVZ";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	MOVZ		= new Instruction("MOVZ", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -1473,57 +774,27 @@ public class EEInstructions {
 														cpu.doMOVZ(rd, rs, rt);
 													}
 												};
-	public static final Instruction	MOVT		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MOVT";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	MOVT		= new Instruction("MOVT", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
-														final int rd = (insn >> 11) & 31;
+														rd = (insn >> 11) & 31;
 														final int cc = (insn >> 18) & 7;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 														cpu.doMOVT(rd, rs, cc);
 													}
 												};
-	public static final Instruction	MOVF		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MOVF";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	MOVF		= new Instruction("MOVF", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
-														final int rd = (insn >> 11) & 31;
+														rd = (insn >> 11) & 31;
 														final int cc = (insn >> 18) & 7;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 														cpu.doMOVF(rd, rs, cc);
 													}
 												};
-	public static final Instruction	MOVN		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MOVN";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	MOVN		= new Instruction("MOVN", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -1534,17 +805,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	MAX			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MAX";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	MAX			= new Instruction("MAX", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -1555,17 +816,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	MIN			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MIN";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	MIN			= new Instruction("MIN", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -1576,459 +827,278 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	CLZ			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "CLZ";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	CLZ			= new Instruction("CLZ", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
-														final int rd = (insn >> 11) & 31;
-														final int rs = (insn >> 21) & 31;
+														rd = (insn >> 11) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doCLZ(rd, rs);
 
 													}
 
 												};
-	public static final Instruction	CLO			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "CLO";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	CLO			= new Instruction("CLO", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
-														final int rd = (insn >> 11) & 31;
-														final int rs = (insn >> 21) & 31;
+														rd = (insn >> 11) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doCLO(rd, rs);
 
 													}
 
 												};
-	public static final Instruction	EXT			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "EXT";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	EXT			= new Instruction("EXT", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int lsb = (insn >> 6) & 31;
 														final int msb = (insn >> 11) & 31;
 														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doEXT(rt, rs, lsb, msb);
 
 													}
 
 												};
-	public static final Instruction	INS			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "INS";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	INS			= new Instruction("INS", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int lsb = (insn >> 6) & 31;
 														final int msb = (insn >> 11) & 31;
 														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doINS(rt, rs, lsb, msb);
 
 													}
 
 												};
-	public static final Instruction	MULT		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MULT";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	MULT		= new Instruction("MULT", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doMULT(rs, rt);
-
 													}
-
 												};
 
-	public static final Instruction	DMULT		= new Instruction(NO_FLAGS) {
+	public static final Instruction	MULT1		= new Instruction("MULT1", NO_FLAGS) {
 
 													@Override
-													public final String name() {
-														return "DMULT";
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doMULT1(rs, rt, rd);
 													}
+												};
 
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	MULTU		= new Instruction("MULTU", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
-
-														cpu.doDMULT(rs, rt);
-
-													}
-
-												};
-	public static final Instruction	DMULTU		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DMULTU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
-
-													@Override
-													public void interpret(final int insn, final boolean delay) {
-														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
-
-														cpu.doDMULTU(rs, rt);
-
-													}
-
-												};
-	public static final Instruction	MULTU		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MULTU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
-
-													@Override
-													public void interpret(final int insn, final boolean delay) {
-														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doMULTU(rs, rt);
+													}
+												};
+
+	public static final Instruction	MULTU1		= new Instruction("MULTU1", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doMULTU1(rs, rt, rd);
+													}
+												};
+	public static final Instruction	MADD		= new Instruction("MADD", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+
+														cpu.doMADD(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	MADD1		= new Instruction("MADD1", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+
+														cpu.doMADD1(rs, rt, rd);
+													}
+												};
+	public static final Instruction	MADDU		= new Instruction("MADDU", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doMADDU(rs, rt, rd);
 
 													}
 
 												};
-	public static final Instruction	MADD		= new Instruction(NO_FLAGS) {
 
-													@Override
-													public final String name() {
-														return "MADD";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	MADDU1		= new Instruction("MADDU1", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
-														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
-
-														cpu.doMADD(rs, rt);
+														decodeRsRtRd(insn);
+														cpu.doMADDU1(rs, rt, rd);
 
 													}
 
 												};
-	public static final Instruction	MADDU		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MADDU";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	DIV			= new Instruction("DIV", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
-
-														cpu.doMADDU(rs, rt);
-
-													}
-
-												};
-	public static final Instruction	MSUB		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MSUB";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
-
-													@Override
-													public void interpret(final int insn, final boolean delay) {
-														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
-
-														cpu.doMSUB(rs, rt);
-
-													}
-
-												};
-	public static final Instruction	MSUBU		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MSUBU";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
-
-													@Override
-													public void interpret(final int insn, final boolean delay) {
-														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
-
-														cpu.doMSUBU(rs, rt);
-
-													}
-
-												};
-	public static final Instruction	DIV			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DIV";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
-
-													@Override
-													public void interpret(final int insn, final boolean delay) {
-														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doDIV(rs, rt);
 
 													}
 
 												};
-	public static final Instruction	DIVU		= new Instruction(NO_FLAGS) {
 
-													@Override
-													public final String name() {
-														return "DIVU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	DIV1		= new Instruction("DIV1", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
+
+														cpu.doDIV1(rs, rt);
+													}
+												};
+	public static final Instruction	DIVU		= new Instruction("DIVU", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														final int rt = (insn >> 16) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doDIVU(rs, rt);
 
 													}
 
 												};
-	public static final Instruction	DDIV		= new Instruction(NO_FLAGS) {
 
-													@Override
-													public final String name() {
-														return "DDIV";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	DIVU1		= new Instruction("DIVU1", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
-														cpu.doDDIV(rs, rt);
-
+														cpu.doDIVU1(rs, rt);
 													}
-
 												};
 
-	public static final Instruction	DDIVU		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DDIVU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	MFHI		= new Instruction("MFHI", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
-														final int rt = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
-
-														cpu.doDDIVU(rs, rt);
-
-													}
-
-												};
-	public static final Instruction	MFHI		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MFHI";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
-
-													@Override
-													public void interpret(final int insn, final boolean delay) {
-														final int rd = (insn >> 11) & 31;
+														rd = (insn >> 11) & 31;
 
 														cpu.doMFHI(rd);
 
 													}
 
 												};
-	public static final Instruction	MFLO		= new Instruction(NO_FLAGS) {
 
-													@Override
-													public final String name() {
-														return "MFLO";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	MFHI1		= new Instruction("MFHI1", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
-														final int rd = (insn >> 11) & 31;
+														rd = (insn >> 11) & 31;
+
+														cpu.doMFHI1(rd);
+
+													}
+
+												};
+
+	public static final Instruction	MFLO		= new Instruction("MFLO", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														rd = (insn >> 11) & 31;
 
 														cpu.doMFLO(rd);
 
 													}
 
 												};
-	public static final Instruction	MTHI		= new Instruction(NO_FLAGS) {
 
-													@Override
-													public final String name() {
-														return "MTHI";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	MFLO1		= new Instruction("MFLO1", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
-														final int rs = (insn >> 21) & 31;
+														rd = (insn >> 11) & 31;
+
+														cpu.doMFLO1(rd);
+
+													}
+
+												};
+	public static final Instruction	MTHI		= new Instruction("MTHI", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														rs = (insn >> 21) & 31;
 
 														cpu.doMTHI(rs);
 
 													}
 
 												};
-	public static final Instruction	MTLO		= new Instruction(NO_FLAGS) {
 
-													@Override
-													public final String name() {
-														return "MTLO";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	MTHI1		= new Instruction("MTHI1", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
+
+														cpu.doMTHI1(rs);
+
+													}
+
+												};
+	public static final Instruction	MTLO		= new Instruction("MTLO", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														rs = (insn >> 21) & 31;
 
 														cpu.doMTLO(rs);
 
 													}
 
 												};
-	public static final Instruction	BEQ			= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
+
+	public static final Instruction	MTLO1		= new Instruction("MTLO1", NO_FLAGS) {
 
 													@Override
-													public final String name() {
-														return "BEQ";
+													public void interpret(final int insn, final boolean delay) {
+														rs = (insn >> 21) & 31;
+
+														cpu.doMTLO1(rs);
+
 													}
 
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+												};
+	public static final Instruction	BEQ			= new Instruction("BEQ", FLAGS_BRANCH_INSTRUCTION) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2041,17 +1111,7 @@ public class EEInstructions {
 
 												};
 	// TODO MFC2
-	public static final Instruction	BEQL		= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-													@Override
-													public final String name() {
-														return "BEQL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	BEQL		= new Instruction("BEQL", FLAGS_BRANCH_INSTRUCTION) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2063,22 +1123,12 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BGEZ		= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-													@Override
-													public final String name() {
-														return "BGEZ";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	BGEZ		= new Instruction("BGEZ", FLAGS_BRANCH_INSTRUCTION) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int imm16 = (insn >> 0) & 65535;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														if (cpu.doBGEZ(rs, (short) imm16))
 															cpu.processor.interpretDelayslot();
@@ -2086,22 +1136,12 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BGEZAL		= new Instruction(FLAGS_LINK_INSTRUCTION | FLAG_IS_CONDITIONAL | FLAG_IS_BRANCHING) {
-
-													@Override
-													public final String name() {
-														return "BGEZAL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	BGEZAL		= new Instruction("BGEZAL", FLAGS_LINK_INSTRUCTION | FLAG_IS_CONDITIONAL | FLAG_IS_BRANCHING) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int imm16 = (insn >> 0) & 65535;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														if (cpu.doBGEZAL(rs, (short) imm16))
 															cpu.processor.interpretDelayslot();
@@ -2109,22 +1149,12 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BGEZALL		= new Instruction(FLAGS_LINK_INSTRUCTION | FLAG_IS_CONDITIONAL | FLAG_IS_BRANCHING) {
-
-													@Override
-													public final String name() {
-														return "BGEZALL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	BGEZALL		= new Instruction("BGEZALL", FLAGS_LINK_INSTRUCTION | FLAG_IS_CONDITIONAL | FLAG_IS_BRANCHING) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int imm16 = (insn >> 0) & 65535;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														if (cpu.doBGEZALL(rs, (short) imm16))
 															cpu.processor.interpretDelayslot();
@@ -2132,22 +1162,12 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BGEZL		= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-													@Override
-													public final String name() {
-														return "BGEZL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	BGEZL		= new Instruction("BGEZL", FLAGS_BRANCH_INSTRUCTION) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int imm16 = (insn >> 0) & 65535;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														if (cpu.doBGEZL(rs, (short) imm16))
 															cpu.processor.interpretDelayslot();
@@ -2155,22 +1175,12 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BGTZ		= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-													@Override
-													public final String name() {
-														return "BGTZ";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	BGTZ		= new Instruction("BGTZ", FLAGS_BRANCH_INSTRUCTION) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int imm16 = (insn >> 0) & 65535;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														if (cpu.doBGTZ(rs, (short) imm16))
 															cpu.processor.interpretDelayslot();
@@ -2178,22 +1188,12 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BGTZL		= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-													@Override
-													public final String name() {
-														return "BGTZL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	BGTZL		= new Instruction("BGTZL", FLAGS_BRANCH_INSTRUCTION) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int imm16 = (insn >> 0) & 65535;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														if (cpu.doBGTZL(rs, (short) imm16))
 															cpu.processor.interpretDelayslot();
@@ -2201,22 +1201,12 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BLEZ		= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-													@Override
-													public final String name() {
-														return "BLEZ";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	BLEZ		= new Instruction("BLEZ", FLAGS_BRANCH_INSTRUCTION) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int imm16 = (insn >> 0) & 65535;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														if (cpu.doBLEZ(rs, (short) imm16))
 															cpu.processor.interpretDelayslot();
@@ -2224,22 +1214,12 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BLEZL		= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-													@Override
-													public final String name() {
-														return "BLEZL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	BLEZL		= new Instruction("BLEZL", FLAGS_BRANCH_INSTRUCTION) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int imm16 = (insn >> 0) & 65535;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														if (cpu.doBLEZL(rs, (short) imm16))
 															cpu.processor.interpretDelayslot();
@@ -2247,22 +1227,12 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BLTZ		= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-													@Override
-													public final String name() {
-														return "BLTZ";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	BLTZ		= new Instruction("BLTZ", FLAGS_BRANCH_INSTRUCTION) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int imm16 = (insn >> 0) & 65535;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														if (cpu.doBLTZ(rs, (short) imm16))
 															cpu.processor.interpretDelayslot();
@@ -2270,22 +1240,12 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BLTZAL		= new Instruction(FLAGS_LINK_INSTRUCTION | FLAG_IS_CONDITIONAL | FLAG_IS_BRANCHING) {
-
-													@Override
-													public final String name() {
-														return "BLTZAL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	BLTZAL		= new Instruction("BLTZAL", FLAGS_LINK_INSTRUCTION | FLAG_IS_CONDITIONAL | FLAG_IS_BRANCHING) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int imm16 = (insn >> 0) & 65535;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														if (cpu.doBLTZAL(rs, (short) imm16))
 															cpu.processor.interpretDelayslot();
@@ -2293,22 +1253,12 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BLTZALL		= new Instruction(FLAGS_LINK_INSTRUCTION | FLAG_IS_CONDITIONAL | FLAG_IS_BRANCHING) {
-
-													@Override
-													public final String name() {
-														return "BLTZALL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	BLTZALL		= new Instruction("BLTZALL", FLAGS_LINK_INSTRUCTION | FLAG_IS_CONDITIONAL | FLAG_IS_BRANCHING) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int imm16 = (insn >> 0) & 65535;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														if (cpu.doBLTZALL(rs, (short) imm16))
 															cpu.processor.interpretDelayslot();
@@ -2316,22 +1266,12 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BLTZL		= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-													@Override
-													public final String name() {
-														return "BLTZL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	BLTZL		= new Instruction("BLTZL", FLAGS_BRANCH_INSTRUCTION) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int imm16 = (insn >> 0) & 65535;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														if (cpu.doBLTZL(rs, (short) imm16))
 															cpu.processor.interpretDelayslot();
@@ -2339,17 +1279,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BNE			= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-													@Override
-													public final String name() {
-														return "BNE";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	BNE			= new Instruction("BNE", FLAGS_BRANCH_INSTRUCTION) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2361,17 +1291,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BNEL		= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-													@Override
-													public final String name() {
-														return "BNEL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	BNEL		= new Instruction("BNEL", FLAGS_BRANCH_INSTRUCTION) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2383,17 +1303,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	J			= new Instruction(FLAG_HAS_DELAY_SLOT | FLAG_IS_JUMPING | FLAG_CANNOT_BE_SPLIT | FLAG_ENDS_BLOCK) {
-
-													@Override
-													public final String name() {
-														return "J";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	J			= new Instruction("J", FLAG_HAS_DELAY_SLOT | FLAG_IS_JUMPING | FLAG_CANNOT_BE_SPLIT | FLAG_ENDS_BLOCK) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2405,17 +1315,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	JAL			= new Instruction(FLAGS_LINK_INSTRUCTION | FLAG_IS_JUMPING) {
-
-													@Override
-													public final String name() {
-														return "JAL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	JAL			= new Instruction("JAL", FLAGS_LINK_INSTRUCTION | FLAG_IS_JUMPING) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2427,22 +1327,12 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	JALR		= new Instruction(FLAG_HAS_DELAY_SLOT) {
-
-													@Override
-													public final String name() {
-														return "JALR";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	JALR		= new Instruction("JALR", FLAG_HAS_DELAY_SLOT) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
-														final int rd = (insn >> 11) & 31;
-														final int rs = (insn >> 21) & 31;
+														rd = (insn >> 11) & 31;
+														rs = (insn >> 21) & 31;
 
 														if (cpu.doJALR(rd, rs))
 															cpu.processor.interpretDelayslot();
@@ -2450,21 +1340,11 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	JR			= new Instruction(FLAG_HAS_DELAY_SLOT | FLAG_CANNOT_BE_SPLIT | FLAG_ENDS_BLOCK) {
-
-													@Override
-													public final String name() {
-														return "JR";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	JR			= new Instruction("JR", FLAG_HAS_DELAY_SLOT | FLAG_CANNOT_BE_SPLIT | FLAG_ENDS_BLOCK) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														if (cpu.doJR(rs))
 															cpu.processor.interpretDelayslot();
@@ -2472,17 +1352,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BC1F		= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-													@Override
-													public final String name() {
-														return "BC1F";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I/FPU";
-													}
+	public static final Instruction	BC1F		= new Instruction("BC1F", FLAGS_BRANCH_INSTRUCTION) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2494,17 +1364,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BC1T		= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-													@Override
-													public final String name() {
-														return "BC1T";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I/FPU";
-													}
+	public static final Instruction	BC1T		= new Instruction("BC1T", FLAGS_BRANCH_INSTRUCTION) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2516,17 +1376,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BC1FL		= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-													@Override
-													public final String name() {
-														return "BC1FL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II/FPU";
-													}
+	public static final Instruction	BC1FL		= new Instruction("BC1FL", FLAGS_BRANCH_INSTRUCTION) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2538,17 +1388,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	BC1TL		= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-													@Override
-													public final String name() {
-														return "BC1TL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II/FPU";
-													}
+	public static final Instruction	BC1TL		= new Instruction("BC1TL", FLAGS_BRANCH_INSTRUCTION) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2561,17 +1401,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	LB			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "LB";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	LB			= new Instruction("LB", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2582,17 +1412,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	LBU			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "LBU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	LBU			= new Instruction("LBU", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2603,17 +1423,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	LH			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "LH";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	LH			= new Instruction("LH", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2624,17 +1434,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	LHU			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "LHU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	LHU			= new Instruction("LHU", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2645,17 +1445,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	LW			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "LW";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	LW			= new Instruction("LW", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2666,17 +1456,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	LD			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "LD";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS IV";
-													}
+	public static final Instruction	LD			= new Instruction("LD", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2687,17 +1467,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	LWU			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "LWU";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS IV";
-													}
+	public static final Instruction	LWU			= new Instruction("LWU", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2707,17 +1477,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	LWL			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "LWL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	LWL			= new Instruction("LWL", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2727,17 +1487,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	LWR			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "LWR";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	LWR			= new Instruction("LWR", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2748,17 +1498,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	LDR			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "LDR";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	LDR			= new Instruction("LDR", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2770,17 +1510,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	LDL			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "LDL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS IV";
-													}
+	public static final Instruction	LDL			= new Instruction("LDL", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2792,17 +1522,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	LQ			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "LQ";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS IV";
-													}
+	public static final Instruction	LQ			= new Instruction("LQ", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2814,17 +1534,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	SQ			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SQ";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS IV";
-													}
+	public static final Instruction	SQ			= new Instruction("SQ", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2836,17 +1546,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	SB			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SB";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	SB			= new Instruction("SB", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2857,17 +1557,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SH			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SH";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	SH			= new Instruction("SH", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2878,17 +1568,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SW			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SW";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	SW			= new Instruction("SW", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2899,17 +1579,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SD			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SD";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS IV";
-													}
+	public static final Instruction	SD			= new Instruction("SD", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2920,17 +1590,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SWL			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SWL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	SWL			= new Instruction("SWL", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2941,17 +1601,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SWR			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SWR";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	SWR			= new Instruction("SWR", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2963,17 +1613,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	SDL			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SDL";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS IV";
-													}
+	public static final Instruction	SDL			= new Instruction("SDL", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -2985,17 +1625,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	SDR			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SDR";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS IV";
-													}
+	public static final Instruction	SDR			= new Instruction("SDR", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3006,17 +1636,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	LL			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "LL";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	LL			= new Instruction("LL", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3027,40 +1647,20 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	LWC1		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "LWC1";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I/FPU";
-													}
+	public static final Instruction	LWC1		= new Instruction("LWC1", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int imm16 = (insn >> 0) & 65535;
 														final int ft = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doLWC1(ft, rs, (short) imm16);
 
 													}
 
 												};
-	public static final Instruction	LWXC1		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "LWXC1";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II/FPU";
-													}
+	public static final Instruction	LWXC1		= new Instruction("LWXC1", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3074,17 +1674,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	SC			= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SC";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	SC			= new Instruction("SC", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3095,40 +1685,20 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SWC1		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SWC1";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I/FPU";
-													}
+	public static final Instruction	SWC1		= new Instruction("SWC1", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final int imm16 = (insn >> 0) & 65535;
 														final int ft = (insn >> 16) & 31;
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doSWC1(ft, rs, (short) imm16);
 
 													}
 
 												};
-	public static final Instruction	ADD_S		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "ADD.S";
-													}
-
-													@Override
-													public final String category() {
-														return "FPU";
-													}
+	public static final Instruction	ADD_S		= new Instruction("ADD.S", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3141,17 +1711,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SUB_S		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SUB.S";
-													}
-
-													@Override
-													public final String category() {
-														return "FPU";
-													}
+	public static final Instruction	SUB_S		= new Instruction("SUB.S", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3164,17 +1724,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	MUL_S		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MUL.S";
-													}
-
-													@Override
-													public final String category() {
-														return "FPU";
-													}
+	public static final Instruction	MUL_S		= new Instruction("MUL.S", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3187,17 +1737,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	DIV_S		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DIV.S";
-													}
-
-													@Override
-													public final String category() {
-														return "FPU";
-													}
+	public static final Instruction	DIV_S		= new Instruction("DIV.S", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3210,17 +1750,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SQRT_S		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SQRT.S";
-													}
-
-													@Override
-													public final String category() {
-														return "FPU";
-													}
+	public static final Instruction	SQRT_S		= new Instruction("SQRT.S", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3232,17 +1762,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	ABS_S		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "ABS.S";
-													}
-
-													@Override
-													public final String category() {
-														return "FPU";
-													}
+	public static final Instruction	ABS_S		= new Instruction("ABS.S", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3254,17 +1774,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	MOV_S		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MOV.S";
-													}
-
-													@Override
-													public final String category() {
-														return "FPU";
-													}
+	public static final Instruction	MOV_S		= new Instruction("MOV.S", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3276,17 +1786,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	NEG_S		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "NEG.S";
-													}
-
-													@Override
-													public final String category() {
-														return "FPU";
-													}
+	public static final Instruction	NEG_S		= new Instruction("NEG.S", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3298,17 +1798,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	ROUND_W_S	= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "ROUND.W.S";
-													}
-
-													@Override
-													public final String category() {
-														return "FPU";
-													}
+	public static final Instruction	ROUND_W_S	= new Instruction("ROUND.W.S", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3320,17 +1810,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	TRUNC_W_S	= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "TRUNC.W.S";
-													}
-
-													@Override
-													public final String category() {
-														return "FPU";
-													}
+	public static final Instruction	TRUNC_W_S	= new Instruction("TRUNC.W.S", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3342,17 +1822,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	CEIL_W_S	= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "CEIL.W.S";
-													}
-
-													@Override
-													public final String category() {
-														return "FPU";
-													}
+	public static final Instruction	CEIL_W_S	= new Instruction("CEIL.W.S", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3364,17 +1834,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	FLOOR_W_S	= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "FLOOR.W.S";
-													}
-
-													@Override
-													public final String category() {
-														return "FPU";
-													}
+	public static final Instruction	FLOOR_W_S	= new Instruction("FLOOR.W.S", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3386,17 +1846,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	CVT_S_W		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "CVT.S.W";
-													}
-
-													@Override
-													public final String category() {
-														return "FPU";
-													}
+	public static final Instruction	CVT_S_W		= new Instruction("CVT.S.W", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3408,17 +1858,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	CVT_W_S		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "CVT.W.S";
-													}
-
-													@Override
-													public final String category() {
-														return "FPU";
-													}
+	public static final Instruction	CVT_W_S		= new Instruction("CVT.W.S", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3430,17 +1870,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	C_COND_S	= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "C.COND.S";
-													}
-
-													@Override
-													public final String category() {
-														return "FPU";
-													}
+	public static final Instruction	C_COND_S	= new Instruction("C.COND.S", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3453,17 +1883,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	MFC1		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MFC1";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I/FPU";
-													}
+	public static final Instruction	MFC1		= new Instruction("MFC1", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3475,17 +1895,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	DMFC1		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DMFC1";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II/FPU";
-													}
+	public static final Instruction	DMFC1		= new Instruction("DMFC1", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3497,17 +1907,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	CFC1		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "CFC1";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I/FPU";
-													}
+	public static final Instruction	CFC1		= new Instruction("CFC1", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3519,17 +1919,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	MTC1		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MTC1";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I/FPU";
-													}
+	public static final Instruction	MTC1		= new Instruction("MTC1", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3541,17 +1931,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	DMTC1		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DMTC1";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II/FPU";
-													}
+	public static final Instruction	DMTC1		= new Instruction("DMTC1", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3563,17 +1943,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	CTC1		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "CTC1";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I/FPU";
-													}
+	public static final Instruction	CTC1		= new Instruction("CTC1", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3585,17 +1955,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	MFC0		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MFC0";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	MFC0		= new Instruction("MFC0", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3605,17 +1965,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	DMFC0		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DMFC0";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	DMFC0		= new Instruction("DMFC0", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3625,17 +1975,7 @@ public class EEInstructions {
 														throw new RuntimeException();
 													}
 												};
-	public static final Instruction	CFC0		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "CFC0";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	CFC0		= new Instruction("CFC0", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3645,17 +1985,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	MTC0		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MTC0";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS I";
-													}
+	public static final Instruction	MTC0		= new Instruction("MTC0", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3663,17 +1993,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	DMTC0		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DMTC0";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS II";
-													}
+	public static final Instruction	DMTC0		= new Instruction("DMTC0", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3684,17 +2004,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	CTC0		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "CTC0";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	CTC0		= new Instruction("CTC0", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3705,17 +2015,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	DERET		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "DERET";
-													}
-
-													@Override
-													public final String category() {
-														return "PROCESSOR";
-													}
+	public static final Instruction	DERET		= new Instruction("DERET", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3725,17 +2025,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	WAIT		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "WAIT";
-													}
-
-													@Override
-													public final String category() {
-														return "PROCESSOR";
-													}
+	public static final Instruction	WAIT		= new Instruction("WAIT", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3744,17 +2034,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	CACHE		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "CACHE";
-													}
-
-													@Override
-													public final String category() {
-														return "PROCESSOR";
-													}
+	public static final Instruction	CACHE		= new Instruction("CACHE", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3765,17 +2045,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	TLBR		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "TLBR";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	TLBR		= new Instruction("TLBR", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3784,17 +2054,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	TLBP		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "TLBP";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	TLBP		= new Instruction("TLBP", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3803,17 +2063,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	TLBWI		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "TLBWI";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	TLBWI		= new Instruction("TLBWI", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3822,17 +2072,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	TLBWR		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "TLBWR";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	TLBWR		= new Instruction("TLBWR", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3840,61 +2080,31 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	MTSAB		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MTSAB";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS EE";
-													}
+	public static final Instruction	MTSAB		= new Instruction("MTSAB", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final short imm16 = (short) ((insn >> 0) & 65535);
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doMTSAB(rs, imm16);
 													}
 
 												};
 
-	public static final Instruction	MTSAH		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "MTSAH";
-													}
-
-													@Override
-													public final String category() {
-														return "MIPS EE";
-													}
+	public static final Instruction	MTSAH		= new Instruction("MTSAH", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 														final short imm16 = (short) ((insn >> 0) & 65535);
-														final int rs = (insn >> 21) & 31;
+														rs = (insn >> 21) & 31;
 
 														cpu.doMTSAH(rs, imm16);
 													}
 
 												};
 
-	public static final Instruction	LQC2		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "LQC2";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	LQC2		= new Instruction("LQC2", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3904,17 +2114,7 @@ public class EEInstructions {
 													}
 
 												};
-	public static final Instruction	SQC2		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "SQC2";
-													}
-
-													@Override
-													public final String category() {
-														return "CPU";
-													}
+	public static final Instruction	SQC2		= new Instruction("SQC2", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3925,17 +2125,7 @@ public class EEInstructions {
 
 												};
 
-	public static final Instruction	PLZCW		= new Instruction(NO_FLAGS) {
-
-													@Override
-													public final String name() {
-														return "PLZCW";
-													}
-
-													@Override
-													public final String category() {
-														return "MMI";
-													}
+	public static final Instruction	PLZCW		= new Instruction("PLZCW", NO_FLAGS) {
 
 													@Override
 													public void interpret(final int insn, final boolean delay) {
@@ -3943,6 +2133,170 @@ public class EEInstructions {
 														cpu.doPLZCW(rs, rd);
 													}
 
+												};
+
+	public static final Instruction	PMFHLLW		= new Instruction("PMFHLLW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														rd = (insn >> 11) & 31;
+														cpu.doPMFHLLW(rd);
+													}
+												};
+
+	public static final Instruction	PMFHLUW		= new Instruction("PMFHLUW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														rd = (insn >> 11) & 31;
+														cpu.doPMFHLUW(rd);
+													}
+												};
+
+	public static final Instruction	PMFHLSLW	= new Instruction("PMFHLSLW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														rd = (insn >> 11) & 31;
+														cpu.doPMFHLSLW(rd);
+													}
+												};
+
+	public static final Instruction	PMFHLLH		= new Instruction("PMFHLLH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														rd = (insn >> 11) & 31;
+														cpu.doPMFHLLH(rd);
+													}
+												};
+
+	public static final Instruction	PMFHLSH		= new Instruction("PMFHLSH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														rd = (insn >> 11) & 31;
+														cpu.doPMFHLSH(rd);
+													}
+												};
+
+	public static final Instruction	PMTHL		= new Instruction("PMTHL", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														rs = (insn >> 21) & 31;
+														cpu.doPMTHL(rs);
+													}
+												};
+
+	public static final Instruction	PSLLH		= new Instruction("PSLLH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRtRdSa(insn);
+														cpu.doPSLLH(rt, rd, sa);
+													}
+												};
+
+	public static final Instruction	PSRLH		= new Instruction("PSRLH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRtRdSa(insn);
+														cpu.doPSRLH(rt, rd, sa);
+													}
+												};
+
+	public static final Instruction	PSRAH		= new Instruction("PSRLH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRtRdSa(insn);
+														cpu.doPSRLH(rt, rd, sa);
+													}
+												};
+
+	public static final Instruction	PSLLW		= new Instruction("PSLLW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRtRdSa(insn);
+														cpu.doPSLLW(rt, rd, sa);
+													}
+												};
+
+	public static final Instruction	PSRLW		= new Instruction("PSRLW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRtRdSa(insn);
+														cpu.doPSRLW(rt, rd, sa);
+													}
+												};
+
+	public static final Instruction	PSRAW		= new Instruction("PSRAW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRtRdSa(insn);
+														cpu.doPSRAW(rt, rd, sa);
+													}
+												};
+
+	public static final Instruction	PADDW		= new Instruction("PADDW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPADDW(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PSUBW		= new Instruction("PSUBW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPSUBW(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PCGTW		= new Instruction("PCGTW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPCGTW(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PMAXW		= new Instruction("PMAXW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPMAXW(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PPAC5		= new Instruction("PPAC5", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														rd = (insn >> 11) & 31;
+														rt = (insn >> 16) & 31;
+														cpu.doPPAC5(rt, rd);
+													}
+												};
+
+	public static final Instruction	PEXT5		= new Instruction("PEXT5", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														rd = (insn >> 11) & 31;
+														rt = (insn >> 16) & 31;
+														cpu.doPEXT5(rt, rd);
+													}
 												};
 
 	static CpuState					cpu;

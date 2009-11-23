@@ -20,10 +20,6 @@ public abstract class LsuState extends MduState {
 		super.copy(that);
 	}
 
-	public LsuState(final LsuState that) {
-		super(that);
-	}
-
 	public void doLB(final int rt, final int rs, final int simm16) {
 		final int word = (byte) processor.memory.read8(gpr[rs].read32() + simm16);
 		if (rt != 0) {
@@ -321,7 +317,7 @@ public abstract class LsuState extends MduState {
 	public final void doSDL(final int rt, final int rs, final int simm16) {
 		final int address = gpr[rs].read32() + simm16;
 		final int offset = address & 7;
-		long data = processor.memory.read64(address & ~7);
+		final long data = processor.memory.read64(address & ~7);
 
 		if (data != -1) {
 			processor.memory.write64(address & ~7, (gpr[rt].read64() >> sdlShift[offset]) | (data & sdlMask[offset]));
@@ -352,7 +348,7 @@ public abstract class LsuState extends MduState {
 	public final void doSDR(final int rt, final int rs, final int simm16) {
 		final int address = gpr[rs].read32() + simm16;
 		final int offset = address & 7;
-		long data = processor.memory.read64(address & ~7);
+		final long data = processor.memory.read64(address & ~7);
 
 		if (data != -1) {
 			processor.memory.write64(address & ~7, (gpr[rt].read64() << sdrShift[offset]) | (data & sdrMask[offset]));

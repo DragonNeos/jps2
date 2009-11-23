@@ -62,9 +62,11 @@ public class Common {
 
 		public abstract void interpret(int insn, boolean delay);
 
-		public abstract String name();
+		private final String	name;
 
-		public abstract String category();
+		public String getName() {
+			return name;
+		}
 
 		public void resetCount() {
 			m_count = 0;
@@ -86,7 +88,8 @@ public class Common {
 			return this;
 		}
 
-		public Instruction(final int flags) {
+		public Instruction(final String name, final int flags) {
+			this.name = name;
 			this.flags = flags;
 		}
 
@@ -137,7 +140,7 @@ public class Common {
 
 		@Override
 		public String toString() {
-			return name();// + "(" + flagsToString() + ")";
+			return getName();
 		}
 	}
 
@@ -145,7 +148,7 @@ public class Common {
 	public static abstract class STUB extends Instruction {
 
 		public STUB() {
-			super(NO_FLAGS);
+			super("STUB", NO_FLAGS);
 		}
 
 		@Override
@@ -155,54 +158,22 @@ public class Common {
 
 		@Override
 		public abstract Instruction instance(int insn);
-
-		@Override
-		public final String name() {
-			return null;
-		}
-
-		@Override
-		public final String category() {
-			return null;
-		}
 	}
 
-	public static final Instruction	NOP	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "NOP";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
-
+	public static final Instruction	NOP	= new Instruction("NOP", NO_FLAGS) {
 											@Override
 											public void interpret(final int insn, final boolean delay) {
 												// nothing to do
 											}
-
 										};
 
 	/** Instrution unknow */
-	public static final Instruction	UNK	= new Instruction(Instruction.NO_FLAGS) {
+	public static final Instruction	UNK	= new Instruction("UNK", Instruction.NO_FLAGS) {
 											DecimalFormat	format	= new DecimalFormat("00000000000000000000000000000000");
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
 												throw new RuntimeException("UNK function." + format.format(new BigInteger(Integer.toBinaryString(insn))));
-											}
-
-											@Override
-											public final String name() {
-												return "UNK";
-											}
-
-											@Override
-											public final String category() {
-												return "UNK";
 											}
 										};
 }

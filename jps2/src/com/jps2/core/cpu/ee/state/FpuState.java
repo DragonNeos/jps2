@@ -69,18 +69,6 @@ public abstract class FpuState extends BcuState {
 		fcr31 = new Fcr31();
 	}
 
-	public void copy(final FpuState that) {
-		super.copy(that);
-		fpr = that.fpr.clone();
-		fcr31 = new Fcr31(that.fcr31);
-	}
-
-	public FpuState(final FpuState that) {
-		super(that);
-		fpr = that.fpr.clone();
-		fcr31 = new Fcr31(that.fcr31);
-	}
-
 	public void doMFC1(final int rt, final int c1dr) {
 		gpr[rt].write32((int) (Double.doubleToRawLongBits(fpr[c1dr]) & 0xFFFFFFFF));
 	}

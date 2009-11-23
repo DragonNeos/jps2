@@ -25,18 +25,6 @@ public abstract class BcuState extends LsuState {
 		npc = 0xBFC00000;
 	}
 
-	public void copy(final BcuState that) {
-		super.copy(that);
-		pc = that.pc;
-		npc = that.npc;
-	}
-
-	public BcuState(final BcuState that) {
-		super(that);
-		pc = that.pc;
-		npc = that.npc;
-	}
-
 	public static int branchTarget(final int npc, final int simm16) {
 		return npc + (simm16 << 2);
 	}

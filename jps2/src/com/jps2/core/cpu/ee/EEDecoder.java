@@ -71,7 +71,8 @@ public class EEDecoder {
 							@Override
 							public Instruction instance(final int insn) {
 								return mmiTable[(insn >> 21) & 0x0000001F].instance(insn);
-//								throw new RuntimeException("MMI not supported.");
+								// throw new
+								// RuntimeException("MMI not supported.");
 							}
 						},
 						Common.UNK,
@@ -223,6 +224,21 @@ public class EEDecoder {
 						Common.UNK
 														};
 
+	private static final Instruction[]	mmiPmfhlTable	= {
+						EEInstructions.PMFHLLW,
+						EEInstructions.PMFHLUW,
+						EEInstructions.PMFHLSLW,
+						EEInstructions.PMFHLLH,
+						EEInstructions.PMFHLSH
+														};
+
+	private static final STUB			mmiPmfhlStub	= new STUB() {
+															@Override
+															public Instruction instance(final int insn) {
+																return mmiPmfhlTable[insn >> 6 & 0x00000007].instance(insn);
+															}
+														};
+
 	private static final Instruction[]	mmiTable		= {
 						EEInstructions.MADD,
 						EEInstructions.MADDU,
@@ -236,14 +252,14 @@ public class EEDecoder {
 
 							@Override
 							public Instruction instance(final int insn) {
-								return mmi0Table[insn];
+								return mmi0Table[insn].instance(insn);
 							}
 						},
 						new STUB() {
 
 							@Override
 							public Instruction instance(final int insn) {
-								return mmi2Table[insn];
+								return mmi2Table[insn].instance(insn);
 							}
 						},
 						Common.UNK,
@@ -280,14 +296,14 @@ public class EEDecoder {
 
 							@Override
 							public Instruction instance(final int insn) {
-								return mmi1Table[insn];
+								return mmi1Table[insn].instance(insn);
 							}
 						},
 						new STUB() {
 
 							@Override
 							public Instruction instance(final int insn) {
-								return mmi3Table[insn];
+								return mmi3Table[insn].instance(insn);
 							}
 						},
 						Common.UNK,
@@ -296,7 +312,7 @@ public class EEDecoder {
 						Common.UNK,
 						Common.UNK,
 						Common.UNK,
-						EEInstructions.PMFHL,
+						mmiPmfhlStub,
 						EEInstructions.PMTHL,
 						Common.UNK,
 						Common.UNK,
@@ -457,14 +473,17 @@ public class EEDecoder {
 	private static final STUB			c0Stub			= new STUB() {
 															@Override
 															public Instruction instance(final int insn) {
-																return c0Table[insn & 0x0000003f];
+																return c0Table[insn & 0x0000003f].instance(insn);
 															}
 														};
 
 	private static final STUB			bc0Stub			= new STUB() {
 															@Override
 															public Instruction instance(final int insn) {
-//																return bc0Table[(insn >> 16) & 0x1f];
+																// return
+																// bc0Table[(insn
+																// >> 16) &
+																// 0x1f].instance(insn);
 																throw new RuntimeException("BC0 not supported.");
 															}
 														};
@@ -504,39 +523,39 @@ public class EEDecoder {
 						Common.UNK
 														};
 
-//	private static final Instruction	bc0Table[]		= {
-//						EEInstructions.BC0F,
-//						EEInstructions.BC0T,
-//						EEInstructions.BC0FL,
-//						EEInstructions.BC0TL,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK };
+	// private static final Instruction bc0Table[] = {
+	// EEInstructions.BC0F,
+	// EEInstructions.BC0T,
+	// EEInstructions.BC0FL,
+	// EEInstructions.BC0TL,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK };
 
 	private static final Instruction	c0Table[]		= {
 						Common.UNK,

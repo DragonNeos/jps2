@@ -15,17 +15,7 @@ import com.jps2.core.cpu.Common.Instruction;
 import com.jps2.core.cpu.iop.state.CpuState;
 
 public class IOPInstructions {
-	static final Instruction	SYSCALL	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "SYSCALL";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	SYSCALL	= new Instruction("SYSCALL",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -35,17 +25,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	BREAK	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "BREAK";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	BREAK	= new Instruction("BREAK",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -55,17 +35,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	ADD		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "ADD";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	ADD		= new Instruction("ADD",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -76,17 +46,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	ADDU	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "ADDU";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	ADDU	= new Instruction("ADDU",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -98,17 +58,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	ADDI	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "ADDI";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	ADDI	= new Instruction("ADDI",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -118,17 +68,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	ADDIU	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "ADDIU";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	ADDIU	= new Instruction("ADDIU",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -139,17 +79,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	AND		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "AND";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	AND		= new Instruction("AND",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -160,17 +90,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	ANDI	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "ANDI";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	ANDI	= new Instruction("ANDI",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -181,17 +101,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	NOR		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "NOR";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	NOR		= new Instruction("NOR",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -202,17 +112,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	OR		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "OR";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	OR		= new Instruction("OR",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -223,17 +123,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	ORI		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "ORI";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	ORI		= new Instruction("ORI",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -244,17 +134,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	XOR		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "XOR";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	XOR		= new Instruction("XOR",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -265,17 +145,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	XORI	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "XORI";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	XORI	= new Instruction("XORI",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -286,17 +156,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	SLL		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "SLL";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	SLL		= new Instruction("SLL",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -310,17 +170,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	SLLV	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "SLLV";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	SLLV	= new Instruction("SLLV",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -332,17 +182,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	SRA		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "SRA";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	SRA		= new Instruction("SRA",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -356,17 +196,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	SRAV	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "SRAV";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	SRAV	= new Instruction("SRAV",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -378,17 +208,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	SRL		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "SRL";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	SRL		= new Instruction("SRL",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -402,17 +222,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	SRLV	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "SRLV";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	SRLV	= new Instruction("SRLV",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -424,17 +234,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	SLT		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "SLT";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	SLT		= new Instruction("SLT",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -445,17 +245,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	SLTI	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "SLTI";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	SLTI	= new Instruction("SLTI",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -466,17 +256,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	SLTU	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "SLTU";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	SLTU	= new Instruction("SLTU",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -488,17 +268,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	SLTIU	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "SLTIU";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	SLTIU	= new Instruction("SLTIU",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -509,17 +279,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	SUB		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "SUB";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	SUB		= new Instruction("SUB",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -531,17 +291,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	SUBU	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "SUBU";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	SUBU	= new Instruction("SUBU",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -549,17 +299,7 @@ public class IOPInstructions {
 												cpu.doSUBU(rd, rs, rt, insn, delay);
 											}
 										};
-	static final Instruction	LUI		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "LUI";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	LUI		= new Instruction("LUI",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -572,17 +312,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	MULT	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "MULT";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	MULT	= new Instruction("MULT",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -595,17 +325,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	MULTU	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "MULTU";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	MULTU	= new Instruction("MULTU",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -618,17 +338,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	DIV		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "DIV";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	DIV		= new Instruction("DIV",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -640,17 +350,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	DIVU	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "DIVU";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	DIVU	= new Instruction("DIVU",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -663,17 +363,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	MFHI	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "MFHI";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	MFHI	= new Instruction("MFHI",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -684,17 +374,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	MFLO	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "MFLO";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	MFLO	= new Instruction("MFLO",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -705,17 +385,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	MTHI	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "MTHI";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	MTHI	= new Instruction("MTHI",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -726,17 +396,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	MTLO	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "MTLO";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	MTLO	= new Instruction("MTLO",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -747,17 +407,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	BEQ		= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-											@Override
-											public final String name() {
-												return "BEQ";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	BEQ		= new Instruction("BEQ",FLAGS_BRANCH_INSTRUCTION){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -769,17 +419,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	BGEZ	= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-											@Override
-											public final String name() {
-												return "BGEZ";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	BGEZ	= new Instruction("BGEZ",FLAGS_BRANCH_INSTRUCTION){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -792,17 +432,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	BGEZAL	= new Instruction(FLAGS_LINK_INSTRUCTION | FLAG_IS_CONDITIONAL | FLAG_IS_BRANCHING) {
-
-											@Override
-											public final String name() {
-												return "BGEZAL";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	BGEZAL	= new Instruction("BGEZAL",FLAGS_LINK_INSTRUCTION | FLAG_IS_CONDITIONAL | FLAG_IS_BRANCHING){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -816,17 +446,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	BGTZ	= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-											@Override
-											public final String name() {
-												return "BGTZ";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	BGTZ	= new Instruction("BGTZ",FLAGS_BRANCH_INSTRUCTION){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -839,17 +459,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	BLEZ	= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-											@Override
-											public final String name() {
-												return "BLEZ";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	BLEZ	= new Instruction("BLEZ",FLAGS_BRANCH_INSTRUCTION){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -862,17 +472,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	BLTZ	= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-											@Override
-											public final String name() {
-												return "BLTZ";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	BLTZ	= new Instruction("BLTZ",FLAGS_BRANCH_INSTRUCTION){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -885,17 +485,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	BLTZAL	= new Instruction(FLAGS_LINK_INSTRUCTION | FLAG_IS_CONDITIONAL | FLAG_IS_BRANCHING) {
-
-											@Override
-											public final String name() {
-												return "BLTZAL";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	BLTZAL	= new Instruction("BLTZAL",FLAGS_LINK_INSTRUCTION | FLAG_IS_CONDITIONAL | FLAG_IS_BRANCHING){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -909,17 +499,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	BNE		= new Instruction(FLAGS_BRANCH_INSTRUCTION) {
-
-											@Override
-											public final String name() {
-												return "BNE";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	BNE		= new Instruction("BNE",FLAGS_BRANCH_INSTRUCTION){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -931,17 +511,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	J		= new Instruction(FLAG_HAS_DELAY_SLOT | FLAG_IS_JUMPING | FLAG_CANNOT_BE_SPLIT | FLAG_ENDS_BLOCK) {
-
-											@Override
-											public final String name() {
-												return "J";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	J		= new Instruction("J",FLAG_HAS_DELAY_SLOT | FLAG_IS_JUMPING | FLAG_CANNOT_BE_SPLIT | FLAG_ENDS_BLOCK){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -953,17 +523,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	JAL		= new Instruction(FLAGS_LINK_INSTRUCTION | FLAG_IS_JUMPING) {
-
-											@Override
-											public final String name() {
-												return "JAL";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	JAL		= new Instruction("JAL",FLAGS_LINK_INSTRUCTION | FLAG_IS_JUMPING){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -975,17 +535,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	JALR	= new Instruction(FLAG_HAS_DELAY_SLOT) {
-
-											@Override
-											public final String name() {
-												return "JALR";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	JALR	= new Instruction("JALR",FLAG_HAS_DELAY_SLOT){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -998,17 +548,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	JR		= new Instruction(FLAG_HAS_DELAY_SLOT | FLAG_CANNOT_BE_SPLIT | FLAG_ENDS_BLOCK) {
-
-											@Override
-											public final String name() {
-												return "JR";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	JR		= new Instruction("JR",FLAG_HAS_DELAY_SLOT | FLAG_CANNOT_BE_SPLIT | FLAG_ENDS_BLOCK){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -1021,17 +561,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	LB		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "LB";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	LB		= new Instruction("LB",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -1042,17 +572,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	LBU		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "LBU";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	LBU		= new Instruction("LBU",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -1063,17 +583,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	LH		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "LH";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	LH		= new Instruction("LH",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -1084,17 +594,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	LHU		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "LHU";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	LHU		= new Instruction("LHU",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -1105,17 +605,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	LW		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "LW";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	LW		= new Instruction("LW",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -1125,17 +615,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	LWL		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "LWL";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	LWL		= new Instruction("LWL",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -1145,17 +625,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	LWR		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "LWR";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	LWR		= new Instruction("LWR",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -1166,17 +636,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	SB		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "SB";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	SB		= new Instruction("SB",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -1187,17 +647,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	SH		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "SH";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	SH		= new Instruction("SH",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -1208,17 +658,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	SW		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "SW";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	SW		= new Instruction("SW",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -1229,17 +669,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	SWL		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "SWL";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	SWL		= new Instruction("SWL",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -1249,17 +679,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	SWR		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "SWR";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	SWR		= new Instruction("SWR",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -1268,17 +688,7 @@ public class IOPInstructions {
 											}
 										};
 
-	static final Instruction	MFC0	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "MFC0";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	MFC0	= new Instruction("MFC0",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -1288,17 +698,7 @@ public class IOPInstructions {
 											}
 										};
 
-	static final Instruction	CFC0	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "CFC0";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	CFC0	= new Instruction("CFC0",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -1308,17 +708,7 @@ public class IOPInstructions {
 											}
 
 										};
-	static final Instruction	MTC0	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "MTC0";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	MTC0	= new Instruction("MTC0",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -1329,17 +719,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	RFE		= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "RFE";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	RFE		= new Instruction("RFE",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -1348,17 +728,7 @@ public class IOPInstructions {
 
 										};
 
-	static final Instruction	CTC0	= new Instruction(NO_FLAGS) {
-
-											@Override
-											public final String name() {
-												return "CTC0";
-											}
-
-											@Override
-											public final String category() {
-												return "MIPS I";
-											}
+	static final Instruction	CTC0	= new Instruction("CTC0",NO_FLAGS){
 
 											@Override
 											public void interpret(final int insn, final boolean delay) {
@@ -1371,7 +741,7 @@ public class IOPInstructions {
 
 	static CpuState				cpu;
 
-	public static final void setCpu(CpuState cpu) {
+	public static final void setCpu(final CpuState cpu) {
 		IOPInstructions.cpu = cpu;
 	}
 }

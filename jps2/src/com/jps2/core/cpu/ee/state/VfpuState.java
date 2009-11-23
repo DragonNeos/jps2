@@ -172,17 +172,6 @@ public abstract class VfpuState extends FpuState {
 		rnd = new Random();
 	}
 
-	public void copy(final VfpuState that) {
-		super.copy(that);
-		vpr = that.vpr.clone();
-		vcr = new Vcr(that.vcr);
-	}
-
-	public VfpuState(final VfpuState that) {
-		super(that);
-		vpr = that.vpr.clone();
-		vcr = new Vcr(that.vcr);
-	}
 
 	private static float[]	v1	= new float[4];
 	private static float[]	v2	= new float[4];

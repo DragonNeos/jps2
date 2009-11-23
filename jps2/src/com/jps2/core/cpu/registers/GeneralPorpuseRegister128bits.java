@@ -81,7 +81,7 @@ public class GeneralPorpuseRegister128bits implements Register128bits {
 
 		return result;
 	}
-
+	
 	public final void write8(final byte data) {
 		type = DataType.BYTE;
 		word = data;
@@ -107,6 +107,11 @@ public class GeneralPorpuseRegister128bits implements Register128bits {
 		type = DataType.QUADWORD;
 		quadword[0] = data[0];
 		quadword[1] = data[1];
+	}
+	
+	public void write128(final long data, final int pos) {
+		type = DataType.QUADWORD;
+		quadword[pos] = data;
 	}
 
 	@Override

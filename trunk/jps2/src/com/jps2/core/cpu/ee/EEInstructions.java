@@ -2308,6 +2308,168 @@ public class EEInstructions {
 													}
 												};
 
+	public static final Instruction	PEXTLB		= new Instruction("PEXTLB", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPEXTLB(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PSUBSB		= new Instruction("PSUBSB", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPSUBSB(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PADDSB		= new Instruction("PADDSB", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPADDSB(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PPACH		= new Instruction("PPACH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPPACH(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PEXTLH		= new Instruction("PEXTLH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPEXTLH(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PADDH		= new Instruction("PADDH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPADDH(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PSUBH		= new Instruction("PSUBH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPSUBH(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PCGTH		= new Instruction("PCGTH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPCGTH(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PMAXH		= new Instruction("PMAXH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPMAXH(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PADDB		= new Instruction("PADDB", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPADDB(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PSUBB		= new Instruction("PSUBB", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPSUBB(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PCGTB		= new Instruction("PCGTB", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPCGTB(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PPACW		= new Instruction("PPACW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPPACW(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PADDSW		= new Instruction("PADDSW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPADDSW(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PSUBSW		= new Instruction("PSUBSW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPSUBSW(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PEXTLW		= new Instruction("PEXTLW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPEXTLW(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PADDSH		= new Instruction("PADDSH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPADDSH(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PSUBSH		= new Instruction("PSUBSH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPSUBSH(rs, rt, rd);
+													}
+												};
+
 	static CpuState					cpu;
 
 	public static final void setCpu(final CpuState cpu) {

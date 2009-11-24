@@ -126,6 +126,7 @@ public class Emulator {
 
 		IOPProcess() {
 			super("IOP Process");
+			setPriority(MIN_PRIORITY);
 			setDaemon(true);
 			// send cpu to others objects in emulator
 			Memories.hwRegistersIOP.setCpu((com.jps2.core.cpu.iop.state.CpuState) iop.cpu);
@@ -164,6 +165,7 @@ public class Emulator {
 
 		EEProcess() {
 			super("EE Process");
+			setPriority(MIN_PRIORITY);
 			setDaemon(true);
 			// send cpu to others objects in emulator
 			EEInstructions.setCpu((com.jps2.core.cpu.ee.state.CpuState) ee.cpu);

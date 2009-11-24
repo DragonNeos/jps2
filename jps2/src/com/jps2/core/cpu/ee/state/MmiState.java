@@ -273,6 +273,32 @@ public class MmiState extends SauState {
 		return (toExtend & 0x0000001F) << 3 | (toExtend & 0x000003E0) << 6 | (toExtend & 0x00007C00) << 9 | (toExtend & 0x00008000) << 16;
 	}
 
+	public final void doPPACB(final int rs, final int rt, final int rd) {
+		if (rd != 0) {
+			final long[] rtValue = gpr[rt].read128();
+			long packedRtValue = rtValue[1] & 0xF;
+			packedRtValue |= (rtValue[1] >> 8) & 0xF0;
+			packedRtValue |= ((rtValue[1] >> 16) & 0xF00) ;
+			packedRtValue |= ((rtValue[1] >> 24) & 0xF000);
+			packedRtValue |= ((rtValue[0]) & 0xF) << 32;
+			packedRtValue |= ((rtValue[0] >> 8) & 0xF0) << 32;
+			packedRtValue |= ((rtValue[0] >> 16) & 0xF00) << 32;
+			packedRtValue |= ((rtValue[0] >> 24) & 0xF000) << 32;
+			
+			final long[] rsValue = gpr[rt].read128();
+			long packedRsValue = rsValue[1] & 0xF;
+			packedRsValue |= (rsValue[1] >> 8) & 0xF0;
+			packedRsValue |= ((rsValue[1] >> 16) & 0xF00) ;
+			packedRsValue |= ((rsValue[1] >> 24) & 0xF000);
+			packedRsValue |= ((rsValue[0]) & 0xF) << 32;
+			packedRsValue |= ((rsValue[0] >> 8) & 0xF0) << 32;
+			packedRsValue |= ((rsValue[0] >> 16) & 0xF00) << 32;
+			packedRsValue |= ((rsValue[0] >> 24) & 0xF000) << 32;
+			
+			gpr[rd].write128(new long[]{packedRsValue,packedRtValue});
+		}
+	}
+
 	private static int[] convertLongArrayToIntArray(final long[] longArray) {
 		final int[] intArray = new int[longArray.length * 2];
 

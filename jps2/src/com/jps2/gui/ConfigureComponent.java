@@ -1,12 +1,16 @@
 package com.jps2.gui;
 
-import java.awt.Component;
+import javax.swing.JComponent;
 
-@SuppressWarnings("serial")
-public abstract class ConfigureComponent extends Component {
+public interface ConfigureComponent {
 
 	/**
 	 * Save configuration.
 	 */
-	public abstract void save();
+	public void save();
+
+	/**
+	 * Get Cfg component
+	 */
+	public JComponent getComponent();
 }

@@ -9,6 +9,7 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 
+import com.jps2.gui.config.GSConfigPanel;
 import com.jps2.util.ResourceManager;
 
 /**
@@ -40,6 +41,8 @@ public class PluginConfigDialog extends JDialog {
 
 	private final void initComponents() {
 
+		add(new GSConfigPanel());
+
 		// add ok/cancel button in a panel on south
 		add(new JPanel(new FlowLayout(FlowLayout.TRAILING)) {
 			{
@@ -49,7 +52,7 @@ public class PluginConfigDialog extends JDialog {
 					public void actionPerformed(final ActionEvent e) {
 						// save config
 						save();
-						// close about dialog
+						// close config dialog
 						dispose();
 					}
 				}));
@@ -57,7 +60,7 @@ public class PluginConfigDialog extends JDialog {
 
 					@Override
 					public void actionPerformed(final ActionEvent e) {
-						// close about dialog
+						// close config dialog
 						dispose();
 					}
 				}));

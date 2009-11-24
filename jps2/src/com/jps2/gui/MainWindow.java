@@ -1,7 +1,10 @@
 package com.jps2.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.DisplayMode;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -13,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
@@ -38,6 +42,10 @@ public class MainWindow extends JFrame {
 	private static MainWindow	instance;
 
 	private final AWTGLCanvas	canvas;
+
+	private boolean				fullscreen	= false;
+
+	private Component			toolBar;
 
 	private MainWindow() {
 		super("JPS2 - Java PS2 emulator");
@@ -80,14 +88,13 @@ public class MainWindow extends JFrame {
 						resized = false;
 						GL11.glMatrixMode(GL11.GL_PROJECTION_MATRIX);
 						GL11.glLoadIdentity();
-						GL11.glOrtho(0, getWidth(), 0, getHeight(), 1, -1);
+						GL11.glOrtho(0, 256, 0, 256, 1, -1);
 						GL11.glMatrixMode(GL11.GL_MODELVIEW_MATRIX);
 					}
 					GL11.glPushMatrix();
-					GL11.glScaled(getWidth() / 512d, getHeight() / 512d, 0);
 					{
 						// center square according to screen size
-						GL11.glTranslatef(256f, 256f, 0.0f);
+						GL11.glTranslatef(256f, 256f, (getHeight() / 256f) - 1);
 
 						// rotate square according to angle
 						GL11.glRotatef(angle, 0, 0, 1.0f);
@@ -123,7 +130,7 @@ public class MainWindow extends JFrame {
 				@Override
 				public void run() {
 					while (!isInterrupted()) {
-						if (false && Emulator.getInstance().isEmulating()) {
+						if (Emulator.getInstance().isEmulating()) {
 							if (canvas.isVisible()) {
 								canvas.repaint();
 							}
@@ -138,6 +145,7 @@ public class MainWindow extends JFrame {
 					}
 				}
 			}.start();
+			setLocationRelativeTo(null);
 			setVisible(true);
 		} catch (final Exception e) {
 			throw new RuntimeException(e);
@@ -199,14 +207,59 @@ public class MainWindow extends JFrame {
 		setJMenuBar(menuBar);
 	}
 
+	public final void fullscreenSwitch() {
+		final Toolkit toolkit = Toolkit.getDefaultToolkit();
+		if (fullscreen) {
+			if (toolkit.isAlwaysOnTopSupported()) {
+				setAlwaysOnTop(false);
+			}
+			getGraphicsConfiguration().getDevice().setFullScreenWindow(null);
+			dispose();
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					setUndecorated(false);
+					getJMenuBar().setVisible(true);
+					toolBar.setVisible(true);
+					setVisible(true);
+				}
+			});
+		} else {
+			dispose();
+			getJMenuBar().setVisible(false);
+			toolBar.setVisible(false);
+			SwingUtilities.invokeLater(new Runnable() {
+
+				@Override
+				public void run() {
+					if (toolkit.isAlwaysOnTopSupported()) {
+						setAlwaysOnTop(false);
+					}
+					setUndecorated(true);
+					getGraphicsConfiguration().getDevice().setFullScreenWindow(MainWindow.this);
+					getGraphicsConfiguration().getDevice().setDisplayMode(new DisplayMode(640, 480, 32, 60));
+				}
+			});
+		}
+
+		fullscreen = !fullscreen;
+	}
+
+	public final boolean isFullscreen() {
+		return fullscreen;
+	}
+
 	// contruct toolbar
 	private void makeToolBar() {
 
 		final JButton playButton = new JButton(ResourceManager.getIcon("/icons/16x16/play.png"));
-		final JButton pauseButton = new JButton(ResourceManager.getIcon("/icons/16x16/pause.png"));
+		final JToggleButton pauseButton = new JToggleButton(ResourceManager.getIcon("/icons/16x16/pause.png"));
 		pauseButton.setEnabled(false);
 		final JButton stopButton = new JButton(ResourceManager.getIcon("/icons/16x16/stop.png"));
 		stopButton.setEnabled(false);
+		final JToggleButton fullscreenButton = new JToggleButton(ResourceManager.getIcon("/icons/16x16/fullscreen.png"));
+
 		playButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -240,6 +293,18 @@ public class MainWindow extends JFrame {
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						Emulator.getInstance().stop();
+					}
+				});
+			}
+		});
+
+		fullscreenButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				SwingUtilities.invokeLater(new Runnable() {
+					public void run() {
+						fullscreenSwitch();
 					}
 				});
 			}
@@ -289,8 +354,10 @@ public class MainWindow extends JFrame {
 			stopButton.putClientProperty("JButton.segmentPosition", "last");
 			layoutBox.add(stopButton);
 			toolBar.addComponentToLeft(layoutBox);
-
+			fullscreenButton.putClientProperty("JButton.buttonType", "textured");
+			toolBar.addComponentToRight(fullscreenButton);
 			add(toolBar.getComponent(), BorderLayout.NORTH);
+			this.toolBar = toolBar.getComponent();
 		} else {
 			final JToolBar toolBar = new JToolBar();
 
@@ -298,8 +365,10 @@ public class MainWindow extends JFrame {
 			toolBar.add(playButton);
 			toolBar.add(pauseButton);
 			toolBar.add(stopButton);
-
+			toolBar.addSeparator();
+			toolBar.add(fullscreenButton);
 			add(toolBar, BorderLayout.NORTH);
+			this.toolBar = toolBar;
 		}
 	}
 

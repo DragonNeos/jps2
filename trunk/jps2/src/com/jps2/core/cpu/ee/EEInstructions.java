@@ -2299,6 +2299,15 @@ public class EEInstructions {
 													}
 												};
 
+	public static final Instruction	PPACB		= new Instruction("PPACB", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPPACB(rs, rt, rd);
+													}
+												};
+
 	static CpuState					cpu;
 
 	public static final void setCpu(final CpuState cpu) {

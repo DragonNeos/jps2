@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Class-Path: .  lib/forms-1.2.1.jar 
+ lib/jgz-0.2.jar 
+ lib/jinput.jar 
+ lib/log4j-1.2.15.jar 
+ lib/lwjgl.jar 
+ lib/mac_widgets-0.9.6-beta.jar 
+ lib/mac-integration.jar 
+Main-Class: JPS2
+

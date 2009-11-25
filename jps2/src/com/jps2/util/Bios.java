@@ -16,7 +16,7 @@ public class Bios {
 				memory.writeStream(0, is);
 				is.close();
 			} else {
-				throw new RuntimeException("Inválid Bios file.");
+				throw new RuntimeException("Invalid Bios file.");
 			}
 		} catch (final Exception e) {
 			throw new RuntimeException("Problems on load BIOS.", e);
@@ -49,10 +49,8 @@ public class Bios {
 			}
 			buffer = digest.digest();
 			final StringBuilder hexMd5 = new StringBuilder();
-			String hexPart;
 			for (final byte b : buffer) {
-				hexPart = "0" + Integer.toHexString(b);
-				hexMd5.append(hexPart.substring(hexPart.length() - 2, hexPart.length()));
+				hexMd5.append(Integer.toHexString(0x100 | b).substring(0, 2));
 			}
 
 			// for new bios uncomment and add in hashset

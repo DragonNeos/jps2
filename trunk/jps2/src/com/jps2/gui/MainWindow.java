@@ -20,7 +20,6 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
-import org.jps2.mac.MacApplication;
 import org.lwjgl.opengl.AWTGLCanvas;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -30,6 +29,7 @@ import com.explodingpixels.macwidgets.UnifiedToolBar;
 import com.jps2.core.Emulator;
 import com.jps2.core.EmulatorStateListener;
 import com.jps2.util.ResourceManager;
+import com.jps2.util.SystemInfo;
 
 /**
  * JPS2's main window.
@@ -57,10 +57,10 @@ public class MainWindow extends JFrame {
 			ResourceManager.getIcon("/icons/256x256/joystick.png").getImage())/**/);
 			setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 			setMinimumSize(new Dimension(300, 240));
-			if (Utilities.isMac()) {
+			if (SystemInfo.isMac()) {
 				try {
-					new MacApplication(this, getClass().getDeclaredMethod("about"), getClass().getDeclaredMethod("config"), getClass().getDeclaredMethod("close"), ResourceManager
-							.getIcon("/icons/256x256/joystick.png").getImage());
+//					new MacApplication(this, getClass().getDeclaredMethod("about"), getClass().getDeclaredMethod("config"), getClass().getDeclaredMethod("close"), ResourceManager
+//							.getIcon("/icons/256x256/joystick.png").getImage());
 				} catch (final Exception e) {
 					throw new RuntimeException(e);
 				}
@@ -161,8 +161,8 @@ public class MainWindow extends JFrame {
 		dispose();
 	}
 
-	public void config() {
-		new PluginConfigDialog();
+	public void preferences() {
+		new PreferencesDialog();
 	}
 
 	// construct menu
@@ -171,7 +171,7 @@ public class MainWindow extends JFrame {
 
 		final JMenu fileMenu = new JMenu(ResourceManager.getString("menu.file"));
 		// if not is mac
-		if (!Utilities.isMac()) {
+		if (!SystemInfo.isMac()) {
 
 			final JMenuItem exitMenu = new JMenuItem(ResourceManager.getString("menu.file.exit"), ResourceManager.getIcon("/icons/16x16/exit.png"));
 			exitMenu.addActionListener(new ActionListener() {
@@ -183,26 +183,28 @@ public class MainWindow extends JFrame {
 			});
 			fileMenu.add(exitMenu);
 
+			menuBar.add(fileMenu);
+
 			final JMenu configMenu = new JMenu(ResourceManager.getString("menu.config"));
 
-			final JMenuItem pluginsMenuItem = new JMenuItem(ResourceManager.getString("menu.config.plugins"), ResourceManager.getIcon("/icons/16x16/config.png"));
-			pluginsMenuItem.addActionListener(new ActionListener() {
+			final JMenuItem preferencesMenuItem = new JMenuItem(ResourceManager.getString("menu.config.preferences"), ResourceManager.getIcon("/icons/16x16/preferences.png"));
+			preferencesMenuItem.addActionListener(new ActionListener() {
 
 				@Override
 				public void actionPerformed(final ActionEvent e) {
-					config();
+					preferences();
 				}
 			});
-			configMenu.add(pluginsMenuItem);
+			configMenu.add(preferencesMenuItem);
 
 			menuBar.add(configMenu);
+		} else {
+			menuBar.add(fileMenu);
 		}
-
-		menuBar.add(fileMenu);
 		final JMenu helpMenu = new JMenu(ResourceManager.getString("menu.help"));
 
 		// if not is mac
-		if (!Utilities.isMac()) {
+		if (!SystemInfo.isMac()) {
 			final JMenuItem aboutMenuItem = new JMenuItem(ResourceManager.getString("menu.help.about"), ResourceManager.getIcon("/icons/16x16/about.png"));
 			aboutMenuItem.addActionListener(new ActionListener() {
 
@@ -348,7 +350,7 @@ public class MainWindow extends JFrame {
 			}
 		});
 		// if is mac
-		if (Utilities.isMac()) {
+		if (SystemInfo.isMac()) {
 			// adjust for leopard, if necessary
 			MacUtils.makeWindowLeopardStyle(getRootPane());
 

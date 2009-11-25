@@ -59,7 +59,8 @@ public class MainWindow extends JFrame {
 			setMinimumSize(new Dimension(300, 240));
 			if (Utilities.isMac()) {
 				try {
-					new MacApplication(this, getClass().getDeclaredMethod("about"), null, null, ResourceManager.getIcon("/icons/256x256/joystick.png").getImage());
+					new MacApplication(this, getClass().getDeclaredMethod("about"), getClass().getDeclaredMethod("config"), getClass().getDeclaredMethod("close"), ResourceManager
+							.getIcon("/icons/256x256/joystick.png").getImage());
 				} catch (final Exception e) {
 					throw new RuntimeException(e);
 				}
@@ -156,39 +157,50 @@ public class MainWindow extends JFrame {
 		new AboutDialog();
 	}
 
+	public void close() {
+		dispose();
+	}
+
+	public void config() {
+		new PluginConfigDialog();
+	}
+
 	// construct menu
 	private void makeMenu() {
 		final JMenuBar menuBar = new JMenuBar();
 
 		final JMenu fileMenu = new JMenu(ResourceManager.getString("menu.file"));
+		// if not is mac
+		if (!Utilities.isMac()) {
 
-		final JMenuItem exitMenu = new JMenuItem(ResourceManager.getString("menu.file.exit"), ResourceManager.getIcon("/icons/16x16/exit.png"));
-		exitMenu.addActionListener(new ActionListener() {
+			final JMenuItem exitMenu = new JMenuItem(ResourceManager.getString("menu.file.exit"), ResourceManager.getIcon("/icons/16x16/exit.png"));
+			exitMenu.addActionListener(new ActionListener() {
 
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				dispose();
-			}
-		});
-		fileMenu.add(exitMenu);
+				@Override
+				public void actionPerformed(final ActionEvent e) {
+					close();
+				}
+			});
+			fileMenu.add(exitMenu);
+
+			final JMenu configMenu = new JMenu(ResourceManager.getString("menu.config"));
+
+			final JMenuItem pluginsMenuItem = new JMenuItem(ResourceManager.getString("menu.config.plugins"), ResourceManager.getIcon("/icons/16x16/config.png"));
+			pluginsMenuItem.addActionListener(new ActionListener() {
+
+				@Override
+				public void actionPerformed(final ActionEvent e) {
+					config();
+				}
+			});
+			configMenu.add(pluginsMenuItem);
+
+			menuBar.add(configMenu);
+		}
 
 		menuBar.add(fileMenu);
-
-		final JMenu configMenu = new JMenu(ResourceManager.getString("menu.config"));
-
-		final JMenuItem pluginsMenuItem = new JMenuItem(ResourceManager.getString("menu.config.plugins"), ResourceManager.getIcon("/icons/16x16/config.png"));
-		pluginsMenuItem.addActionListener(new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				new PluginConfigDialog();
-			}
-		});
-		configMenu.add(pluginsMenuItem);
-
-		menuBar.add(configMenu);
-
 		final JMenu helpMenu = new JMenu(ResourceManager.getString("menu.help"));
+
 		// if not is mac
 		if (!Utilities.isMac()) {
 			final JMenuItem aboutMenuItem = new JMenuItem(ResourceManager.getString("menu.help.about"), ResourceManager.getIcon("/icons/16x16/about.png"));
@@ -238,7 +250,7 @@ public class MainWindow extends JFrame {
 					}
 					setUndecorated(true);
 					getGraphicsConfiguration().getDevice().setFullScreenWindow(MainWindow.this);
-					getGraphicsConfiguration().getDevice().setDisplayMode(new DisplayMode(640, 480, 32, 60));
+					getGraphicsConfiguration().getDevice().setDisplayMode(new DisplayMode(640, 480, 32, 0));
 				}
 			});
 		}

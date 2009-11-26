@@ -42,7 +42,7 @@ public class MainWindow extends JFrame {
 
 	private static MainWindow	instance;
 
-	private final AWTGLCanvas	canvas;
+	private static AWTGLCanvas	canvas;
 
 	private boolean				fullscreen	= false;
 
@@ -60,8 +60,8 @@ public class MainWindow extends JFrame {
 			setMinimumSize(new Dimension(300, 240));
 			if (SystemInfo.isMac()) {
 				try {
-					new MacApplication(this, getClass().getDeclaredMethod("about"), getClass().getDeclaredMethod("preferences"), getClass().getDeclaredMethod("close"), ResourceManager
-							.getIcon("/icons/256x256/joystick.png").getImage());
+					new MacApplication(this, getClass().getDeclaredMethod("about"), getClass().getDeclaredMethod("preferences"), getClass().getDeclaredMethod("close"),
+							ResourceManager.getIcon("/icons/256x256/joystick.png").getImage());
 				} catch (final Exception e) {
 					throw new RuntimeException(e);
 				}
@@ -163,6 +163,9 @@ public class MainWindow extends JFrame {
 	}
 
 	public void preferences() {
+		if (Emulator.getInstance().isEmulating()) {
+			Emulator.getInstance().stop();
+		}
 		new PreferencesDialog();
 	}
 
@@ -385,6 +388,10 @@ public class MainWindow extends JFrame {
 			add(toolBar, BorderLayout.NORTH);
 			this.toolBar = toolBar;
 		}
+	}
+
+	public static AWTGLCanvas getCanvas() {
+		return canvas;
 	}
 
 	/**

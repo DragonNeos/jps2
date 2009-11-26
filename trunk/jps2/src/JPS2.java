@@ -35,7 +35,7 @@ public class JPS2 {
 					extractMacNatives();
 				} else
 					if (SystemInfo.isSolaris()) {
-
+						extractSolarisNatives();
 					} else {
 						extractLinuxNatives();
 					}
@@ -49,6 +49,12 @@ public class JPS2 {
 		SystemInfo.getSystemInfo();
 		// init GUI
 		MainWindow.getInstance();
+	}
+
+	private static final void extractSolarisNatives() {
+		if (extractNative("solaris/", "liblwjgl.so")) {
+			extractNative("solaris/", "libopenal.so");
+		}
 	}
 
 	private static final void extractMacNatives() {
@@ -82,7 +88,6 @@ public class JPS2 {
 					extractNative("libopenal.so");
 				}
 			}
-
 		} else {
 			if (extractNative("liblwjgl64.so")) {
 				if (extractNative("libjinput-linux64.so")) {
@@ -102,10 +107,9 @@ public class JPS2 {
 			final InputStream inputStream = JPS2.class.getResourceAsStream("/native/" + dir + name);
 
 			if (inputStream != null) {
-
-				System.err.println("extracting /native/" + name);
 				final File temporaryDll = new File(name);
 				if (!temporaryDll.exists()) {
+					System.err.println("extracting /native/" + dir + name + "...");
 					final FileOutputStream outputStream = new FileOutputStream(temporaryDll);
 					final byte[] array = new byte[8192];
 					for (int i = inputStream.read(array); i != -1; i = inputStream.read(array)) {
@@ -114,6 +118,8 @@ public class JPS2 {
 					outputStream.close();
 
 					temporaryDll.deleteOnExit();
+				} else {
+					System.err.println("Using " + name + " found in folder.");
 				}
 				return true;
 			}

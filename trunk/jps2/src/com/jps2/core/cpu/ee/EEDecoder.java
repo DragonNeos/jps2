@@ -71,8 +71,6 @@ public class EEDecoder {
 							@Override
 							public Instruction instance(final int insn) {
 								return mmiTable[(insn >> 21) & 0x0000001F].instance(insn);
-								// throw new
-								// RuntimeException("MMI not supported.");
 							}
 						},
 						Common.UNK,
@@ -368,40 +366,40 @@ public class EEDecoder {
 						EEInstructions.PPAC5
 														};
 
-//	private static final Instruction[]	mmi1Table		= {
-//						Common.UNK,
-//						EEInstructions.PABSW,
-//						EEInstructions.PCEQW,
-//						EEInstructions.PMINW,
-//						EEInstructions.PADSBH,
-//						EEInstructions.PABSH,
-//						EEInstructions.PCEQH,
-//						EEInstructions.PMINH,
-//						Common.UNK,
-//						Common.UNK,
-//						EEInstructions.PCEQB,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						EEInstructions.PADDUW,
-//						EEInstructions.PSUBUW,
-//						EEInstructions.PEXTUW,
-//						Common.UNK,
-//						EEInstructions.PADDUH,
-//						EEInstructions.PSUBUH,
-//						EEInstructions.PEXTUH,
-//						Common.UNK,
-//						EEInstructions.PADDUB,
-//						EEInstructions.PSUBUB,
-//						EEInstructions.PEXTUB,
-//						EEInstructions.QFSRV,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK
-//														};
+	private static final Instruction[]	mmi1Table		= {
+						Common.UNK,
+						EEInstructions.PABSW,
+						EEInstructions.PCEQW,
+						EEInstructions.PMINW,
+						EEInstructions.PADSBH,
+						EEInstructions.PABSH,
+						EEInstructions.PCEQH,
+						EEInstructions.PMINH,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.PCEQB,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						EEInstructions.PADDUW,
+						EEInstructions.PSUBUW,
+						EEInstructions.PEXTUW,
+						Common.UNK,
+						EEInstructions.PADDUH,
+						EEInstructions.PSUBUH,
+						EEInstructions.PEXTUH,
+						Common.UNK,
+						EEInstructions.PADDUB,
+						EEInstructions.PSUBUB,
+						EEInstructions.PEXTUB,
+						EEInstructions.QFSRV,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK
+														};
 //
 //	private static final Instruction[]	mmi2Table		= {
 //						EEInstructions.PMADDW,

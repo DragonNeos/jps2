@@ -2470,6 +2470,80 @@ public class EEInstructions {
 													}
 												};
 
+	public static final Instruction	PABSW		= new Instruction("PABSW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														rd = (insn >> 11) & 31;
+														rt = (insn >> 16) & 31;
+														cpu.doPABSW(rt, rd);
+													}
+												};
+
+	public static final Instruction	PCEQW		= new Instruction("PCEQW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPCEQW(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PMINW		= new Instruction("PMINW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPMINW(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PADSBH		= new Instruction("PADSBH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPADSBH(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PABSH		= new Instruction("PABSH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														rd = (insn >> 11) & 31;
+														rt = (insn >> 16) & 31;
+														cpu.doPABSH(rt, rd);
+													}
+												};
+
+	public static final Instruction	PCEQH		= new Instruction("PCEQH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPCEQH(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PMINH		= new Instruction("PMINH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPMINH(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PCEQB		= new Instruction("PCEQB", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPCEQB(rs, rt, rd);
+													}
+												};
+
 	static CpuState					cpu;
 
 	public static final void setCpu(final CpuState cpu) {

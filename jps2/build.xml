@@ -29,7 +29,7 @@
 	</target>
 	<target name="compile" depends="init" description="Compile">
 		<echo>Compiling sources...</echo>
-		<javac srcdir="${src}" destdir="${build}" classpathref="classpath" debug="true" excludes="/bios/**" />
+		<javac srcdir="${src}" destdir="${build}" classpathref="classpath" debug="true"/>
 		<copy todir="${build}/native">
 			<fileset dir="lib/native">
 				<include name="**/*.*" />
@@ -43,7 +43,7 @@
 			<fileset dir="${src}">
 				<include name="**/*.*" />
 				<exclude name="**/*.java" />
-				<exclude name="/bios/*" />
+				<exclude name="**/bios/**" />
 			</fileset>
 		</jar>
 		<delete file="${dist}/${ant.project.name}.jar" />

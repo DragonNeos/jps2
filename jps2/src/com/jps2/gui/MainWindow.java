@@ -20,6 +20,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
+import org.jps2.mac.MacApplication;
 import org.lwjgl.opengl.AWTGLCanvas;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
@@ -59,8 +60,8 @@ public class MainWindow extends JFrame {
 			setMinimumSize(new Dimension(300, 240));
 			if (SystemInfo.isMac()) {
 				try {
-//					new MacApplication(this, getClass().getDeclaredMethod("about"), getClass().getDeclaredMethod("config"), getClass().getDeclaredMethod("close"), ResourceManager
-//							.getIcon("/icons/256x256/joystick.png").getImage());
+					new MacApplication(this, getClass().getDeclaredMethod("about"), getClass().getDeclaredMethod("preferences"), getClass().getDeclaredMethod("close"), ResourceManager
+							.getIcon("/icons/256x256/joystick.png").getImage());
 				} catch (final Exception e) {
 					throw new RuntimeException(e);
 				}

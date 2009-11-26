@@ -49,8 +49,10 @@ public class Bios {
 			}
 			buffer = digest.digest();
 			final StringBuilder hexMd5 = new StringBuilder();
+			String hexStr;
 			for (final byte b : buffer) {
-				hexMd5.append(Integer.toHexString(0x100 | b).substring(0, 2));
+				hexStr = Integer.toHexString(0x100 | b);
+				hexMd5.append(hexStr.substring(hexStr.length() -2, hexStr.length()));
 			}
 
 			// for new bios uncomment and add in hashset

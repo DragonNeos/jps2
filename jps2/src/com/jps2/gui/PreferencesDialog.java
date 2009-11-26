@@ -3,8 +3,10 @@ package com.jps2.gui;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -13,6 +15,7 @@ import javax.swing.Box;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -20,6 +23,7 @@ import javax.swing.SwingConstants;
 
 import com.explodingpixels.macwidgets.MacUtils;
 import com.explodingpixels.macwidgets.UnifiedToolBar;
+import com.explodingpixels.macwidgets.plaf.PreferencesTabBarButtonUI;
 import com.jps2.gui.preferences.JoystickPreferencesPanel;
 import com.jps2.gui.preferences.SoundPreferencesPanel;
 import com.jps2.gui.preferences.VideoPreferencesPanel;
@@ -32,30 +36,40 @@ import com.jps2.util.SystemInfo;
  * @author dyorgio
  */
 @SuppressWarnings("serial")
-public class PreferencesDialog extends JDialog {
+public class PreferencesDialog {
 	/**
 	 * Contruct a preferences dialog.
 	 */
 	public PreferencesDialog() {
-		// use MainWindow as onwer and make this dialog modal (block MainWindow)
-		super(MainWindow.getInstance(), ResourceManager.getString("preferences.title"), true);
-		// dispose this dialog if presse close button
-		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		Window window;
+		if (SystemInfo.isMac()) {
+			window = new JFrame(ResourceManager.getString("preferences.title"));
+			// dispose this dialog if presse close button
+			((JFrame) window).setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+			// no resizable
+			((JFrame) window).setResizable(false);
+		} else {
+			window = new JDialog(MainWindow.getInstance(), ResourceManager.getString("preferences.title"), true);
+			// dispose this dialog if presse close button
+			((JDialog) window).setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+			// no resizable
+			((JDialog) window).setResizable(false);
+		}
+
 		// set dialog icon
-		setIconImage(ResourceManager.getIcon("/icons/16x16/preferences.png").getImage());
+		window.setIconImage(ResourceManager.getIcon("/icons/16x16/preferences.png").getImage());
 		// contruct dialog UI
-		initComponents();
+		initComponents(window);
+		window.setMinimumSize(new Dimension(300, 300));
 		// adjust window preferred size
-		pack();
-		// no resizable
-		setResizable(false);
+		window.pack();
 		// center of screen
-		setLocationRelativeTo(null);
+		window.setLocationRelativeTo(null);
 		// show
-		setVisible(true);
+		window.setVisible(true);
 	}
 
-	private final void initComponents() {
+	private final void initComponents(final Window window) {
 		final CardLayout layout = new CardLayout();
 		final JPanel contentPane = new JPanel(layout);
 
@@ -97,13 +111,14 @@ public class PreferencesDialog extends JDialog {
 		// if is mac
 		if (SystemInfo.isMac()) {
 			// adjust for leopard, if necessary
-			MacUtils.makeWindowLeopardStyle(getRootPane());
+			MacUtils.makeWindowLeopardStyle(((JFrame) window).getRootPane());
+			((JFrame) window).getRootPane().putClientProperty("Window.style", "small");
 
 			final UnifiedToolBar toolBar = new UnifiedToolBar();
-			toolBar.installWindowDraggerOnWindow(this);
+			toolBar.installWindowDraggerOnWindow(window);
 			final Box layoutBox = Box.createHorizontalBox();
 
-			videoButton.putClientProperty("JButton.buttonType", "recessed");
+			videoButton.putClientProperty("JButton.buttonType", "textured");
 			layoutBox.add(videoButton);
 			joystickButton.putClientProperty("JButton.buttonType", "recessed");
 			layoutBox.add(joystickButton);
@@ -112,7 +127,7 @@ public class PreferencesDialog extends JDialog {
 
 			toolBar.addComponentToLeft(layoutBox);
 
-			add(toolBar.getComponent(), BorderLayout.NORTH);
+			window.add(toolBar.getComponent(), BorderLayout.NORTH);
 		} else {
 			final JToolBar toolBar = new JToolBar();
 
@@ -123,17 +138,17 @@ public class PreferencesDialog extends JDialog {
 			toolBar.add(joystickButton);
 			toolBar.add(soundButton);
 
-			add(toolBar, BorderLayout.NORTH);
+			window.add(toolBar, BorderLayout.NORTH);
 		}
 
 		contentPane.add(new VideoPreferencesPanel(), "VIDEO");
 		contentPane.add(new JoystickPreferencesPanel(), "JOYSTICK");
 		contentPane.add(new SoundPreferencesPanel(), "SOUND");
 
-		add(contentPane);
+		window.add(contentPane);
 
 		// add ok/cancel button in a panel on south
-		add(new JPanel(new FlowLayout(FlowLayout.TRAILING)) {
+		window.add(new JPanel(new FlowLayout(FlowLayout.TRAILING)) {
 			{
 				add(new JButton(new AbstractAction(ResourceManager.getString("preferences.ok.text")) {
 
@@ -142,7 +157,7 @@ public class PreferencesDialog extends JDialog {
 						// save config
 						save();
 						// close config dialog
-						dispose();
+						window.dispose();
 					}
 				}));
 				add(new JButton(new AbstractAction(ResourceManager.getString("preferences.cancel.text")) {
@@ -150,7 +165,7 @@ public class PreferencesDialog extends JDialog {
 					@Override
 					public void actionPerformed(final ActionEvent e) {
 						// close config dialog
-						dispose();
+						window.dispose();
 					}
 				}));
 			}
@@ -158,11 +173,15 @@ public class PreferencesDialog extends JDialog {
 	}
 
 	private void prepareToolBarButton(final JToggleButton videoButton) {
-		videoButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-		videoButton.setHorizontalTextPosition(SwingConstants.CENTER);
-		videoButton.setContentAreaFilled(true);
-		videoButton.setMargin(new Insets(2, 20, 2, 20));
-		videoButton.setFocusPainted(false);
+		if (SystemInfo.isMac()) {
+			videoButton.setUI(new PreferencesTabBarButtonUI());
+		} else {
+			videoButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+			videoButton.setHorizontalTextPosition(SwingConstants.CENTER);
+			videoButton.setContentAreaFilled(true);
+			videoButton.setMargin(new Insets(2, 20, 2, 20));
+			videoButton.setFocusPainted(false);
+		}
 	}
 
 	private final void save() {

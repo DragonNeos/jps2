@@ -23,21 +23,21 @@ public class JPS2 {
 			// define system look and feel
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		} catch (final Exception e) {
-			// ignore UIManager erros
+			// ignore UIManager errors
 		}
 
 		try {
-			// load plataform natives
+			// extract plataform natives
 			if (SystemInfo.isWindows()) {
 				extractWindowsNatives();
 			} else
 				if (SystemInfo.isMac()) {
-
+					extractMacNatives();
 				} else
 					if (SystemInfo.isSolaris()) {
 
 					} else {
-
+						extractLinuxNatives();
 					}
 		} catch (final Exception e) {
 			// ignore path erros
@@ -51,39 +51,75 @@ public class JPS2 {
 		MainWindow.getInstance();
 	}
 
-	private static final void extractWindowsNatives() {
-		extractNative("jinput-dx8.dll");
-		extractNative("jinput-raw.dll");
-		if (SystemInfo.is32Bits()) {
-			extractNative("lwjgl.dll");
-			extractNative("OpenAL32.dll");
-		} else {
-			extractNative("lwjgl64.dll");
-			extractNative("OpenAL64.dll");
+	private static final void extractMacNatives() {
+		if (extractNative("libjinput-osx.jnilib")) {
+			if (extractNative("liblwjgl.jnilib")) {
+				extractNative("openal.dylib");
+			}
 		}
 	}
 
-	private static final void extractNative(final String name) {
+	private static final void extractWindowsNatives() {
+		if (extractNative("jinput-dx8.dll")) {
+			if (extractNative("jinput-raw.dll")) {
+				if (SystemInfo.is32Bits()) {
+					if (extractNative("lwjgl.dll")) {
+						extractNative("OpenAL32.dll");
+					}
+				} else {
+					if (extractNative("lwjgl64.dll")) {
+						extractNative("OpenAL64.dll");
+					}
+				}
+			}
+		}
+	}
+
+	private static final void extractLinuxNatives() {
+		if (SystemInfo.is32Bits()) {
+			if (extractNative("liblwjgl.so")) {
+				if (extractNative("libjinput-linux.so")) {
+					extractNative("libopenal.so");
+				}
+			}
+
+		} else {
+			if (extractNative("liblwjgl64.so")) {
+				if (extractNative("libjinput-linux64.so")) {
+					extractNative("libopenal64.so");
+				}
+			}
+		}
+	}
+
+	private static final boolean extractNative(final String name) {
+		return extractNative("", name);
+	}
+
+	private static final boolean extractNative(final String dir, final String name) {
 		try {
 			// Finds a stream to the dll. Change path/class if necessary
-			final InputStream inputStream = JPS2.class.getResource("/native/" + name).openStream();
+			final InputStream inputStream = JPS2.class.getResourceAsStream("/native/" + dir + name);
 
 			if (inputStream != null) {
 
-				System.err.println("loading " + name);
-				// Change name if necessary
+				System.err.println("extracting /native/" + name);
 				final File temporaryDll = new File(name);
-				final FileOutputStream outputStream = new FileOutputStream(temporaryDll);
-				final byte[] array = new byte[8192];
-				for (int i = inputStream.read(array); i != -1; i = inputStream.read(array)) {
-					outputStream.write(array, 0, i);
-				}
-				outputStream.close();
+				if (!temporaryDll.exists()) {
+					final FileOutputStream outputStream = new FileOutputStream(temporaryDll);
+					final byte[] array = new byte[8192];
+					for (int i = inputStream.read(array); i != -1; i = inputStream.read(array)) {
+						outputStream.write(array, 0, i);
+					}
+					outputStream.close();
 
-				temporaryDll.deleteOnExit();
+					temporaryDll.deleteOnExit();
+				}
+				return true;
 			}
 		} catch (final Throwable e) {
 			e.printStackTrace();
 		}
+		return false;
 	}
 }

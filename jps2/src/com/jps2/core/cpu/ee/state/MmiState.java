@@ -568,6 +568,138 @@ public class MmiState extends SauState {
 		}
 	}
 
+	public final void doPABSW(final int rt, final int rd) {
+		if (rd != 0) {
+			final int[] value = new int[4];
+			final int[] rtValue = convertLongArrayToIntArray(gpr[rt].read128());
+
+			for (int i = 0; i < 4; i++) {
+				if (rtValue[i] == 0x80000000) {
+					value[i] = 0x7FFFFFFF;
+				} else {
+					value[i] = rtValue[i] < 0 ? -rtValue[i] : rtValue[i];
+				}
+			}
+
+			gpr[rd].write128(convertIntArrayToLongArray(value));
+		}
+	}
+
+	public final void doPCEQW(final int rs, final int rt, final int rd) {
+		if (rd != 0) {
+			final int[] value = new int[4];
+			final int[] rsValue = convertLongArrayToIntArray(gpr[rs].read128());
+			final int[] rtValue = convertLongArrayToIntArray(gpr[rt].read128());
+
+			for (int i = 0; i < 4; i++) {
+				if (rtValue[i] == rsValue[i]) {
+					value[i] = 0xFFFFFFFF;
+				}
+			}
+
+			gpr[rd].write128(convertIntArrayToLongArray(value));
+		}
+	}
+
+	public final void doPMINW(final int rs, final int rt, final int rd) {
+		if (rd != 0) {
+			final int[] value = new int[4];
+			final int[] rsValue = convertLongArrayToIntArray(gpr[rs].read128());
+			final int[] rtValue = convertLongArrayToIntArray(gpr[rt].read128());
+
+			for (int i = 0; i < 4; i++) {
+				if (rsValue[i] > rtValue[i]) {
+					value[i] = rtValue[i];
+				} else {
+					value[i] = rsValue[i];
+				}
+			}
+
+			gpr[rd].write128(convertIntArrayToLongArray(value));
+		}
+	}
+
+	public final void doPADSBH(final int rs, final int rt, final int rd) {
+		if (rd != 0) {
+			final short[] value = new short[8];
+			final short[] rsValue = convertLongArrayToShortArray(gpr[rs].read128());
+			final short[] rtValue = convertLongArrayToShortArray(gpr[rt].read128());
+
+			for (int i = 0; i < 4; i++) {
+				value[i] = (short) ((rsValue[i] + rtValue[i]) & 0xFFFF);
+			}
+
+			for (int i = 4; i < 8; i++) {
+				value[i] = (short) ((rsValue[i] - rtValue[i]) & 0xFFFF);
+			}
+
+			gpr[rd].write128(convertShortArrayToLongArray(value));
+		}
+	}
+
+	public final void doPABSH(final int rt, final int rd) {
+		if (rd != 0) {
+			final short[] value = new short[8];
+			final short[] rtValue = convertLongArrayToShortArray(gpr[rt].read128());
+
+			for (int i = 0; i < 8; i++) {
+				if (rtValue[i] == 0x8000) {
+					value[i] = 0x7FFF;
+				} else {
+					value[i] = (short) (rtValue[i] < 0 ? -rtValue[i] : rtValue[i]);
+				}
+			}
+
+			gpr[rd].write128(convertShortArrayToLongArray(value));
+		}
+	}
+
+	public final void doPCEQH(final int rs, final int rt, final int rd) {
+		if (rd != 0) {
+			final short[] value = new short[8];
+			final short[] rsValue = convertLongArrayToShortArray(gpr[rs].read128());
+			final short[] rtValue = convertLongArrayToShortArray(gpr[rt].read128());
+
+			for (int i = 0; i < 8; i++) {
+				if (rsValue[i] == rtValue[i]) {
+					value[i] = (short) 0xFFFF;
+				}
+			}
+
+			gpr[rd].write128(convertShortArrayToLongArray(value));
+		}
+	}
+
+	public final void doPMINH(final int rs, final int rt, final int rd) {
+		if (rd != 0) {
+			final short[] value = new short[8];
+			final short[] rsValue = convertLongArrayToShortArray(gpr[rs].read128());
+			final short[] rtValue = convertLongArrayToShortArray(gpr[rt].read128());
+
+			for (int i = 0; i < 8; i++) {
+				value[i] = rsValue[i] > rtValue[i] ? rtValue[i] : rsValue[i];
+			}
+
+			gpr[rd].write128(convertShortArrayToLongArray(value));
+		}
+	}
+
+	public final void doPCEQB(final int rs, final int rt, final int rd) {
+		if (rd != 0) {
+			final byte[] value = new byte[16];
+			final byte[] rsValue = convertLongArrayToByteArray(gpr[rs].read128());
+			final byte[] rtValue = convertLongArrayToByteArray(gpr[rt].read128());
+
+			for (int i = 0; i < 16; i++) {
+				if (rsValue[i] == rtValue[i]) {
+					value[i] = (byte) 0xFF;
+				}
+			}
+
+			gpr[rd].write128(convertByteArrayToLongArray(value));
+		}
+	}
+
 	private static final byte subtractClampBytes(final byte a, final byte b) {
 		final int subResult = a - b;
 

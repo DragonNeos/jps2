@@ -700,6 +700,63 @@ public class MmiState extends SauState {
 		}
 	}
 
+	public final void doPADDUW(final int rs, final int rt, final int rd) {
+		if (rd != 0) {
+			final int[] value = new int[4];
+			final int[] rsValue = convertLongArrayToIntArray(gpr[rs].read128());
+			final int[] rtValue = convertLongArrayToIntArray(gpr[rt].read128());
+
+			long tmp;
+			for (int i = 0; i < 4; i++) {
+				tmp = (((long) rsValue[i]) & 0xFFFFFFFF) + (((long) rtValue[i]) & 0xFFFFFFFF);
+
+				if (tmp > 0xFFFFFFFFL) {
+					tmp = 0xFFFFFFFFL;
+				}
+
+				value[i] = (int) tmp;
+			}
+
+			gpr[rd].write128(convertIntArrayToLongArray(value));
+		}
+	}
+
+	public final void doPSUBUW(final int rs, final int rt, final int rd) {
+		if (rd != 0) {
+			final int[] value = new int[4];
+			final int[] rsValue = convertLongArrayToIntArray(gpr[rs].read128());
+			final int[] rtValue = convertLongArrayToIntArray(gpr[rt].read128());
+
+			long tmp;
+			for (int i = 0; i < 4; i++) {
+				tmp = (((long) rsValue[i]) & 0xFFFFFFFF) - (((long) rtValue[i]) & 0xFFFFFFFF);
+
+				if (tmp < 0) {
+					tmp = 0;
+				}
+
+				value[i] = (int) tmp;
+			}
+
+			gpr[rd].write128(convertIntArrayToLongArray(value));
+		}
+	}
+
+	public final void doPEXTUW(final int rs, final int rt, final int rd) {
+		if (rd != 0) {
+			final long[] rsValue = gpr[rs].read128();
+			final long[] rtValue = gpr[rt].read128();
+			final long[] value = new long[2];
+
+			value[1] = (int) rtValue[0];
+			value[1] |= rsValue[0] << 32;
+			value[0] = rtValue[0] >>> 32;
+			value[0] |= rsValue[0] & 0xFFFFFFFF00000000L;
+
+			gpr[rd].write128(value);
+		}
+	}
+
 	private static final byte subtractClampBytes(final byte a, final byte b) {
 		final int subResult = a - b;
 

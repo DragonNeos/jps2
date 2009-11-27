@@ -2544,6 +2544,32 @@ public class EEInstructions {
 													}
 												};
 
+	public static final Instruction	PADDUW		= new Instruction("PADDUW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPADDUW(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PSUBUW		= new Instruction("PSUBUW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPSUBUW(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PEXTUW		= new Instruction("PEXTUW", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPEXTUW(rs, rt, rd);
+													}
+												};
 	static CpuState					cpu;
 
 	public static final void setCpu(final CpuState cpu) {

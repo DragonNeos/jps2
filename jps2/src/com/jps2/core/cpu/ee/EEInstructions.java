@@ -2570,6 +2570,70 @@ public class EEInstructions {
 														cpu.doPEXTUW(rs, rt, rd);
 													}
 												};
+
+	public static final Instruction	PADDUH		= new Instruction("PADDUH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPADDUH(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PSUBUH		= new Instruction("PSUBUH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPSUBUH(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PEXTUH		= new Instruction("PEXTUH", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPEXTUH(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PADDUB		= new Instruction("PADDUB", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPADDUB(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PSUBUB		= new Instruction("PSUBUB", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPSUBUB(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	PEXTUB		= new Instruction("PEXTUB", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doPEXTUB(rs, rt, rd);
+													}
+												};
+
+	public static final Instruction	QFSRV		= new Instruction("QFSRV", NO_FLAGS) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+														decodeRsRtRd(insn);
+														cpu.doQFSRV(rs, rt, rd);
+													}
+												};
+
 	static CpuState					cpu;
 
 	public static final void setCpu(final CpuState cpu) {

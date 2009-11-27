@@ -250,7 +250,7 @@ public class EEDecoder {
 
 							@Override
 							public Instruction instance(final int insn) {
-								return mmi0Table[insn].instance(insn);
+								return mmi0Table[(insn >> 6) & 0x1F].instance(insn);
 							}
 						},
 						new STUB() {
@@ -258,7 +258,7 @@ public class EEDecoder {
 							@Override
 							public Instruction instance(final int insn) {
 								throw new RuntimeException("MMI2 not supported");
-//								return mmi2Table[insn].instance(insn);
+								// return mmi2Table[insn].instance(insn);
 							}
 						},
 						Common.UNK,
@@ -295,8 +295,7 @@ public class EEDecoder {
 
 							@Override
 							public Instruction instance(final int insn) {
-								throw new RuntimeException("MMI1 not supported");
-//								return mmi1Table[insn].instance(insn);
+								return mmi1Table[(insn >> 6) & 0x1F].instance(insn);
 							}
 						},
 						new STUB() {
@@ -304,7 +303,7 @@ public class EEDecoder {
 							@Override
 							public Instruction instance(final int insn) {
 								throw new RuntimeException("MMI3 not supported");
-//								return mmi3Table[insn].instance(insn);
+								// return mmi3Table[insn].instance(insn);
 							}
 						},
 						Common.UNK,
@@ -400,76 +399,76 @@ public class EEDecoder {
 						Common.UNK,
 						Common.UNK
 														};
-//
-//	private static final Instruction[]	mmi2Table		= {
-//						EEInstructions.PMADDW,
-//						Common.UNK,
-//						EEInstructions.PSLLVW,
-//						EEInstructions.PSRLVW,
-//						EEInstructions.PMSUBW,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						EEInstructions.PMFHI,
-//						EEInstructions.PMFLO,
-//						EEInstructions.PINTH,
-//						Common.UNK,
-//						EEInstructions.PMULTW,
-//						EEInstructions.PDIVW,
-//						EEInstructions.PCPYLD,
-//						Common.UNK,
-//						EEInstructions.PMADDH,
-//						EEInstructions.PHMADH,
-//						EEInstructions.PAND,
-//						EEInstructions.PXOR,
-//						EEInstructions.PMSUBH,
-//						EEInstructions.PHMSBH,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						EEInstructions.PEXEH,
-//						EEInstructions.PREVH,
-//						EEInstructions.PMULTH,
-//						EEInstructions.PDIVBW,
-//						EEInstructions.PEXEW,
-//						EEInstructions.PROT3W
-//														};
-//
-//	private static final Instruction[]	mmi3Table		= {
-//						EEInstructions.PMADDUW,
-//						Common.UNK,
-//						Common.UNK,
-//						EEInstructions.PSRAVW,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						EEInstructions.PMTHI,
-//						EEInstructions.PMTLO,
-//						EEInstructions.PINTEH,
-//						Common.UNK,
-//						EEInstructions.PMULTUW,
-//						EEInstructions.PDIVUW,
-//						EEInstructions.PCPYUD,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						EEInstructions.POR,
-//						EEInstructions.PNOR,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						Common.UNK,
-//						EEInstructions.PEXCH,
-//						EEInstructions.PCPYH,
-//						Common.UNK,
-//						Common.UNK,
-//						EEInstructions.PEXCW,
-//						Common.UNK,
-//														};
+	//
+	// private static final Instruction[] mmi2Table = {
+	// EEInstructions.PMADDW,
+	// Common.UNK,
+	// EEInstructions.PSLLVW,
+	// EEInstructions.PSRLVW,
+	// EEInstructions.PMSUBW,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// EEInstructions.PMFHI,
+	// EEInstructions.PMFLO,
+	// EEInstructions.PINTH,
+	// Common.UNK,
+	// EEInstructions.PMULTW,
+	// EEInstructions.PDIVW,
+	// EEInstructions.PCPYLD,
+	// Common.UNK,
+	// EEInstructions.PMADDH,
+	// EEInstructions.PHMADH,
+	// EEInstructions.PAND,
+	// EEInstructions.PXOR,
+	// EEInstructions.PMSUBH,
+	// EEInstructions.PHMSBH,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// EEInstructions.PEXEH,
+	// EEInstructions.PREVH,
+	// EEInstructions.PMULTH,
+	// EEInstructions.PDIVBW,
+	// EEInstructions.PEXEW,
+	// EEInstructions.PROT3W
+	// };
+	//
+	// private static final Instruction[] mmi3Table = {
+	// EEInstructions.PMADDUW,
+	// Common.UNK,
+	// Common.UNK,
+	// EEInstructions.PSRAVW,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// EEInstructions.PMTHI,
+	// EEInstructions.PMTLO,
+	// EEInstructions.PINTEH,
+	// Common.UNK,
+	// EEInstructions.PMULTUW,
+	// EEInstructions.PDIVUW,
+	// EEInstructions.PCPYUD,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// EEInstructions.POR,
+	// EEInstructions.PNOR,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// Common.UNK,
+	// EEInstructions.PEXCH,
+	// EEInstructions.PCPYH,
+	// Common.UNK,
+	// Common.UNK,
+	// EEInstructions.PEXCW,
+	// Common.UNK,
+	// };
 
 	private static final STUB			c0Stub			= new STUB() {
 															@Override

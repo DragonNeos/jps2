@@ -1,5 +1,7 @@
 package com.jps2.core.cpu.ee.state;
 
+import java.math.BigInteger;
+
 public class MmiState extends SauState {
 
 	public final void doPLZCW(final int rs, final int rd) {
@@ -754,6 +756,165 @@ public class MmiState extends SauState {
 			value[0] |= rsValue[0] & 0xFFFFFFFF00000000L;
 
 			gpr[rd].write128(value);
+		}
+	}
+
+	public final void doPADDUH(final int rs, final int rt, final int rd) {
+		if (rd != 0) {
+			final short[] value = new short[8];
+			final short[] rsValue = convertLongArrayToShortArray(gpr[rs].read128());
+			final short[] rtValue = convertLongArrayToShortArray(gpr[rt].read128());
+
+			int tmp;
+			for (int i = 0; i < 8; i++) {
+				tmp = ((rsValue[i]) & 0xFFFF) + ((rtValue[i]) & 0xFFFF);
+
+				if (tmp > 0xFFFF) {
+					tmp = 0xFFFF;
+				}
+
+				value[i] = (short) tmp;
+			}
+
+			gpr[rd].write128(convertShortArrayToLongArray(value));
+		}
+	}
+
+	public final void doPSUBUH(final int rs, final int rt, final int rd) {
+		if (rd != 0) {
+			final short[] value = new short[8];
+			final short[] rsValue = convertLongArrayToShortArray(gpr[rs].read128());
+			final short[] rtValue = convertLongArrayToShortArray(gpr[rt].read128());
+
+			int tmp;
+			for (int i = 0; i < 8; i++) {
+				tmp = (rsValue[i] & 0xFFFF) - (rtValue[i] & 0xFFFF);
+
+				if (tmp < 0) {
+					tmp = 0;
+				}
+
+				value[i] = (short) tmp;
+			}
+
+			gpr[rd].write128(convertShortArrayToLongArray(value));
+		}
+	}
+
+	public final void doPEXTUH(final int rs, final int rt, final int rd) {
+		if (rd != 0) {
+			final long[] value = new long[2];
+			final long[] rsValue = gpr[rs].read128();
+			final long[] rtValue = gpr[rt].read128();
+
+			value[1] = rtValue[0] & 0xFFFF;
+			value[1] |= (rsValue[0] << 32) & 0xFFFF0000;
+			value[1] |= (rtValue[0] << 32) & 0xFFFF00000000L;
+			value[1] |= (rsValue[0] << 64) & 0xFFFF000000000000L;
+
+			value[0] = rsValue[0] & 0xFFFF000000000000L;
+			value[0] |= (rtValue[0] >> 32) & 0xFFFF00000000L;
+			value[0] |= (rsValue[0] >> 32) & 0xFFFF0000L;
+			value[0] |= (rtValue[0] >> 64) & 0xFFFFL;
+
+			gpr[rd].write128(value);
+		}
+	}
+
+	public final void doPADDUB(final int rs, final int rt, final int rd) {
+		if (rd != 0) {
+			final byte[] value = new byte[16];
+			final byte[] rsValue = convertLongArrayToByteArray(gpr[rs].read128());
+			final byte[] rtValue = convertLongArrayToByteArray(gpr[rt].read128());
+
+			short tmp;
+			for (int i = 0; i < 16; i++) {
+				tmp = (short) ((rsValue[i] & 0xFF) + (rtValue[i] & 0xFF));
+
+				if (tmp > 0xFF) {
+					tmp = 0xFF;
+				}
+
+				value[i] = (byte) tmp;
+			}
+
+			gpr[rd].write128(convertByteArrayToLongArray(value));
+		}
+	}
+
+	public final void doPSUBUB(final int rs, final int rt, final int rd) {
+		if (rd != 0) {
+			final byte[] value = new byte[16];
+			final byte[] rsValue = convertLongArrayToByteArray(gpr[rs].read128());
+			final byte[] rtValue = convertLongArrayToByteArray(gpr[rt].read128());
+
+			short tmp;
+			for (int i = 0; i < 16; i++) {
+				tmp = (short) ((rsValue[i] & 0xFF) - (rtValue[i] & 0xFF));
+
+				if (tmp < 0) {
+					tmp = 0;
+				}
+
+				value[i] = (byte) tmp;
+			}
+
+			gpr[rd].write128(convertByteArrayToLongArray(value));
+		}
+	}
+
+	private static final long[]	maskPEXTUB	= new long[] {
+						0x00000000000000FFL,
+						0x000000000000FF00L,
+						0x0000000000FF0000L,
+						0x00000000FF000000L,
+						0x000000FF00000000L,
+						0x0000FF0000000000L,
+						0x00FF000000000000L,
+						0xFF00000000000000L
+											};
+
+	public final void doPEXTUB(final int rs, final int rt, final int rd) {
+		if (rd != 0) {
+			final long[] value = new long[2];
+			final long rsValue = gpr[rs].read128()[0];
+			final long rtValue = gpr[rt].read128()[0];
+
+			for (int i = 0; i < 4; i++) {
+				value[1] |= (rtValue << (i * 8)) & maskPEXTUB[(i * 2)];
+				value[1] |= (rsValue << ((i + 1) * 8)) & maskPEXTUB[(i * 2) + 1];
+			}
+
+			for (int i = 0; i < 4; i++) {
+				value[0] |= (rtValue >> (32 - (i * 8))) & maskPEXTUB[(i * 2)];
+				value[0] |= (rsValue >> (32 - ((i + 1) * 8))) & maskPEXTUB[(i * 2) + 1];
+			}
+
+			gpr[rd].write128(value);
+		}
+	}
+
+	public final void doQFSRV(final int rs, final int rt, final int rd) {
+		if (rd != 0) {
+			if (SA != 0) {
+				final byte[] concatValue = new byte[32];
+				System.arraycopy(convertLongArrayToByteArray(gpr[rs].read128()), 0, concatValue, 0, 16);
+				System.arraycopy(convertLongArrayToByteArray(gpr[rt].read128()), 0, concatValue, 16, 16);
+				final byte[] shiftValue = new BigInteger(concatValue).shiftRight(SA).toByteArray();
+
+				final byte[] value = new byte[16];
+
+				if (shiftValue.length >= 16) {
+					System.arraycopy(shiftValue, shiftValue.length - 16, value, 0, 16);
+				} else {
+					System.arraycopy(shiftValue, 0, value, 16 - shiftValue.length, shiftValue.length);
+				}
+
+				gpr[rd].write128(convertByteArrayToLongArray(value));
+			} else {
+				gpr[rd].write128(gpr[rt].read128());
+			}
+
 		}
 	}
 

@@ -1103,7 +1103,7 @@ public class EEInstructions {
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 
-														if (cpu.doBC0F(insn & 0xFFFF)) {
+														if (cpu.doBC0F(insn & 0xFFFF,delay)) {
 															cpu.processor.interpretDelayslot();
 														}
 													}
@@ -1115,7 +1115,7 @@ public class EEInstructions {
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 
-														if (cpu.doBC0TL(insn & 0xFFFF)) {
+														if (cpu.doBC0TL(insn & 0xFFFF,delay)) {
 															cpu.processor.interpretDelayslot();
 														}
 													}
@@ -1126,7 +1126,7 @@ public class EEInstructions {
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 
-														if (cpu.doBC0FL(insn & 0xFFFF)) {
+														if (cpu.doBC0FL(insn & 0xFFFF,delay)) {
 															cpu.processor.interpretDelayslot();
 														}
 													}
@@ -1138,7 +1138,7 @@ public class EEInstructions {
 													@Override
 													public void interpret(final int insn, final boolean delay) {
 
-														if (cpu.doBC0T(insn & 0xFFFF)) {
+														if (cpu.doBC0T(insn & 0xFFFF,delay)) {
 															cpu.processor.interpretDelayslot();
 														}
 													}
@@ -1150,7 +1150,7 @@ public class EEInstructions {
 													public void interpret(final int insn, final boolean delay) {
 														decodeRsRtImm16(insn);
 
-														if (cpu.doBEQ(rs, rt, (short) imm16)) {
+														if (cpu.doBEQ(rs, rt, (short) imm16,delay)) {
 															cpu.processor.interpretDelayslot();
 														}
 													}
@@ -1163,7 +1163,7 @@ public class EEInstructions {
 													public void interpret(final int insn, final boolean delay) {
 														decodeRsRtImm16(insn);
 
-														if (cpu.doBEQL(rs, rt, (short) imm16))
+														if (cpu.doBEQL(rs, rt, (short) imm16,delay))
 															cpu.processor.interpretDelayslot();
 
 													}
@@ -1176,7 +1176,7 @@ public class EEInstructions {
 														final int imm16 = (insn >> 0) & 65535;
 														rs = (insn >> 21) & 31;
 
-														if (cpu.doBGEZ(rs, (short) imm16))
+														if (cpu.doBGEZ(rs, (short) imm16,delay))
 															cpu.processor.interpretDelayslot();
 
 													}
@@ -1189,7 +1189,7 @@ public class EEInstructions {
 														final int imm16 = (insn >> 0) & 65535;
 														rs = (insn >> 21) & 31;
 
-														if (cpu.doBGEZAL(rs, (short) imm16))
+														if (cpu.doBGEZAL(rs, (short) imm16,delay))
 															cpu.processor.interpretDelayslot();
 
 													}
@@ -1202,7 +1202,7 @@ public class EEInstructions {
 														final int imm16 = (insn >> 0) & 65535;
 														rs = (insn >> 21) & 31;
 
-														if (cpu.doBGEZALL(rs, (short) imm16))
+														if (cpu.doBGEZALL(rs, (short) imm16,delay))
 															cpu.processor.interpretDelayslot();
 
 													}
@@ -1215,7 +1215,7 @@ public class EEInstructions {
 														final int imm16 = (insn >> 0) & 65535;
 														rs = (insn >> 21) & 31;
 
-														if (cpu.doBGEZL(rs, (short) imm16))
+														if (cpu.doBGEZL(rs, (short) imm16,delay))
 															cpu.processor.interpretDelayslot();
 
 													}
@@ -1228,7 +1228,7 @@ public class EEInstructions {
 														final int imm16 = (insn >> 0) & 65535;
 														rs = (insn >> 21) & 31;
 
-														if (cpu.doBGTZ(rs, (short) imm16))
+														if (cpu.doBGTZ(rs, (short) imm16,delay))
 															cpu.processor.interpretDelayslot();
 
 													}
@@ -1241,7 +1241,7 @@ public class EEInstructions {
 														final int imm16 = (insn >> 0) & 65535;
 														rs = (insn >> 21) & 31;
 
-														if (cpu.doBGTZL(rs, (short) imm16))
+														if (cpu.doBGTZL(rs, (short) imm16,delay))
 															cpu.processor.interpretDelayslot();
 
 													}
@@ -1254,7 +1254,7 @@ public class EEInstructions {
 														final int imm16 = (insn >> 0) & 65535;
 														rs = (insn >> 21) & 31;
 
-														if (cpu.doBLEZ(rs, (short) imm16))
+														if (cpu.doBLEZ(rs, (short) imm16,delay))
 															cpu.processor.interpretDelayslot();
 
 													}
@@ -1267,7 +1267,7 @@ public class EEInstructions {
 														final int imm16 = (insn >> 0) & 65535;
 														rs = (insn >> 21) & 31;
 
-														if (cpu.doBLEZL(rs, (short) imm16))
+														if (cpu.doBLEZL(rs, (short) imm16,delay))
 															cpu.processor.interpretDelayslot();
 
 													}
@@ -1280,7 +1280,7 @@ public class EEInstructions {
 														final int imm16 = (insn >> 0) & 65535;
 														rs = (insn >> 21) & 31;
 
-														if (cpu.doBLTZ(rs, (short) imm16))
+														if (cpu.doBLTZ(rs, (short) imm16,delay))
 															cpu.processor.interpretDelayslot();
 
 													}
@@ -1293,7 +1293,7 @@ public class EEInstructions {
 														final int imm16 = (insn >> 0) & 65535;
 														rs = (insn >> 21) & 31;
 
-														if (cpu.doBLTZAL(rs, (short) imm16))
+														if (cpu.doBLTZAL(rs, (short) imm16,delay))
 															cpu.processor.interpretDelayslot();
 
 													}
@@ -1306,7 +1306,7 @@ public class EEInstructions {
 														final int imm16 = (insn >> 0) & 65535;
 														rs = (insn >> 21) & 31;
 
-														if (cpu.doBLTZALL(rs, (short) imm16))
+														if (cpu.doBLTZALL(rs, (short) imm16,delay))
 															cpu.processor.interpretDelayslot();
 
 													}
@@ -1319,7 +1319,7 @@ public class EEInstructions {
 														final int imm16 = (insn >> 0) & 65535;
 														rs = (insn >> 21) & 31;
 
-														if (cpu.doBLTZL(rs, (short) imm16))
+														if (cpu.doBLTZL(rs, (short) imm16,delay))
 															cpu.processor.interpretDelayslot();
 
 													}
@@ -1331,7 +1331,7 @@ public class EEInstructions {
 													public void interpret(final int insn, final boolean delay) {
 														decodeRsRtImm16(insn);
 
-														if (cpu.doBNE(rs, rt, (short) imm16))
+														if (cpu.doBNE(rs, rt, (short) imm16,delay))
 															cpu.processor.interpretDelayslot();
 
 													}
@@ -1343,7 +1343,7 @@ public class EEInstructions {
 													public void interpret(final int insn, final boolean delay) {
 														decodeRsRtImm16(insn);
 
-														if (cpu.doBNEL(rs, rt, (short) imm16))
+														if (cpu.doBNEL(rs, rt, (short) imm16,delay))
 															cpu.processor.interpretDelayslot();
 
 													}
@@ -1355,7 +1355,7 @@ public class EEInstructions {
 													public void interpret(final int insn, final boolean delay) {
 														final int imm26 = (insn >> 0) & 67108863;
 
-														if (cpu.doJ(imm26))
+														if (cpu.doJ(imm26,delay))
 															cpu.processor.interpretDelayslot();
 
 													}
@@ -1367,7 +1367,7 @@ public class EEInstructions {
 													public void interpret(final int insn, final boolean delay) {
 														final int imm26 = (insn >> 0) & 67108863;
 
-														if (cpu.doJAL(imm26))
+														if (cpu.doJAL(imm26,delay))
 															cpu.processor.interpretDelayslot();
 
 													}
@@ -1380,7 +1380,7 @@ public class EEInstructions {
 														rd = (insn >> 11) & 31;
 														rs = (insn >> 21) & 31;
 
-														if (cpu.doJALR(rd, rs))
+														if (cpu.doJALR(rd, rs,delay))
 															cpu.processor.interpretDelayslot();
 
 													}
@@ -1392,7 +1392,7 @@ public class EEInstructions {
 													public void interpret(final int insn, final boolean delay) {
 														rs = (insn >> 21) & 31;
 
-														if (cpu.doJR(rs))
+														if (cpu.doJR(rs,delay))
 															cpu.processor.interpretDelayslot();
 
 													}

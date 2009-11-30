@@ -42,6 +42,7 @@ public class PreferencesDialog {
 	 */
 	public PreferencesDialog() {
 		Window window;
+		// if is mac
 		if (SystemInfo.isMac()) {
 			window = new JFrame(ResourceManager.getString("preferences.title"));
 			// dispose this dialog if presse close button

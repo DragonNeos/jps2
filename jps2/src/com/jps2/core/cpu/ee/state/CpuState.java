@@ -2,6 +2,7 @@ package com.jps2.core.cpu.ee.state;
 
 import org.apache.log4j.Logger;
 
+import com.jps2.core.Emulator;
 import com.jps2.core.cpu.ExcCode;
 import com.jps2.core.cpu.ee.EECounter;
 import com.jps2.core.cpu.ee.EEHardwareRegisters;
@@ -11,38 +12,45 @@ import com.jps2.core.cpu.registers.CP0StatusRegister;
 
 public final class CpuState extends MmiState {
 
-	private static final Logger	logger			= Logger.getLogger(CpuState.class);
+	private static final Logger	logger				= Logger.getLogger(CpuState.class);
 
 	final EECounter[]			counters;
 	final EESyncCounter			hSyncCounter;
 	final EESyncCounter			vSyncCounter;
 
-	int							nextsCounter;										// records
-																					// the
-																					// cpuRegs.cycle
-																					// value
-																					// of
-																					// the
-																					// last
-																					// call
-																					// to
+	int							nextsCounter;											// records
+	// the
+	// cpuRegs.cycle
+	// value
+	// of
+	// the
+	// last
+	// call
+	// to
 	// rcntUpdate()
-	int							nextCounter;										// delta
-																					// from
-																					// nextsCounter,
-																					// in
-																					// cycles,
-																					// until
-																					// the
-																					// next
+	int							nextCounter;											// delta
+	// from
+	// nextsCounter,
+	// in
+	// cycles,
+	// until
+	// the
+	// next
 	// rcntUpdate()
 	int[]						eCycle;
-	int[]						sCycle;											// for
-																					// internal
-																					// counters
+	int[]						sCycle;												// for
+	// internal
+	// counters
 
-	int							lastCp0Cycle	= 0;
-	final int[]					lastPERFCycle	= new int[2];
+	int							lastCp0Cycle		= 0;
+	final int[]					lastPERFCycle		= new int[2];
+	boolean						eeEventTestIsActive	= false;
+	boolean						iopBranchAction		= false;
+	long						nextBranchCycle		= 0;
+	public int					EEsCycle			= 0;
+	public long					EEoCycle			= 0;
+
+	public static final int		eeWaitCycles		= 3072;
 
 	final PERFregs				perfRegs;
 
@@ -218,6 +226,206 @@ public final class CpuState extends MmiState {
 				lastPERFCycle[1] = cycle;
 			}
 		}
+	}
+
+	@Override
+	void testEvents(boolean delay) {
+		{
+	        eeEventTestIsActive = true;
+	        nextBranchCycle = cycle + eeWaitCycles;
+
+	        // ---- Counters -------------
+	        // Important: the vsync counter must be the first to be checked.  It includes emulation
+	        // escape/suspend hooks, and it's really a good idea to suspend/resume emulation before
+	        // doing any actual meaninful branchtest logic.
+
+	        if( cpuTestCycle( nextsCounter, nextCounter ) )
+	        {
+	                rcntUpdate();
+	                cpuTestPERF();
+	        }
+
+	        rcntUpdate_hScanline();
+
+	        cpuTestTIMR(delay);
+
+	        // ---- Interrupts -------------
+	        // Handles all interrupts except 30 and 31, which are handled later.
+	        if( (interrupt & ~(3<<30)) != 0){
+	                cpuTestInterrupts();
+	        }
+
+	        // ---- IOP -------------
+	        // * It's important to run a psxBranchTest before calling ExecuteBlock. This
+	        //   is because the IOP does not always perform branch tests before returning
+	        //   (during the prev branch) and also so it can act on the state the EE has
+	        //   given it before executing any code.
+	        //
+	        // * The IOP cannot always be run.  If we run IOP code every time through the
+	        //   cpuBranchTest, the IOP generally starts to run way ahead of the EE.
+	        EEsCycle += cycle - EEoCycle;
+	        EEoCycle = cycle;
+
+	        if( EEsCycle > 0 ){
+	                iopBranchAction = true;
+	        }
+
+	        psxBranchTest();
+
+	        if( iopBranchAction )
+	        {
+	                //if( EEsCycle < -450 )
+	                //      Console.WriteLn( " IOP ahead by: %d cycles", -EEsCycle );
+
+	                // Experimental and Probably Unnecessry Logic -->
+	                // Check if the EE already has an exception pending, and if so we shouldn't
+	                // waste too much time updating the IOP.  Theory being that the EE and IOP should
+	                // run closely in sync during raised exception events.  But in practice it didn't
+	                // seem to make much of a difference.
+
+	                // Note: The IOP is very good about chaining blocks together so it tends to
+	                // run lots of cycles, even with only 32 (4 IOP) cycles specified here.  That's
+	                // probably why it doesn't improve sync much.
+
+	                /*bool eeExceptPending = cpuIntsEnabled() &&
+	                        //( cpuRegs.CP0.n.Status.b.EIE && cpuRegs.CP0.n.Status.b.IE && (cpuRegs.CP0.n.Status.b.ERL == 0) ) &&
+	                        //( (cpuRegs.CP0.n.Status.val & 0x10007) == 0x10001 ) &&
+	                        ( (cpuRegs.interrupt & (3<<30)) != 0 );
+
+	                if( eeExceptPending )
+	                {
+	                        // ExecuteBlock returns a negative value, so subtract it from the cycle count
+	                        // specified to get the total cycles processed! :D
+	                        int cycleCount = std::min( EEsCycle, (s32)(eeWaitCycles>>4) );
+	                        int cyclesRun = cycleCount - psxCpu->ExecuteBlock( cycleCount );
+	                        EEsCycle -= cyclesRun;
+	                        //Console.Notice( "IOP Exception-Pending Execution -- EEsCycle: %d", EEsCycle );
+	                }
+	                else*/
+	                {
+	                        EEsCycle = psxCpu->ExecuteBlock( EEsCycle );
+	                }
+
+	                iopBranchAction = false;
+	        }
+
+	        // ---- VU0 -------------
+
+	        if (VU0.VI[REG_VPU_STAT].UL & 0x1)
+	        {
+	                // We're in a BranchTest.  All dynarec registers are flushed
+	                // so there is no need to freeze registers here.
+	                CpuVU0.ExecuteBlock();
+
+	                // This might be needed to keep the EE and VU0 in sync.
+	                // A better fix will require hefty changes to the VU recs. -_-
+	                if(VU0.VI[REG_VPU_STAT].UL & 0x1){
+	                        cpuSetNextBranchDelta( 768 );
+	                }
+	        }
+
+	        // Note:  We don't update the VU1 here because it runs it's micro-programs in
+	        // one shot always.  That is, when a program is executed the VU1 doesn't even
+	        // bother to return until the program is completely finished.
+
+	        // ---- Schedule Next Event Test --------------
+
+	        if( EEsCycle > 192 )
+	        {
+	                // EE's running way ahead of the IOP still, so we should branch quickly to give the
+	                // IOP extra timeslices in short order.
+
+	                cpuSetNextBranchDelta( 48 );
+	                //Console.Notice( "EE ahead of the IOP -- Rapid Branch!  %d", EEsCycle );
+	        }
+
+	        // The IOP could be running ahead/behind of us, so adjust the iop's next branch by its
+	        // relative position to the EE (via EEsCycle)
+	        cpuSetNextBranchDelta( ((g_psxNextBranchCycle-Emulator.IOP.cpu.cycle)*8) - EEsCycle );
+
+	        // Apply the hsync counter's nextCycle
+	        cpuSetNextBranch( hSyncCounter.sCycle, hSyncCounter.cycleT );
+
+	        // Apply vsync and other counter nextCycles
+	        cpuSetNextBranch( nextsCounter, nextCounter );
+
+	        eeEventTestIsActive = false;
+
+	        // ---- INTC / DMAC Exceptions -----------------
+	        // Raise the INTC and DMAC interrupts here, which usually throw exceptions.
+	        // This should be done last since the IOP and the VU0 can raise several EE
+	        // exceptions.
+
+	        //if ((cpuRegs.CP0.n.Status.val & 0x10007) == 0x10001)
+	        if( cpuIntsEnabled() )
+	        {
+	                TESTINT(30, intcInterrupt);
+	                TESTINT(31, dmacInterrupt);
+	        } 
+	}
+
+	void rcntUpdate() {
+		rcntUpdate_vSync();
+
+		// Update counters so that we can perform overflow and target tests.
+
+		for (int i = 0; i <= 3; i++) {
+			// We want to count gated counters (except the hblank which exclude
+			// below, and are
+			// counted by the hblank timer instead)
+
+			// if ( gates & (1<<i) ) continue;
+
+			if (!counters[i].mode.isCounting())
+				continue;
+
+			if (counters[i].mode.getClockSource() != 0x3) // don't count hblank
+															// sources
+			{
+				int change = cycle - counters[i].cycleT;
+				if (change < 0)
+					change = 0; // sanity check!
+
+				counters[i].count += change / counters[i].rate;
+				change -= (change / counters[i].rate) * counters[i].rate;
+				counters[i].cycleT = cycle - change;
+
+				// Check Counter Targets and Overflows:
+				_cpuTestTarget(i);
+				_cpuTestOverflow(i);
+			} else
+				counters[i].cycleT = cycle;
+		}
+
+		cpuRcntSet();
+	}
+
+	// sets a branch test to occur some time from an arbitrary starting point.
+	void cpuSetNextBranch(long startCycle, int delta) {
+		// typecast the conditional to signed so that things don't blow up
+		// if startCycle is greater than our next branch cycle.
+
+		if ((int) (nextBranchCycle - startCycle) > delta) {
+			nextBranchCycle = startCycle + delta;
+		}
+	}
+
+	// sets a branch to occur some time from the current cycle
+	void cpuSetNextBranchDelta(int delta) {
+		cpuSetNextBranch(cycle, delta);
+	}
+
+	// tests the cpu cycle agaisnt the given start and delta values.
+	// Returns true if the delta time has passed.
+	boolean cpuTestCycle(long startCycle, int delta) {
+		// typecast the conditional to signed so that things don't explode
+		// if the startCycle is ahead of our current cpu cycle.
+		return (int) (cycle - startCycle) >= delta;
+	}
+
+	// tells the EE to run the branch test the next time it gets a chance.
+	void cpuSetBranch() {
+		nextBranchCycle = cycle;
 	}
 
 	public final void cpuTestINTCInts() {

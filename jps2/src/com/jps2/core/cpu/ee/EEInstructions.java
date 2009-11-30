@@ -1098,6 +1098,52 @@ public class EEInstructions {
 													}
 
 												};
+	public static final Instruction	BC0F		= new Instruction("BC0F", FLAGS_BRANCH_INSTRUCTION) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+
+														if (cpu.doBC0F(insn & 0xFFFF)) {
+															cpu.processor.interpretDelayslot();
+														}
+													}
+
+												};
+
+	public static final Instruction	BC0TL		= new Instruction("BC0TL", FLAGS_BRANCH_INSTRUCTION) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+
+														if (cpu.doBC0TL(insn & 0xFFFF)) {
+															cpu.processor.interpretDelayslot();
+														}
+													}
+												};
+
+	public static final Instruction	BC0FL		= new Instruction("BC0FL", FLAGS_BRANCH_INSTRUCTION) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+
+														if (cpu.doBC0FL(insn & 0xFFFF)) {
+															cpu.processor.interpretDelayslot();
+														}
+													}
+
+												};
+
+	public static final Instruction	BC0T		= new Instruction("BC0T", FLAGS_BRANCH_INSTRUCTION) {
+
+													@Override
+													public void interpret(final int insn, final boolean delay) {
+
+														if (cpu.doBC0T(insn & 0xFFFF)) {
+															cpu.processor.interpretDelayslot();
+														}
+													}
+												};
+
 	public static final Instruction	BEQ			= new Instruction("BEQ", FLAGS_BRANCH_INSTRUCTION) {
 
 													@Override

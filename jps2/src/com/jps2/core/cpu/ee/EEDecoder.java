@@ -37,8 +37,6 @@ public class EEDecoder {
 							@Override
 							public Instruction instance(final int insn) {
 								return cpo0Table[(insn >> 21) & 0x0000001F].instance(insn);
-								// throw new
-								// RuntimeException("CPO0 not supported.");
 							}
 						},
 						new STUB() {
@@ -480,11 +478,7 @@ public class EEDecoder {
 	private static final STUB			bc0Stub			= new STUB() {
 															@Override
 															public Instruction instance(final int insn) {
-																// return
-																// bc0Table[(insn
-																// >> 16) &
-																// 0x1f].instance(insn);
-																throw new RuntimeException("BC0 not supported.");
+																return bc0Table[(insn >> 16) & 0x1f].instance(insn);
 															}
 														};
 
@@ -523,39 +517,40 @@ public class EEDecoder {
 						Common.UNK
 														};
 
-	// private static final Instruction bc0Table[] = {
-	// EEInstructions.BC0F,
-	// EEInstructions.BC0T,
-	// EEInstructions.BC0FL,
-	// EEInstructions.BC0TL,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK,
-	// Common.UNK };
+	private static final Instruction	bc0Table[]		= {
+						EEInstructions.BC0F,
+						EEInstructions.BC0T,
+						EEInstructions.BC0FL,
+						EEInstructions.BC0TL,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK,
+						Common.UNK
+														};
 
 	private static final Instruction	c0Table[]		= {
 						Common.UNK,

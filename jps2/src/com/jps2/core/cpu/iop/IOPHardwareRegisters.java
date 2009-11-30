@@ -239,10 +239,10 @@ public final class IOPHardwareRegisters extends FastMemory {
 
 		switch (address) {
 			case 0x1040:
-				hard = Emulator.getInstance().getSio().sioRead8();
-				hard |= Emulator.getInstance().getSio().sioRead8() << 8;
-				hard |= Emulator.getInstance().getSio().sioRead8() << 16;
-				hard |= Emulator.getInstance().getSio().sioRead8() << 24;
+				hard = Emulator.SIO.sioRead8();
+				hard |= Emulator.SIO.sioRead8() << 8;
+				hard |= Emulator.SIO.sioRead8() << 16;
+				hard |= Emulator.SIO.sioRead8() << 24;
 				logger.debug(String.format("sio read32 ;ret = %x", hard));
 				return hard;
 
@@ -600,7 +600,7 @@ public final class IOPHardwareRegisters extends FastMemory {
 
 		switch (address) {
 			case 0x1040:
-				hard = Emulator.getInstance().sio.sioRead8();
+				hard = Emulator.getInstance().SIO.sioRead8();
 				break;
 			// case 0x1f801050: hard = serial_read8(); break;//for use of serial
 			// port ignore for now
@@ -654,23 +654,23 @@ public final class IOPHardwareRegisters extends FastMemory {
 
 		switch (address) {
 			case 0x1040:
-				Emulator.getInstance().getSio().sioWrite8((byte) data);
-				Emulator.getInstance().getSio().sioWrite8((byte) (data >> 8));
+				Emulator.SIO.sioWrite8((byte) data);
+				Emulator.SIO.sioWrite8((byte) (data >> 8));
 				logger.debug(String.format("sio write16 %x, %x", address & 0xf, data));
 				return;
 			case 0x1044:
 				logger.debug(String.format("sio write16 %x, %x", address & 0xf, data));
 				return;
 			case 0x1048:
-				Emulator.getInstance().getSio().modeReg = data;
+				Emulator.SIO.modeReg = data;
 				logger.debug(String.format("sio write16 %x, %x", address & 0xf, data));
 				return;
 			case 0x104a: // control register
-				Emulator.getInstance().getSio().sioWriteCtrl16(data);
+				Emulator.SIO.sioWriteCtrl16(data);
 				logger.debug(String.format("sio write16 %x, %x", address & 0xf, data));
 				return;
 			case 0x104e: // baudrate register
-				Emulator.getInstance().getSio().baudReg = data;
+				Emulator.SIO.baudReg = data;
 				logger.debug(String.format("sio write16 %x, %x", address & 0xf, data));
 				return;
 
@@ -828,10 +828,10 @@ public final class IOPHardwareRegisters extends FastMemory {
 		}
 		switch (address) {
 			case 0x1040:
-				Emulator.getInstance().getSio().sioWrite8((byte) (data & 0xff));
-				Emulator.getInstance().getSio().sioWrite8((byte) ((data & 0xff00) >> 8));
-				Emulator.getInstance().getSio().sioWrite8((byte) ((data & 0xff0000) >> 16));
-				Emulator.getInstance().getSio().sioWrite8((byte) ((data & 0xff000000) >> 24));
+				Emulator.SIO.sioWrite8((byte) (data & 0xff));
+				Emulator.SIO.sioWrite8((byte) ((data & 0xff00) >> 8));
+				Emulator.SIO.sioWrite8((byte) ((data & 0xff0000) >> 16));
+				Emulator.SIO.sioWrite8((byte) ((data & 0xff000000) >> 24));
 				logger.debug(String.format("sio write32 %x", data));
 				return;
 				// case 0x1050: serial_write32(value); break;//serial port
@@ -1416,7 +1416,7 @@ public final class IOPHardwareRegisters extends FastMemory {
 		switch (address) {
 			case 0x1040:
 				logger.debug(String.format("SIO write8 %x", address));
-				Emulator.getInstance().getSio().sioWrite8(data);
+				Emulator.SIO.sioWrite8(data);
 				break;
 			// case 0x1050: serial_write8(value); break;//serial port
 

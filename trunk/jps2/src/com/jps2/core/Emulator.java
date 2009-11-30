@@ -16,10 +16,12 @@ public class Emulator {
 
 	private static final Emulator	instance	= new Emulator();
 
-	public SIO						sio;
+	public static SIO				SIO;
 
 	private IOPProcess				iopProcess;
 	private EEProcess				eeProcess;
+	public static EE				EE;
+	public static IOP				IOP;
 
 	private boolean					running		= false;
 	private boolean					paused		= false;
@@ -63,7 +65,9 @@ public class Emulator {
 			}
 			Memories.alloc();
 			PluginManager.initialize();
-			sio = new SIO();
+			SIO = new SIO();
+			EE = new EE();
+			IOP = new IOP();
 			paused = false;
 			// init cpus
 			iopProcess = new IOPProcess();
@@ -100,7 +104,9 @@ public class Emulator {
 				}
 			}
 			PluginManager.closeAll();
-			sio = null;
+			SIO = null;
+			EE = null;
+			IOP = null;
 			System.gc();
 			if (listener != null) {
 				listener.stopped();
@@ -112,26 +118,20 @@ public class Emulator {
 		}
 	}
 
-	public SIO getSio() {
-		return sio;
-	}
-
 	public static final Emulator getInstance() {
 		return instance;
 	}
 
 	private final class IOPProcess extends Thread {
 
-		private final IOP	iop	= new IOP();
-
 		IOPProcess() {
 			super("IOP Process");
 			setPriority(MIN_PRIORITY);
 			setDaemon(true);
 			// send cpu to others objects in emulator
-			Memories.hwRegistersIOP.setCpu((com.jps2.core.cpu.iop.state.CpuState) iop.cpu);
-			IOPInstructions.setCpu((com.jps2.core.cpu.iop.state.CpuState) iop.cpu);
-			sio.setCpu((com.jps2.core.cpu.iop.state.CpuState) iop.cpu);
+			Memories.hwRegistersIOP.setCpu((com.jps2.core.cpu.iop.state.CpuState) IOP.cpu);
+			IOPInstructions.setCpu((com.jps2.core.cpu.iop.state.CpuState) IOP.cpu);
+			SIO.setCpu((com.jps2.core.cpu.iop.state.CpuState) IOP.cpu);
 			start();
 		}
 
@@ -147,7 +147,7 @@ public class Emulator {
 						continue;
 					}
 					// step cpu
-					iop.step();
+					IOP.step();
 				}
 			} catch (final Throwable t) {
 				Emulator.this.stop(false);
@@ -161,15 +161,13 @@ public class Emulator {
 
 	private final class EEProcess extends Thread {
 
-		private final EE	ee	= new EE();
-
 		EEProcess() {
 			super("EE Process");
 			setPriority(MIN_PRIORITY);
 			setDaemon(true);
 			// send cpu to others objects in emulator
-			EEInstructions.setCpu((com.jps2.core.cpu.ee.state.CpuState) ee.cpu);
-			Memories.hwRegistersEE.setCpu((com.jps2.core.cpu.ee.state.CpuState) ee.cpu);
+			EEInstructions.setCpu((com.jps2.core.cpu.ee.state.CpuState) EE.cpu);
+			Memories.hwRegistersEE.setCpu((com.jps2.core.cpu.ee.state.CpuState) EE.cpu);
 			start();
 		}
 
@@ -185,7 +183,7 @@ public class Emulator {
 						continue;
 					}
 					// step cpu
-					ee.step();
+					EE.step();
 				}
 			} catch (final Throwable t) {
 				Emulator.this.stop(false);

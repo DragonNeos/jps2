@@ -1,5 +1,8 @@
 package com.jps2.core.cpu.ee.state;
 
+import com.jps2.core.cpu.Memories;
+import com.jps2.core.cpu.ee.EEHardwareRegisters;
+
 /**
  * Branch Control Unit, handles branching and jumping operations
  * 
@@ -32,6 +35,13 @@ public abstract class BcuState extends LsuState {
 	public static int jumpTarget(final int npc, final int uimm26) {
 		return (npc & 0xf0000000) | (uimm26 << 2);
 	}
+
+	public final boolean cpcond0() {
+		return ((Memories.hwRegistersEE.read16(EEHardwareRegisters.DMAC_STAT) & Memories.hwRegistersEE.read16(EEHardwareRegisters.DMAC_PCR)) & 0x3ff) == (Memories.hwRegistersEE
+				.read16(EEHardwareRegisters.DMAC_PCR) & 0x3ff);
+	}
+
+	abstract void testEvents(final boolean delay);
 
 	public int fetchOpcode() {
 		npc = pc + 4;
@@ -218,4 +228,39 @@ public abstract class BcuState extends LsuState {
 		return false;
 	}
 
+	public boolean doBC0F(int offset) {
+		if (!cpcond0()) {
+			npc = branchTarget(pc, offset);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean doBC0T(int offset) {
+		if (cpcond0()) {
+			npc = branchTarget(pc, offset);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean doBC0FL(int offset) {
+		if (!cpcond0()) {
+			npc = branchTarget(pc, offset);
+			return true;
+		} else {
+			pc += 4;
+		}
+		return false;
+	}
+
+	public boolean doBC0TL(int offset) {
+		if (cpcond0()) {
+			npc = branchTarget(pc, offset);
+			return true;
+		} else {
+			pc += 4;
+		}
+		return false;
+	}
 }

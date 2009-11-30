@@ -2,7 +2,7 @@ package com.jps2.core.cpu.ee.state;
 
 import java.math.BigInteger;
 
-public class MmiState extends SauState {
+public abstract class MmiState extends SauState {
 
 	public final void doPLZCW(final int rs, final int rd) {
 		if (rd != 0) {

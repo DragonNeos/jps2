@@ -70,66 +70,76 @@ public abstract class BcuState extends LsuState {
 		npc = pc + 4;
 	}
 
-	public boolean doJR(final int rs) {
+	public boolean doJR(final int rs, final boolean delay) {
 		npc = gpr[rs].read32();
+		testEvents(delay);
 		return true;
 	}
 
-	public boolean doJALR(final int rd, final int rs) {
+	public boolean doJALR(final int rd, final int rs, final boolean delay) {
 		if (rd != 0) {
 			gpr[rd].write32(pc + 4);
 		}
 		npc = gpr[rs].read32();
+		testEvents(delay);
 		return true;
 	}
 
-	public boolean doBLTZ(final int rs, final int simm16) {
+	public boolean doBLTZ(final int rs, final int simm16, final boolean delay) {
 		npc = (gpr[rs].read32() < 0) ? branchTarget(pc, simm16) : (pc + 4);
+		testEvents(delay);
 		return true;
 	}
 
-	public boolean doBGEZ(final int rs, final int simm16) {
+	public boolean doBGEZ(final int rs, final int simm16, final boolean delay) {
 		npc = (gpr[rs].read32() >= 0) ? branchTarget(pc, simm16) : (pc + 4);
+		testEvents(delay);
 		return true;
 	}
 
-	public boolean doBLTZL(final int rs, final int simm16) {
+	public boolean doBLTZL(final int rs, final int simm16, final boolean delay) {
 		if (gpr[rs].read32() < 0) {
 			npc = branchTarget(pc, simm16);
+			testEvents(delay);
 			return true;
 		} else {
 			pc += 4;
+			testEvents(delay);
 		}
 		return false;
 	}
 
-	public boolean doBGEZL(final int rs, final int simm16) {
+	public boolean doBGEZL(final int rs, final int simm16, final boolean delay) {
 		if (gpr[rs].read32() >= 0) {
 			npc = branchTarget(pc, simm16);
+			testEvents(delay);
 			return true;
 		} else {
 			pc += 4;
+			testEvents(delay);
 		}
 		return false;
 	}
 
-	public boolean doBLTZAL(final int rs, final int simm16) {
+	public boolean doBLTZAL(final int rs, final int simm16, final boolean delay) {
 		final int target = pc + 4;
 		final boolean t = (gpr[rs].read32() < 0);
 		gpr[31].write32(target);
 		npc = t ? branchTarget(pc, simm16) : target;
+		testEvents(delay);
 		return true;
 	}
 
-	public boolean doBGEZAL(final int rs, final int simm16) {
+	public boolean doBGEZAL(final int rs, final int simm16, final boolean delay) {
 		final int target = pc + 4;
 		final boolean t = (gpr[rs].read32() >= 0);
 		gpr[31].write32(target);
 		npc = t ? branchTarget(pc, simm16) : target;
+		testEvents(delay);
 		return true;
 	}
 
-	public boolean doBLTZALL(final int rs, final int simm16) {
+	public boolean doBLTZALL(final int rs, final int simm16, final boolean delay) {
 		final boolean t = (gpr[rs].read32() < 0);
 		gpr[31].write32(pc + 4);
 		if (t) {
@@ -137,10 +147,11 @@ public abstract class BcuState extends LsuState {
 		} else {
 			pc += 4;
 		}
+		testEvents(delay);
 		return t;
 	}
 
-	public boolean doBGEZALL(final int rs, final int simm16) {
+	public boolean doBGEZALL(final int rs, final int simm16, final boolean delay) {
 		final boolean t = (gpr[rs].read32() >= 0);
 		gpr[31].write32(pc + 4);
 		if (t) {
@@ -148,118 +159,141 @@ public abstract class BcuState extends LsuState {
 		} else {
 			pc += 4;
 		}
+		testEvents(delay);
 		return t;
 	}
 
-	public boolean doJ(final int uimm26) {
+	public boolean doJ(final int uimm26, final boolean delay) {
 		npc = jumpTarget(pc, uimm26);
 		if (npc == pc - 4) {
 			throw new RuntimeException("Pausing emulator - jump to self (death loop)");
 		}
+		testEvents(delay);
 		return true;
 	}
 
-	public boolean doJAL(final int uimm26) {
+	public boolean doJAL(final int uimm26, final boolean delay) {
 		gpr[31].write32(pc + 4);
 		npc = jumpTarget(pc, uimm26);
+		testEvents(delay);
 		return true;
 	}
 
-	public boolean doBEQ(final int rs, final int rt, final int simm16) {
+	public boolean doBEQ(final int rs, final int rt, final int simm16, final boolean delay) {
 		npc = (gpr[rs].read32() == gpr[rt].read32()) ? branchTarget(pc, simm16) : (pc + 4);
 		if (npc == pc - 4 && rs == rt) {
 			throw new RuntimeException("Pausing emulator - branch to self (death loop)");
 		}
+		testEvents(delay);
 		return true;
 	}
 
-	public boolean doBNE(final int rs, final int rt, final int simm16) {
+	public boolean doBNE(final int rs, final int rt, final int simm16, final boolean delay) {
 		npc = (gpr[rs].read32() != gpr[rt].read32()) ? branchTarget(pc, simm16) : (pc + 4);
+		testEvents(delay);
 		return true;
 	}
 
-	public boolean doBLEZ(final int rs, final int simm16) {
+	public boolean doBLEZ(final int rs, final int simm16, final boolean delay) {
 		npc = (gpr[rs].read32() <= 0) ? branchTarget(pc, simm16) : (pc + 4);
+		testEvents(delay);
 		return true;
 	}
 
-	public boolean doBGTZ(final int rs, final int simm16) {
+	public boolean doBGTZ(final int rs, final int simm16, final boolean delay) {
 		npc = (gpr[rs].read32() > 0) ? branchTarget(pc, simm16) : (pc + 4);
+		testEvents(delay);
 		return true;
 	}
 
-	public boolean doBEQL(final int rs, final int rt, final int simm16) {
+	public boolean doBEQL(final int rs, final int rt, final int simm16, final boolean delay) {
 		if (gpr[rs].read32() == gpr[rt].read32()) {
 			npc = branchTarget(pc, simm16);
+			testEvents(delay);
 			return true;
 		} else {
 			pc += 4;
+			testEvents(delay);
 		}
 		return false;
 	}
 
-	public boolean doBNEL(final int rs, final int rt, final int simm16) {
+	public boolean doBNEL(final int rs, final int rt, final int simm16, final boolean delay) {
 		if (gpr[rs].read32() != gpr[rt].read32()) {
 			npc = branchTarget(pc, simm16);
+			testEvents(delay);
 			return true;
 		} else {
 			pc += 4;
+			testEvents(delay);
 		}
 		return false;
 	}
 
-	public boolean doBLEZL(final int rs, final int simm16) {
+	public boolean doBLEZL(final int rs, final int simm16, final boolean delay) {
 		if (gpr[rs].read32() <= 0) {
 			npc = branchTarget(pc, simm16);
+			testEvents(delay);
 			return true;
 		} else {
 			pc += 4;
+			testEvents(delay);
 		}
 		return false;
 	}
 
-	public boolean doBGTZL(final int rs, final int simm16) {
+	public boolean doBGTZL(final int rs, final int simm16, final boolean delay) {
 		if (gpr[rs].read32() > 0) {
 			npc = branchTarget(pc, simm16);
+			testEvents(delay);
 			return true;
 		} else {
 			pc += 4;
+			testEvents(delay);
 		}
 		return false;
 	}
 
-	public boolean doBC0F(int offset) {
+	public boolean doBC0F(final int offset, final boolean delay) {
 		if (!cpcond0()) {
 			npc = branchTarget(pc, offset);
+			testEvents(delay);
 			return true;
 		}
+		testEvents(delay);
 		return false;
 	}
 
-	public boolean doBC0T(int offset) {
+	public boolean doBC0T(final int offset, final boolean delay) {
 		if (cpcond0()) {
 			npc = branchTarget(pc, offset);
+			testEvents(delay);
 			return true;
 		}
+		testEvents(delay);
 		return false;
 	}
 
-	public boolean doBC0FL(int offset) {
+	public boolean doBC0FL(final int offset, final boolean delay) {
 		if (!cpcond0()) {
 			npc = branchTarget(pc, offset);
+			testEvents(delay);
 			return true;
 		} else {
 			pc += 4;
+			testEvents(delay);
 		}
 		return false;
 	}
 
-	public boolean doBC0TL(int offset) {
+	public boolean doBC0TL(final int offset, final boolean delay) {
 		if (cpcond0()) {
 			npc = branchTarget(pc, offset);
+			testEvents(delay);
 			return true;
 		} else {
 			pc += 4;
+			testEvents(delay);
 		}
 		return false;
 	}

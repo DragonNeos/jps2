@@ -3,71 +3,93 @@ package com.jps2.core.cpu.ee.state;
 import org.apache.log4j.Logger;
 
 import com.jps2.core.Emulator;
+import com.jps2.core.cpu.CpuRunnable;
 import com.jps2.core.cpu.ExcCode;
+import com.jps2.core.cpu.Memories;
 import com.jps2.core.cpu.ee.EECounter;
 import com.jps2.core.cpu.ee.EEHardwareRegisters;
 import com.jps2.core.cpu.ee.EESyncCounter;
 import com.jps2.core.cpu.registers.CP0Register;
 import com.jps2.core.cpu.registers.CP0StatusRegister;
+import com.jps2.core.cpu.registers.dma.DMAControlRegister;
 
 public final class CpuState extends MmiState {
 
-	private static final Logger	logger				= Logger.getLogger(CpuState.class);
+	private static final Logger	logger			= Logger.getLogger(CpuState.class);
 
 	final EECounter[]			counters;
 	final EESyncCounter			hSyncCounter;
 	final EESyncCounter			vSyncCounter;
 
-	int							nextsCounter;											// records
-	// the
-	// cpuRegs.cycle
-	// value
-	// of
-	// the
-	// last
-	// call
-	// to
-	// rcntUpdate()
-	int							nextCounter;											// delta
-	// from
-	// nextsCounter,
-	// in
-	// cycles,
-	// until
-	// the
-	// next
-	// rcntUpdate()
-	int[]						eCycle;
-	int[]						sCycle;												// for
-	// internal
-	// counters
+	// records the cpuRegs.cycle value of the last call to rcntUpdate()
+	int							nextsCounter;
+	// delta from nextsCounter, in cycles, until the next rcntUpdate()
+	int							nextCounter;
 
-	int							lastCp0Cycle		= 0;
-	final int[]					lastPERFCycle		= new int[2];
-	boolean						eeEventTestIsActive	= false;
-	boolean						iopBranchAction		= false;
-	long						nextBranchCycle		= 0;
-	public int					EEsCycle			= 0;
-	public long					EEoCycle			= 0;
+	int							gates			= 0;
 
-	public static final int		eeWaitCycles		= 3072;
+	int							lastCp0Cycle	= 0;
+	final int[]					lastPERFCycle	= new int[2];
 
 	final PERFregs				perfRegs;
 
 	final CP0StatusRegister		statusReg;
 
+	// Interrupt runnables
+	final CpuRunnable			intcInterrupt;
+	final CpuRunnable			dmacInterrupt;
+
 	@Override
 	public void reset() {
 		resetAll();
 		cp0[CP0_CONFIG].value = 0x440;
-		statusReg.value = 0x70400004; // 0x10900000 <-- wrong; // COP0
-		// enabled |
-		// BEV = 1 | TS = 1
-		cp0[CP0_PRID].value = 0x00002e20; // PRevID = Revision ID, same as
-		// R5900
+		// COP0 enabled | BEV = 1 | TS = 1
+		statusReg.value = 0x70400004;
+		cp0[CP0_PRID].value = 0x00002e20;
 	}
 
 	public CpuState() {
+		intcInterrupt = new CpuRunnable() {
+
+			@Override
+			public void run(final boolean delay) {
+				if ((statusReg.value & 0x400) == 0x400) {
+
+					if ((Memories.hwRegistersEE.read32(EEHardwareRegisters.INTC_STAT)) == 0) {
+						return;
+					}
+					if ((Memories.hwRegistersEE.read32(EEHardwareRegisters.INTC_STAT) & Memories.hwRegistersEE.read32(EEHardwareRegisters.INTC_MASK)) == 0)
+						return;
+
+					if ((Memories.hwRegistersEE.read32(EEHardwareRegisters.INTC_STAT) & 0x2) != 0) {
+						counters[0].hold = rcntRcount(0);
+						counters[1].hold = rcntRcount(1);
+					}
+
+					processor.processException(ExcCode.INTERRUPT, 0x400, delay);
+				}
+			}
+		};
+		dmacInterrupt = new CpuRunnable() {
+
+			@Override
+			public void run(final boolean delay) {
+				if ((statusReg.value & 0x10807) == 0x10801) {
+
+					if (((Memories.hwRegistersEE.read16(EEHardwareRegisters.DMAC_STAT + 2) & Memories.hwRegistersEE.read16(EEHardwareRegisters.DMAC_STAT)) == 0)
+							&& (Memories.hwRegistersEE.read16(EEHardwareRegisters.DMAC_STAT) & 0x8000) == 0) {
+						return;
+					} else {
+						if (!new DMAControlRegister().isDMAEnabled()) {
+							return;
+						}
+					}
+
+					processor.processException(ExcCode.INTERRUPT, 0x800, delay);
+				}
+
+			}
+		};
 		cp0 = new CP0Register[32];
 		statusReg = new CP0StatusRegister();
 		for (int i = 0; i < 32; i++) {
@@ -77,8 +99,6 @@ public final class CpuState extends MmiState {
 				cp0[i] = new CP0Register();
 			}
 		}
-		eCycle = new int[32];
-		sCycle = new int[32];
 		counters = new EECounter[4];
 		for (int i = 0; i < counters.length; i++) {
 			counters[i] = new EECounter();
@@ -230,138 +250,201 @@ public final class CpuState extends MmiState {
 
 	@Override
 	void testEvents(boolean delay) {
-		{
-	        eeEventTestIsActive = true;
-	        nextBranchCycle = cycle + eeWaitCycles;
+		// ---- Counters -------------
+		// Important: the vsync counter must be the first to be checked. It
+		// includes emulation
+		// escape/suspend hooks, and it's really a good idea to suspend/resume
+		// emulation before
+		// doing any actual meaninful branchtest logic.
 
-	        // ---- Counters -------------
-	        // Important: the vsync counter must be the first to be checked.  It includes emulation
-	        // escape/suspend hooks, and it's really a good idea to suspend/resume emulation before
-	        // doing any actual meaninful branchtest logic.
+		if (cpuTestCycle(nextsCounter, nextCounter)) {
+			rcntUpdate();
+			updatePCCR();
+		}
 
-	        if( cpuTestCycle( nextsCounter, nextCounter ) )
-	        {
-	                rcntUpdate();
-	                cpuTestPERF();
-	        }
+		rcntUpdate_hScanline();
 
-	        rcntUpdate_hScanline();
+		cpuTestTIMR(delay);
 
-	        cpuTestTIMR(delay);
+		// ---- Interrupts -------------
+		// Handles all interrupts except 30 and 31, which are handled later.
+		if ((interrupt & ~(3 << 30)) != 0) {
+			cpuTestInterrupts();
+		}
 
-	        // ---- Interrupts -------------
-	        // Handles all interrupts except 30 and 31, which are handled later.
-	        if( (interrupt & ~(3<<30)) != 0){
-	                cpuTestInterrupts();
-	        }
+		// ---- INTC / DMAC Exceptions -----------------
+		// Raise the INTC and DMAC interrupts here, which usually throw
+		// exceptions.
+		// This should be done last since the IOP and the VU0 can raise several
+		// EE
+		// exceptions.
 
-	        // ---- IOP -------------
-	        // * It's important to run a psxBranchTest before calling ExecuteBlock. This
-	        //   is because the IOP does not always perform branch tests before returning
-	        //   (during the prev branch) and also so it can act on the state the EE has
-	        //   given it before executing any code.
-	        //
-	        // * The IOP cannot always be run.  If we run IOP code every time through the
-	        //   cpuBranchTest, the IOP generally starts to run way ahead of the EE.
-	        EEsCycle += cycle - EEoCycle;
-	        EEoCycle = cycle;
+		if (cpuIntsEnabled()) {
+			testInterrupt(30, intcInterrupt, delay);
+			testInterrupt(31, dmacInterrupt, delay);
+		}
+	}
 
-	        if( EEsCycle > 0 ){
-	                iopBranchAction = true;
-	        }
+	void testInterrupt(int n, CpuRunnable runnable, boolean delay) {
+		// if interrupted
+		if ((interrupt & (1 << n)) != 0) {
+			// clear interrupt
+			interrupt &= ~(1 << n);
+			runnable.run(delay);
+		}
+	}
 
-	        psxBranchTest();
+	final void rcntUpdate_hScanline() {
+		if (cpuTestCycle(hSyncCounter.sCycle, hSyncCounter.cycleT)) {
 
-	        if( iopBranchAction )
-	        {
-	                //if( EEsCycle < -450 )
-	                //      Console.WriteLn( " IOP ahead by: %d cycles", -EEsCycle );
+			if ((hSyncCounter.mode & EESyncCounter.MODE_HBLANK) != 0) { // HBLANK
+				// Start
+				rcntStartGate(false, hSyncCounter.sCycle);
 
-	                // Experimental and Probably Unnecessry Logic -->
-	                // Check if the EE already has an exception pending, and if so we shouldn't
-	                // waste too much time updating the IOP.  Theory being that the EE and IOP should
-	                // run closely in sync during raised exception events.  But in practice it didn't
-	                // seem to make much of a difference.
+				// Setup the hRender's start and end cycle information:
+				hSyncCounter.sCycle += vSyncInfo.hBlank; // start (absolute
+				// cycle value)
+				hSyncCounter.cycleT = vSyncInfo.hRender; // endpoint (delta from
+				// start value)
+				hSyncCounter.mode = EESyncCounter.MODE_HRENDER;
+			} else { // HBLANK END / HRENDER Begin
+				if (CSRw & 0x4) {
 
-	                // Note: The IOP is very good about chaining blocks together so it tends to
-	                // run lots of cycles, even with only 32 (4 IOP) cycles specified here.  That's
-	                // probably why it doesn't improve sync much.
+					if (!(GSIMR & 0x400)) {
+						gsIrq();
+					}
+					GSCSRr |= 4; // signal
+				}
+				if (gates != 0) {
+					rcntEndGate(false, hSyncCounter.sCycle);
+				}
 
-	                /*bool eeExceptPending = cpuIntsEnabled() &&
-	                        //( cpuRegs.CP0.n.Status.b.EIE && cpuRegs.CP0.n.Status.b.IE && (cpuRegs.CP0.n.Status.b.ERL == 0) ) &&
-	                        //( (cpuRegs.CP0.n.Status.val & 0x10007) == 0x10001 ) &&
-	                        ( (cpuRegs.interrupt & (3<<30)) != 0 );
+				// set up the hblank's start and end cycle information:
+				hSyncCounter.sCycle += vSyncInfo.hRender; // start (absolute
+				// cycle value)
+				hSyncCounter.cycleT = vSyncInfo.hBlank; // endpoint (delta from
+				// start value)
+				hSyncCounter.mode = EESyncCounter.MODE_HBLANK;
 
-	                if( eeExceptPending )
-	                {
-	                        // ExecuteBlock returns a negative value, so subtract it from the cycle count
-	                        // specified to get the total cycles processed! :D
-	                        int cycleCount = std::min( EEsCycle, (s32)(eeWaitCycles>>4) );
-	                        int cyclesRun = cycleCount - psxCpu->ExecuteBlock( cycleCount );
-	                        EEsCycle -= cyclesRun;
-	                        //Console.Notice( "IOP Exception-Pending Execution -- EEsCycle: %d", EEsCycle );
-	                }
-	                else*/
-	                {
-	                        EEsCycle = psxCpu->ExecuteBlock( EEsCycle );
-	                }
+			}
+		}
+	}
 
-	                iopBranchAction = false;
-	        }
+	// mode - 0 means hblank source, 8 means vblank source.
+	final void rcntStartGate(boolean isVblank, long sCycle) {
+		int i;
 
-	        // ---- VU0 -------------
+		for (i = 0; i <= 3; i++) {
+			// if ((mode == 0) && ((counters[i].mode & 0x83) == 0x83))
+			if (!isVblank && counters[i].mode.isCounting() && (counters[i].mode.getClockSource() == 3)) {
+				// Update counters using the hblank as the clock. This keeps the
+				// hblank source
+				// nicely in sync with the counters and serves as an
+				// optimization also, since these
+				// counter won't recieve special rcntUpdate scheduling.
 
-	        if (VU0.VI[REG_VPU_STAT].UL & 0x1)
-	        {
-	                // We're in a BranchTest.  All dynarec registers are flushed
-	                // so there is no need to freeze registers here.
-	                CpuVU0.ExecuteBlock();
+				// Note: Target and overflow tests must be done here since they
+				// won't be done
+				// currectly by rcntUpdate (since it's not being scheduled for
+				// these counters)
 
-	                // This might be needed to keep the EE and VU0 in sync.
-	                // A better fix will require hefty changes to the VU recs. -_-
-	                if(VU0.VI[REG_VPU_STAT].UL & 0x1){
-	                        cpuSetNextBranchDelta( 768 );
-	                }
-	        }
+				counters[i].count += EECounter.HBLANK_COUNTER_SPEED;
+				cpuTestTarget(i);
+				cpuTestOverflow(i);
+			}
 
-	        // Note:  We don't update the VU1 here because it runs it's micro-programs in
-	        // one shot always.  That is, when a program is executed the VU1 doesn't even
-	        // bother to return until the program is completely finished.
+			if (!(gates & (1 << i)))
+				continue;
+			if ((!!counters[i].mode.GateSource) != isVblank)
+				continue;
 
-	        // ---- Schedule Next Event Test --------------
+			switch (counters[i].mode.getGateMode()) {
+				case 0x0: // Count When Signal is low (off)
 
-	        if( EEsCycle > 192 )
-	        {
-	                // EE's running way ahead of the IOP still, so we should branch quickly to give the
-	                // IOP extra timeslices in short order.
+					// Just set the start cycle (sCycleT) -- counting will be
+					// done as needed
+					// for events (overflows, targets, mode changes, and the
+					// gate off below)
 
-	                cpuSetNextBranchDelta( 48 );
-	                //Console.Notice( "EE ahead of the IOP -- Rapid Branch!  %d", EEsCycle );
-	        }
+					counters[i].mode.setCounting(true);
+					counters[i].cycleT = (int) sCycle;
+					// EECNT_LOG("EE Counter[%d] %s StartGate Type0, count = %x",
+					// isVblank ? "vblank" : "hblank", i, counters[i].count );
+					break;
 
-	        // The IOP could be running ahead/behind of us, so adjust the iop's next branch by its
-	        // relative position to the EE (via EEsCycle)
-	        cpuSetNextBranchDelta( ((g_psxNextBranchCycle-Emulator.IOP.cpu.cycle)*8) - EEsCycle );
+				case 0x2: // reset and start counting on vsync end
+					// this is the vsync start so do nothing.
+					break;
 
-	        // Apply the hsync counter's nextCycle
-	        cpuSetNextBranch( hSyncCounter.sCycle, hSyncCounter.cycleT );
+				case 0x1: // Reset and start counting on Vsync start
+				case 0x3: // Reset and start counting on Vsync start and end
+					counters[i].mode.setCounting(true);
+					counters[i].count = 0;
+					counters[i].target &= 0xffff;
+					counters[i].cycleT = (int) sCycle;
+					// EECNT_LOG("EE Counter[%d] %s StartGate Type%d, count = %x",
+					// isVblank ? "vblank" : "hblank", i,
+					// counters[i].mode.getGateMode(), counters[i].count );
+					break;
+			}
+		}
 
-	        // Apply vsync and other counter nextCycles
-	        cpuSetNextBranch( nextsCounter, nextCounter );
+		// No need to update actual counts here. Counts are calculated as needed
+		// by reads to
+		// rcntRcount(). And so long as sCycleT is set properly, any targets or
+		// overflows
+		// will be scheduled and handled.
 
-	        eeEventTestIsActive = false;
+		// Note: No need to set counters here. They'll get set when control
+		// returns to
+		// rcntUpdate, since we're being called from there anyway.
+	}
 
-	        // ---- INTC / DMAC Exceptions -----------------
-	        // Raise the INTC and DMAC interrupts here, which usually throw exceptions.
-	        // This should be done last since the IOP and the VU0 can raise several EE
-	        // exceptions.
+	// mode - 0 means hblank signal, 8 means vblank signal.
+	final void rcntEndGate(boolean isVblank, long sCycle) {
+		int i;
 
-	        //if ((cpuRegs.CP0.n.Status.val & 0x10007) == 0x10001)
-	        if( cpuIntsEnabled() )
-	        {
-	                TESTINT(30, intcInterrupt);
-	                TESTINT(31, dmacInterrupt);
-	        } 
+		for (i = 0; i <= 3; i++) { // Gates for counters
+			if (!(gates & (1 << i)))
+				continue;
+			if ((!!counters[i].mode.getGateSource()) != isVblank)
+				continue;
+
+			switch (counters[i].mode.getGateMode()) {
+				case 0x0: // Count When Signal is low (off)
+
+					// Set the count here. Since the timer is being turned off
+					// it's
+					// important to record its count at this point (it won't be
+					// counted by
+					// calls to rcntUpdate).
+
+					counters[i].count = rcntRcount(i);
+					counters[i].mode.setCounting(true);
+					counters[i].cycleT = (int) sCycle;
+					// EECNT_LOG("EE Counter[%d] %s EndGate Type0, count = %x",
+					// isVblank ? "vblank" : "hblank", i, counters[i].count );
+					break;
+
+				case 0x1: // Reset and start counting on Vsync start
+					// this is the vsync end so do nothing
+					break;
+
+				case 0x2: // Reset and start counting on Vsync end
+				case 0x3: // Reset and start counting on Vsync start and end
+					counters[i].mode.setCounting(true);
+					counters[i].count = 0;
+					counters[i].target &= 0xffff;
+					counters[i].cycleT = (int) sCycle;
+					// EECNT_LOG("EE Counter[%d] %s EndGate Type%d, count = %x",
+					// isVblank ? "vblank" : "hblank", i,
+					// counters[i].mode.GateMode, counters[i].count );
+					break;
+			}
+		}
+		// Note: No need to set counters here. They'll get set when control
+		// returns to
+		// rcntUpdate, since we're being called from there anyway.
 	}
 
 	void rcntUpdate() {
@@ -370,49 +453,99 @@ public final class CpuState extends MmiState {
 		// Update counters so that we can perform overflow and target tests.
 
 		for (int i = 0; i <= 3; i++) {
-			// We want to count gated counters (except the hblank which exclude
-			// below, and are
-			// counted by the hblank timer instead)
+			if (counters[i].mode.isCounting()) {
+				// don't count hblank sources
+				if (counters[i].mode.getClockSource() != 0x3) {
+					int change = cycle - counters[i].cycleT;
+					if (change < 0) {
+						change = 0; // sanity check!
+					}
+					counters[i].count += change / counters[i].rate;
+					change -= (change / counters[i].rate) * counters[i].rate;
+					counters[i].cycleT = cycle - change;
 
-			// if ( gates & (1<<i) ) continue;
-
-			if (!counters[i].mode.isCounting())
-				continue;
-
-			if (counters[i].mode.getClockSource() != 0x3) // don't count hblank
-															// sources
-			{
-				int change = cycle - counters[i].cycleT;
-				if (change < 0)
-					change = 0; // sanity check!
-
-				counters[i].count += change / counters[i].rate;
-				change -= (change / counters[i].rate) * counters[i].rate;
-				counters[i].cycleT = cycle - change;
-
-				// Check Counter Targets and Overflows:
-				_cpuTestTarget(i);
-				_cpuTestOverflow(i);
-			} else
-				counters[i].cycleT = cycle;
+					// Check Counter Targets and Overflows:
+					cpuTestTarget(i);
+					cpuTestOverflow(i);
+				} else {
+					counters[i].cycleT = cycle;
+				}
+			}
 		}
 
 		cpuRcntSet();
 	}
 
-	// sets a branch test to occur some time from an arbitrary starting point.
-	void cpuSetNextBranch(long startCycle, int delta) {
-		// typecast the conditional to signed so that things don't blow up
-		// if startCycle is greater than our next branch cycle.
+	final void rcntUpdate_vSync() {
+		int diff = (cycle - vSyncCounter.sCycle);
+		if (diff < vSyncCounter.cycleT) {
+			return;
+		}
+		if (vSyncCounter.mode == EESyncCounter.MODE_VSYNC) {
 
-		if ((int) (nextBranchCycle - startCycle) > delta) {
-			nextBranchCycle = startCycle + delta;
+			VSyncEnd(vSyncCounter.sCycle);
+
+			vSyncCounter.sCycle += vSyncInfo.Blank;
+			vSyncCounter.cycleT = vSyncInfo.Render;
+			vSyncCounter.mode = EESyncCounter.MODE_VRENDER;
+		} else {
+			// VSYNC end / VRENDER begin
+			VSyncStart(vSyncCounter.sCycle);
+
+			vSyncCounter.sCycle += vSyncInfo.Render;
+			vSyncCounter.cycleT = vSyncInfo.Blank;
+			vSyncCounter.mode = EESyncCounter.MODE_VSYNC;
+
+			// Accumulate hsync rounding errors:
+			hSyncCounter.sCycle += vSyncInfo.hSyncError;
+
+			if (CHECK_MICROVU0) {
+				vsyncVUrec(0);
+			}
+			if (CHECK_MICROVU1) {
+				vsyncVUrec(1);
+			}
 		}
 	}
 
-	// sets a branch to occur some time from the current cycle
-	void cpuSetNextBranchDelta(int delta) {
-		cpuSetNextBranch(cycle, delta);
+	final void cpuTestTarget(int i) {
+		if (counters[i].count < counters[i].target)
+			return;
+
+		if (counters[i].mode.isTargetInterrupt()) {
+
+			logger.info(String.format("EE Counter[%d] TARGET reached - mode=%x, count=%x, target=%x", i, counters[i].mode, counters[i].count, counters[i].target));
+			counters[i].mode.setTargetReached(true);
+			hwIntcIrq(counters[i].interrupt);
+
+			// The PS2 only resets if the interrupt is enabled - Tested on PS2
+			if (counters[i].mode.isZeroReturn())
+				counters[i].count -= counters[i].target; // Reset on target
+			else
+				counters[i].target |= EECounter.EECNT_FUTURE_TARGET;
+		} else {
+			counters[i].target |= EECounter.EECNT_FUTURE_TARGET;
+		}
+	}
+
+	final void cpuTestOverflow(int i) {
+		if (counters[i].count <= 0xffff)
+			return;
+
+		if (counters[i].mode.isOverflowInterrupt()) {
+			logger.info(String.format("EE Counter[%d] OVERFLOW - mode=%x, count=%x", i, counters[i].mode, counters[i].count));
+			counters[i].mode.setOverflowReached(true);
+			hwIntcIrq(counters[i].interrupt);
+		}
+
+		// wrap counter back around zero, and enable the future target:
+		counters[i].count -= 0x10000;
+		counters[i].target &= 0xffff;
+	}
+
+	void hwIntcIrq(int n) {
+		Memories.hwRegistersEE.write32(EEHardwareRegisters.INTC_STAT, Memories.hwRegistersEE.read32(EEHardwareRegisters.INTC_STAT) | (1 << n));
+		cpuTestINTCInts();
 	}
 
 	// tests the cpu cycle agaisnt the given start and delta values.
@@ -423,31 +556,11 @@ public final class CpuState extends MmiState {
 		return (int) (cycle - startCycle) >= delta;
 	}
 
-	// tells the EE to run the branch test the next time it gets a chance.
-	void cpuSetBranch() {
-		nextBranchCycle = cycle;
-	}
-
 	public final void cpuTestINTCInts() {
 		if ((interrupt & (1 << 30)) == 0) {
 			if (cpuIntsEnabled()) {
 				if ((processor.memory.read32(EEHardwareRegisters.INTC_STAT) & processor.memory.read32(EEHardwareRegisters.INTC_MASK)) != 0) {
 					interrupt |= 1 << 30;
-					sCycle[30] = cycle;
-					eCycle[30] = 4; // Needs to be 4 to account for bus
-					// delays/pipelines
-
-					// only set the next branch delta if the exception won't be
-					// handled
-					// for the current branch...
-					// if (!eeEventTestIsActive)
-					// cpuSetNextBranchDelta(4);
-					// else if (psxCycleEE > 0) {
-					// psxBreak += psxCycleEE; // record the number of cycles
-					// // the IOP
-					// // didn't run.
-					// psxCycleEE = 0;
-					// }
 				}
 			}
 		}
@@ -462,22 +575,6 @@ public final class CpuState extends MmiState {
 			if ((statusReg.value & 0x10807) == 0x10801) {
 				if (((processor.memory.read16(0x1000e012) & processor.memory.read16(0x1000e010)) != 0) && ((processor.memory.read16(0x1000e010) & 0x8000) != 0)) {
 					interrupt |= 1 << 31;
-					sCycle[31] = cycle;
-					eCycle[31] = 4; // Needs to be 4 to account for bus
-					// delays/pipelines etc
-
-					// only set the next branch delta if the exception won't be
-					// handled for
-					// the current branch...
-					// if (!eeEventTestIsActive) {
-					// cpuSetNextBranchDelta(4);
-					// } else if (psxCycleEE > 0) {
-					// psxBreak += psxCycleEE; // record the number of cycles
-					// // the IOP
-					//
-					// // didn't run.
-					// psxCycleEE = 0;
-					// }
 				}
 			}
 		}

@@ -7,8 +7,11 @@ import com.jps2.core.cpu.iop.state.CpuState;
 
 public class IOP extends Processor {
 
+	public final CpuState	iopCpu;
+
 	public IOP() {
 		super(new CpuState(), new IOPMemoryManager());
+		iopCpu = (CpuState) cpu;
 	}
 
 	@Override

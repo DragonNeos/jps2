@@ -5,6 +5,7 @@ import com.jps2.core.cpu.iop.IOPHardwareRegisters;
 import com.jps2.core.cpu.registers.CP0Register;
 
 public class CpuState extends BcuState {
+
 	IOPCounter[]	counters;
 
 	@Override
@@ -31,29 +32,6 @@ public class CpuState extends BcuState {
 
 	public IOPCounter getCounter(final int index) {
 		return counters[index];
-	}
-
-	public void iopTestIntc() {
-		if (processor.memory.read32(0x1F801078) == 0)
-			return;
-		if ((processor.memory.read32(0x1F801070) & processor.memory.read32(0x1FB01074)) == 0)
-			return;
-
-		// if( !eeEventTestIsActive )
-		// {
-		// // An iop exception has occurred while the EE is running code.
-		// // Inform the EE to branch so the IOP can handle it promptly:
-		//
-		// cpuSetNextBranchDelta( 16 );
-		// iopBranchAction = true;
-		// //Console.Error( "** IOP Needs an EE EventText, kthx **  %d",
-		// psxCycleEE );
-		//
-		// // Note: No need to set the iop's branch delta here, since the EE
-		// // will run an IOP branch test regardless.
-		// }
-		// else if( !iopEventTestIsActive )
-		// psxSetNextBranchDelta( 2 );
 	}
 
 	void psxRcntInit() {

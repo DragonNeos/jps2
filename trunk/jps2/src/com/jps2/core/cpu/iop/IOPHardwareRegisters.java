@@ -18,12 +18,12 @@ public final class IOPHardwareRegisters extends FastMemory {
 	public static final int		HW_USB_END				= 0x1700;
 	public static final int		HW_FW_START				= 0x8400;
 	public static final int		HW_FW_END				= 0x8550;										// end
-																										// addr
-																										// for
-																										// FW
-																										// is
-																										// a
-																										// guess...
+	// addr
+	// for
+	// FW
+	// is
+	// a
+	// guess...
 	public static final int		HW_SPU2_START			= 0x1c00;
 	public static final int		HW_SPU2_END				= 0x1e00;
 
@@ -64,25 +64,25 @@ public final class IOPHardwareRegisters extends FastMemory {
 	// ???
 	public static final int		HW_ICFG					= 0x1450;
 	public static final int		HW_DEV9_DATA			= 0x146e;										// DEV9
-																										// read/write
-																										// register
+	// read/write
+	// register
 
 	// CDRom registers are used for various command; status; and data stuff.
 	public static final int		HW_CDR_DATA0			= 0x1800;										// CDROM
-																										// multipurpose
-																										// data
+	// multipurpose
+	// data
 	// register 1
 	public static final int		HW_CDR_DATA1			= 0x1801;										// CDROM
-																										// multipurpose
-																										// data
+	// multipurpose
+	// data
 	// register 2
 	public static final int		HW_CDR_DATA2			= 0x1802;										// CDROM
-																										// multipurpose
-																										// data
+	// multipurpose
+	// data
 	// register 3
 	public static final int		HW_CDR_DATA3			= 0x1803;										// CDROM
-																										// multipurpose
-																										// data
+	// multipurpose
+	// data
 	// register 4
 
 	// SIO2 is a DMA interface for the SIO.
@@ -93,13 +93,13 @@ public final class IOPHardwareRegisters extends FastMemory {
 	public static final int		HW_SIO2_RECV2			= 0x8270;
 	public static final int		HW_SIO2_RECV3			= 0x8274;
 	public static final int		HW_SIO2_8278			= 0x8278;										// May
-																										// as
-																										// well
-																										// add
-																										// defs
+	// as
+	// well
+	// add
+	// defs
 	public static final int		HW_SIO2_827C			= 0x827C;										// for
-																										// these
-																										// 2...
+	// these
+	// 2...
 	public static final int		HW_SIO2_INTR			= 0x8280;
 
 	// DMAMadrAddresses
@@ -187,9 +187,9 @@ public final class IOPHardwareRegisters extends FastMemory {
 	public static final int		IOP_T5_TARGET			= 0x14a8;
 
 	public static final int		IOP_EVT_CDVD			= 5;											// General
-																										// Cdvd
-																										// commands
-																										// (Seek,
+	// Cdvd
+	// commands
+	// (Seek,
 	// Standby, Break, etc)
 	public static final int		IOP_EVT_SIF0			= 9;
 	public static final int		IOP_EVT_SIF1			= 10;
@@ -600,7 +600,7 @@ public final class IOPHardwareRegisters extends FastMemory {
 
 		switch (address) {
 			case 0x1040:
-				hard = Emulator.getInstance().SIO.sioRead8();
+				hard = Emulator.SIO.sioRead8();
 				break;
 			// case 0x1f801050: hard = serial_read8(); break;//for use of serial
 			// port ignore for now
@@ -690,13 +690,11 @@ public final class IOPHardwareRegisters extends FastMemory {
 			case 0x1074:
 				logger.debug(String.format("IMASK 16bit write %x", data));
 				super.write16(address, data);
-				cpu.iopTestIntc();
 				return;
 
 			case 0x1078: // see the 32-bit version for notes!
 				logger.debug(String.format("ICTRL 16bit write %n", data));
 				super.write16(address, data);
-				cpu.iopTestIntc();
 				return;
 
 			case 0x10c4:
@@ -851,17 +849,15 @@ public final class IOPHardwareRegisters extends FastMemory {
 			case 0x1074:
 				logger.debug(String.format("IMASK 32bit write %x", data));
 				super.write32(address, data);
-				cpu.iopTestIntc();
 				return;
 
 			case 0x1078:
 				logger.debug(String.format("ICTRL 32bit write %x", data));
 				super.write32(address, data); // 1; //According to pSXAuthor
-												// this
+				// this
 				// always becomes 1 on write, but
 				// MHPB won't boot if value is not
 				// writen ;p
-				cpu.iopTestIntc();
 				return;
 
 				// ------------------------------------------------------------------

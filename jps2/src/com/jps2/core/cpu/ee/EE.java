@@ -6,9 +6,12 @@ import com.jps2.core.cpu.Common.Instruction;
 import com.jps2.core.cpu.ee.state.CpuState;
 
 public class EE extends Processor {
+	
+	public final CpuState eeCpu;
 
 	public EE() {
 		super(new CpuState(), new EEMemoryManager());
+		eeCpu = (CpuState) cpu;
 	}
 
 	@Override

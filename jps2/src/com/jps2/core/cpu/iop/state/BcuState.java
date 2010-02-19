@@ -7,6 +7,8 @@ package com.jps2.core.cpu.iop.state;
  * 
  */
 public abstract class BcuState extends LsuState {
+	public boolean	doBranch	= false;
+
 	@Override
 	void reset() {
 		pc = 0xBFC00000;
@@ -37,7 +39,8 @@ public abstract class BcuState extends LsuState {
 		npc = that.npc;
 	}
 
-	static final int branchTarget(final int npc, final int simm16) {
+	 final int branchTarget(final int npc, final int simm16) {
+		doBranch = true;
 		return npc + (simm16 << 2);
 	}
 

@@ -9,10 +9,10 @@ import com.jps2.core.memory.AbstractMemoryManager;
 
 public abstract class Processor {
 
-	private static final boolean		ENABLE_INSN_EXECUTE_COUNT	= false;
 	// cache controls
-	private final CacheLine[]			instCache					= new CacheLine[0x10000];
-	private final int					cacheMask					= instCache.length - 1;
+	private final CacheLine[]			instCache	= new CacheLine[0x10000];
+	private final int					cacheMask	= instCache.length - 1;
+	// statistics
 	public long							insnCacheHits, insnCacheMisses, insnCount = 0;
 
 	public final Cpu					cpu;
@@ -43,6 +43,14 @@ public abstract class Processor {
 	// e.printStackTrace();
 	// }
 	// }
+	// private static final String debugFormater(int code) {
+	// StringBuilder builder = new StringBuilder(Integer.toHexString(code));
+	// while (builder.length() < 8) {
+	// builder.insert(0, 0);
+	// }
+	// return builder.toString();
+	// }
+
 	long	last	= System.currentTimeMillis();
 
 	private final CacheLine getFromCache() {
@@ -66,12 +74,7 @@ public abstract class Processor {
 		// e.printStackTrace();
 		// }
 		insnCount++;
-		if (insnCount % 1000000 == 0) {
-			final long lastT = System.currentTimeMillis();
-			final long diff = lastT - last;
-			last = lastT;
-			System.err.println(">>>>>>>>>>>>>>>  " + (long) (1000000 / (diff / 1000d)));
-		}
+
 		return line;
 	}
 
@@ -90,9 +93,7 @@ public abstract class Processor {
 		final CacheLine line = nextDecodedInstruction();
 		line.insn.setInstruction(line.opcode);
 		line.insn.interpret(line.opcode, true);
-		if (ENABLE_INSN_EXECUTE_COUNT) {
-			line.insn.increaseCount();
-		}
+		line.insn.increaseCount();
 
 		cpu.nextPc();
 	}
@@ -101,22 +102,12 @@ public abstract class Processor {
 		interpret();
 	}
 
-	// private static final String debugFormater(int code) {
-	// StringBuilder builder = new StringBuilder(Integer.toHexString(code));
-	// while (builder.length() < 8) {
-	// builder.insert(0, 0);
-	// }
-	// return builder.toString();
-	// }
-
 	public void interpret() {
 		cpu.cycle++;
 		final CacheLine line = fetchDecodedInstruction();
 		line.insn.setInstruction(line.opcode);
 		line.insn.interpret(line.opcode, false);
-		if (ENABLE_INSN_EXECUTE_COUNT) {
-			line.insn.increaseCount();
-		}
+		line.insn.increaseCount();
 	}
 
 	public abstract void processException(final ExcCode e, final int inst, final boolean delay);

@@ -2,7 +2,10 @@ package com.jps2.core.cpu.ee;
 
 public class EECounter {
 
-	public static final int		EECNT_FUTURE_TARGET	= 0x10000000;
+	public static final int		EECNT_FUTURE_TARGET		= 0x10000000;
+	
+	// Set to '3' to double the speed of games like KHII
+	public static int			HBLANK_COUNTER_SPEED	= 1;
 
 	public int					count;
 	public int					target;
@@ -10,7 +13,7 @@ public class EECounter {
 	public int					rate;
 	public int					interrupt;
 	public int					cycleT;
-	public final EECounterMode	mode				= new EECounterMode();
+	public final EECounterMode	mode					= new EECounterMode();
 
 	/**
 	 * <pre>
@@ -67,8 +70,48 @@ public class EECounter {
 			return (value & 0x80) != 0;
 		}
 
+		public void setCounting(boolean counting) {
+			if (counting) {
+				value |= 0x00000080;
+			} else {
+				value &= 0xFFFFFF7F;
+			}
+		}
+
 		public int getClockSource() {
 			return value & 0x3;
+		}
+
+		public int getGateMode() {
+			return ((value >> 4) & 0x3);
+		}
+
+		public boolean isTargetInterrupt() {
+			return (value & 0x100) != 0;
+		}
+
+		public boolean isOverflowInterrupt() {
+			return (value & 0x200) != 0;
+		}
+
+		public boolean isZeroReturn() {
+			return (value & 0x40) != 0;
+		}
+
+		public void setTargetReached(boolean reached) {
+			if (reached) {
+				value |= 0x00000400;
+			} else {
+				value &= 0xFFFFFBFF;
+			}
+		}
+
+		public void setOverflowReached(boolean reached) {
+			if (reached) {
+				value |= 0x00000800;
+			} else {
+				value &= 0xFFFFF7FF;
+			}
 		}
 	}
 }

@@ -4,6 +4,7 @@ import com.jps2.core.cpu.ee.state.CpuState;
 import com.jps2.core.memory.FastMemory;
 
 public class EEHardwareRegisters extends FastMemory {
+	
 	public static final int	RCNT0_COUNT		= 0x0000;
 	public static final int	RCNT0_MODE		= 0x0010;
 	public static final int	RCNT0_TARGET	= 0x0020;

@@ -18,8 +18,7 @@ public class Emulator {
 
 	public static SIO				SIO;
 
-	private IOPProcess				iopProcess;
-	private EEProcess				eeProcess;
+	private EmulatorProcess				emulatorProcess;
 	public static EE				EE;
 	public static IOP				IOP;
 
@@ -69,9 +68,8 @@ public class Emulator {
 			EE = new EE();
 			IOP = new IOP();
 			paused = false;
-			// init cpus
-			iopProcess = new IOPProcess();
-			eeProcess = new EEProcess();
+			// init emulator process
+			emulatorProcess = new EmulatorProcess();
 		} catch (final Throwable t) {
 			if (listener != null) {
 				listener.error(t);
@@ -88,16 +86,9 @@ public class Emulator {
 		try {
 			running = false;
 			if (join) {
-				if (iopProcess != null && Thread.currentThread() != iopProcess) {
+				if (emulatorProcess != null && Thread.currentThread() != emulatorProcess) {
 					try {
-						iopProcess.join();
-					} catch (final InterruptedException e) {
-						// ignore if interrupted
-					}
-				}
-				if (eeProcess != null && Thread.currentThread() != eeProcess) {
-					try {
-						eeProcess.join();
+						emulatorProcess.join();
 					} catch (final InterruptedException e) {
 						// ignore if interrupted
 					}
@@ -111,6 +102,7 @@ public class Emulator {
 			if (listener != null) {
 				listener.stopped();
 			}
+			paused = false;
 		} catch (final Throwable t) {
 			if (listener != null) {
 				listener.error(t);
@@ -122,50 +114,16 @@ public class Emulator {
 		return instance;
 	}
 
-	private final class IOPProcess extends Thread {
+	private final class EmulatorProcess extends Thread {
 
-		IOPProcess() {
-			super("IOP Process");
+		EmulatorProcess() {
+			super("Emulator Process");
 			setPriority(MIN_PRIORITY);
 			setDaemon(true);
-			// send cpu to others objects in emulator
+			// send cpus to others objects in emulator
 			Memories.hwRegistersIOP.setCpu((com.jps2.core.cpu.iop.state.CpuState) IOP.cpu);
 			IOPInstructions.setCpu((com.jps2.core.cpu.iop.state.CpuState) IOP.cpu);
 			SIO.setCpu((com.jps2.core.cpu.iop.state.CpuState) IOP.cpu);
-			start();
-		}
-
-		@Override
-		public void run() {
-			try {
-				while (Emulator.this.running) {
-					// if is paused
-					if (Emulator.this.paused) {
-						// wait 100 millis :)
-						sleep(100);
-						// continue loop
-						continue;
-					}
-					// step cpu
-					IOP.step();
-				}
-			} catch (final Throwable t) {
-				Emulator.this.stop(false);
-				if (listener != null) {
-					listener.error(t);
-				}
-				logger.error("A error throw in IOP Process.", t);
-			}
-		}
-	}
-
-	private final class EEProcess extends Thread {
-
-		EEProcess() {
-			super("EE Process");
-			setPriority(MIN_PRIORITY);
-			setDaemon(true);
-			// send cpu to others objects in emulator
 			EEInstructions.setCpu((com.jps2.core.cpu.ee.state.CpuState) EE.cpu);
 			Memories.hwRegistersEE.setCpu((com.jps2.core.cpu.ee.state.CpuState) EE.cpu);
 			start();
@@ -182,15 +140,66 @@ public class Emulator {
 						// continue loop
 						continue;
 					}
-					// step cpu
+					
+					// step EE 300 MHz
+					EE.step();
+					EE.step();
+					EE.step();
+					EE.step();
+					
+					//step IOP 37.5 Mhz
+					IOP.step();
+
+					EE.step();
+					EE.step();
+					EE.step();
+					EE.step();
+					
+					EE.step();
+					EE.step();
+					EE.step();
+					EE.step();
+					
+					IOP.step();
+
+					EE.step();
+					EE.step();
+					EE.step();
+					EE.step();
+					
+					// TODO - SPU 1 step here
+					
+					EE.step();
+					EE.step();
+					EE.step();
+					EE.step();
+					
+					IOP.step();
+
+					EE.step();
+					EE.step();
+					EE.step();
+					EE.step();
+					
+					EE.step();
+					EE.step();
+					EE.step();
+					EE.step();
+					
+					IOP.step();
+
+					EE.step();
+					EE.step();
+					EE.step();
 					EE.step();
 				}
 			} catch (final Throwable t) {
+				System.err.println("EE count = " + EE.cpu.cycle);
 				Emulator.this.stop(false);
 				if (listener != null) {
 					listener.error(t);
 				}
-				logger.error("A error throw in EE Process.", t);
+				logger.error("A error throw in Emulator Process.", t);
 			}
 		}
 	}

@@ -1,7 +1,6 @@
 package com.jps2.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.Toolkit;
@@ -10,8 +9,10 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.util.Arrays;
 
+import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -46,7 +47,7 @@ public class MainWindow extends JFrame {
 
 	private boolean				fullscreen	= false;
 
-	private Component			toolBar;
+	private JComponent			toolBar;
 
 	private MainWindow() {
 		super("JPS2 - Java PS2 emulator");
@@ -136,6 +137,9 @@ public class MainWindow extends JFrame {
 							if (canvas.isVisible()) {
 								canvas.repaint();
 							}
+							if (Emulator.EE != null && Emulator.EE.eeCpu.counters[0].mode.isCounting() && (Emulator.EE.eeCpu.counters[0].mode.getClockSource() == 0x3)){
+								Emulator.EE.eeCpu.counters[0].count++;	
+							}
 							Display.sync(60);
 						} else {
 							try {
@@ -160,6 +164,12 @@ public class MainWindow extends JFrame {
 
 	public void close() {
 		dispose();
+	}
+	
+	@Override
+	public void dispose() {
+		Emulator.getInstance().stop();
+		super.dispose();
 	}
 
 	public void preferences() {
@@ -238,15 +248,15 @@ public class MainWindow extends JFrame {
 				@Override
 				public void run() {
 					setUndecorated(false);
-					getJMenuBar().setVisible(true);
-					toolBar.setVisible(true);
+//					getJMenuBar().setVisible(true);
+//					toolBar.setVisible(true);
 					setVisible(true);
 				}
 			});
 		} else {
 			dispose();
-			getJMenuBar().setVisible(false);
-			toolBar.setVisible(false);
+//			getJMenuBar().setVisible(false);
+//			toolBar.setVisible(false);
 			SwingUtilities.invokeLater(new Runnable() {
 
 				@Override
@@ -272,12 +282,15 @@ public class MainWindow extends JFrame {
 	private void makeToolBar() {
 
 		final JButton playButton = new JButton(ResourceManager.getIcon("/icons/16x16/play.png"));
+		playButton.setFocusable(false);
 		final JToggleButton pauseButton = new JToggleButton(ResourceManager.getIcon("/icons/16x16/pause.png"));
 		pauseButton.setEnabled(false);
+		pauseButton.setFocusable(false);
 		final JButton stopButton = new JButton(ResourceManager.getIcon("/icons/16x16/stop.png"));
 		stopButton.setEnabled(false);
+		stopButton.setFocusable(false);
 		final JToggleButton fullscreenButton = new JToggleButton(ResourceManager.getIcon("/icons/16x16/fullscreen.png"));
-
+		fullscreenButton.setFocusable(false);
 		playButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -308,6 +321,7 @@ public class MainWindow extends JFrame {
 				playButton.setEnabled(true);
 				stopButton.setEnabled(false);
 				pauseButton.setEnabled(false);
+				pauseButton.setSelected(false);
 				SwingUtilities.invokeLater(new Runnable() {
 					public void run() {
 						Emulator.getInstance().stop();
@@ -376,6 +390,7 @@ public class MainWindow extends JFrame {
 			toolBar.addComponentToRight(fullscreenButton);
 			add(toolBar.getComponent(), BorderLayout.NORTH);
 			this.toolBar = toolBar.getComponent();
+			this.toolBar.setBorder(BorderFactory.createEmptyBorder());
 		} else {
 			final JToolBar toolBar = new JToolBar();
 

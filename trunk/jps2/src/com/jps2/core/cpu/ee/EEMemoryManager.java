@@ -44,14 +44,16 @@ public class EEMemoryManager extends AbstractMemoryManager {
 				switch ((address >> 24 & 0xF)) {
 					// REG
 					case 0x0:
-						logger.info("REG Memories.memory");
 						Memories.hwRegistersEE.setOffset(0x10000000);
 						return Memories.hwRegistersEE;
 					case 0x1:
 						logger.info("VUF Memories.memory");
 						break;
 					case 0x2:
-						logger.info("GS Memories.memory");
+						if (address >= 0x12000000) {
+							Memories.memoryGS.setOffset(0x12000000);
+							return Memories.memoryGS;
+						}
 						break;
 					case 0xF:
 						switch ((address >> 20 & 0xF)) {
@@ -92,7 +94,6 @@ public class EEMemoryManager extends AbstractMemoryManager {
 			// Scratch Pad RAM
 			case 0x7:
 				if (address >= 0x70000000) {
-					logger.info("PAD");
 					Memories.memoryPAD.setOffset(0x70000000);
 					return Memories.memoryPAD;
 				}
@@ -123,7 +124,7 @@ public class EEMemoryManager extends AbstractMemoryManager {
 				return Memories.memoryRAM;
 				// REG ou ROM
 			case 0xB:
-				switch ((address >> 20 & 0xF)) {
+				switch ((address >> 24 & 0xF)) {
 					// EE HW REGISTERS
 					case 0x0:
 						if (address >= 0xB0000000) {
@@ -131,22 +132,33 @@ public class EEMemoryManager extends AbstractMemoryManager {
 							return Memories.hwRegistersEE;
 						}
 						break;
-					// IOP
-					case 0x8:
-						if (address >= 0xBF800000) {
-							Memories.hwRegistersIOP.setOffset(0xBF800000);
-							return Memories.hwRegistersIOP;
+					// VUF
+					case 0x1:
+						logger.info("VUF Memories.memory");
+						break;
+					// GS
+					case 0x2:
+						if (address >= 0xB2000000) {
+							Memories.memoryGS.setOffset(0xB2000000);
+							return Memories.memoryGS;
 						}
 						break;
-					// ROM
-					case 0xC:
+					// ROM | IOP
+					case 0xF:
+						// ROM
 						if (address >= 0xBFC00000) {
 							if (write) {
 								throw new RuntimeException("ReadOnly Memories.memory ROM " + Long.toHexString(address));
 							}
 							Memories.memoryROM.setOffset(0xBFC00000);
-						}
-						return Memories.memoryROM;
+							return Memories.memoryROM;
+							// IOP
+						} else
+							if (address >= 0xBF800000) {
+								Memories.hwRegistersIOP.setOffset(0xBF800000);
+								return Memories.hwRegistersIOP;
+							}
+						break;
 				}
 				break;
 			case 0xF:

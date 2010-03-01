@@ -68,7 +68,7 @@ public class EEDecoder {
 
 							@Override
 							public Instruction instance(final int insn) {
-								return mmiTable[(insn >> 21) & 0x0000001F].instance(insn);
+								return mmiTable[insn & 0x0000001F].instance(insn);
 							}
 						},
 						Common.UNK,

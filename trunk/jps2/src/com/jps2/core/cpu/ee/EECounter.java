@@ -10,7 +10,7 @@ public class EECounter {
 	public int					count;
 	public int					target;
 	public int					hold;
-	public int					rate;
+	public int					rate = 2;
 	public int					interrupt;
 	public int					cycleT;
 	public final EECounterMode	mode					= new EECounterMode();
@@ -64,7 +64,7 @@ public class EECounter {
 	 * 
 	 */
 	public class EECounterMode {
-		public int	value;
+		public int	value = 0x80;
 
 		public boolean isCounting() {
 			return (value & 0x80) != 0;

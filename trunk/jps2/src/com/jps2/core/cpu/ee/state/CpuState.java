@@ -17,7 +17,7 @@ public final class CpuState extends MmiState {
 
 	private static final Logger	logger			= Logger.getLogger(CpuState.class);
 
-	final EECounter[]			counters;
+	public final EECounter[]			counters;
 	final EESyncCounter			hSyncCounter;
 	final EESyncCounter			vSyncCounter;
 
@@ -256,33 +256,33 @@ public final class CpuState extends MmiState {
 		// escape/suspend hooks, and it's really a good idea to suspend/resume
 		// emulation before
 		// doing any actual meaninful branchtest logic.
-
-		if (cpuTestCycle(nextsCounter, nextCounter)) {
-			rcntUpdate();
-			updatePCCR();
-		}
-
-		rcntUpdate_hScanline();
-
-		cpuTestTIMR(delay);
-
-		// ---- Interrupts -------------
-		// Handles all interrupts except 30 and 31, which are handled later.
-		if ((interrupt & ~(3 << 30)) != 0) {
-			cpuTestInterrupts();
-		}
-
-		// ---- INTC / DMAC Exceptions -----------------
-		// Raise the INTC and DMAC interrupts here, which usually throw
-		// exceptions.
-		// This should be done last since the IOP and the VU0 can raise several
-		// EE
-		// exceptions.
-
-		if (cpuIntsEnabled()) {
-			testInterrupt(30, intcInterrupt, delay);
-			testInterrupt(31, dmacInterrupt, delay);
-		}
+//
+//		if (cpuTestCycle(nextsCounter, nextCounter)) {
+//			rcntUpdate();
+//			updatePCCR();
+//		}
+//
+//		rcntUpdate_hScanline();
+//
+//		cpuTestTIMR(delay);
+//
+//		// ---- Interrupts -------------
+//		// Handles all interrupts except 30 and 31, which are handled later.
+//		if ((interrupt & ~(3 << 30)) != 0) {
+////			cpuTestInterrupts();
+//		}
+//
+//		// ---- INTC / DMAC Exceptions -----------------
+//		// Raise the INTC and DMAC interrupts here, which usually throw
+//		// exceptions.
+//		// This should be done last since the IOP and the VU0 can raise several
+//		// EE
+//		// exceptions.
+//
+//		if (cpuIntsEnabled()) {
+//			testInterrupt(30, intcInterrupt, delay);
+//			testInterrupt(31, dmacInterrupt, delay);
+//		}
 	}
 
 	void testInterrupt(int n, CpuRunnable runnable, boolean delay) {
@@ -297,36 +297,36 @@ public final class CpuState extends MmiState {
 	final void rcntUpdate_hScanline() {
 		if (cpuTestCycle(hSyncCounter.sCycle, hSyncCounter.cycleT)) {
 
-			if ((hSyncCounter.mode & EESyncCounter.MODE_HBLANK) != 0) { // HBLANK
-				// Start
-				rcntStartGate(false, hSyncCounter.sCycle);
-
-				// Setup the hRender's start and end cycle information:
-				hSyncCounter.sCycle += vSyncInfo.hBlank; // start (absolute
-				// cycle value)
-				hSyncCounter.cycleT = vSyncInfo.hRender; // endpoint (delta from
-				// start value)
-				hSyncCounter.mode = EESyncCounter.MODE_HRENDER;
-			} else { // HBLANK END / HRENDER Begin
-				if (CSRw & 0x4) {
-
-					if (!(GSIMR & 0x400)) {
-						gsIrq();
-					}
-					GSCSRr |= 4; // signal
-				}
-				if (gates != 0) {
-					rcntEndGate(false, hSyncCounter.sCycle);
-				}
-
-				// set up the hblank's start and end cycle information:
-				hSyncCounter.sCycle += vSyncInfo.hRender; // start (absolute
-				// cycle value)
-				hSyncCounter.cycleT = vSyncInfo.hBlank; // endpoint (delta from
-				// start value)
-				hSyncCounter.mode = EESyncCounter.MODE_HBLANK;
-
-			}
+//			if ((hSyncCounter.mode & EESyncCounter.MODE_HBLANK) != 0) { // HBLANK
+//				// Start
+//				rcntStartGate(false, hSyncCounter.sCycle);
+//
+//				// Setup the hRender's start and end cycle information:
+//				hSyncCounter.sCycle += vSyncInfo.hBlank; // start (absolute
+//				// cycle value)
+//				hSyncCounter.cycleT = vSyncInfo.hRender; // endpoint (delta from
+//				// start value)
+//				hSyncCounter.mode = EESyncCounter.MODE_HRENDER;
+//			} else { // HBLANK END / HRENDER Begin
+//				if (CSRw & 0x4) {
+//
+//					if (!(GSIMR & 0x400)) {
+//						gsIrq();
+//					}
+//					GSCSRr |= 4; // signal
+//				}
+//				if (gates != 0) {
+//					rcntEndGate(false, hSyncCounter.sCycle);
+//				}
+//
+//				// set up the hblank's start and end cycle information:
+//				hSyncCounter.sCycle += vSyncInfo.hRender; // start (absolute
+//				// cycle value)
+//				hSyncCounter.cycleT = vSyncInfo.hBlank; // endpoint (delta from
+//				// start value)
+//				hSyncCounter.mode = EESyncCounter.MODE_HBLANK;
+//
+//			}
 		}
 	}
 
@@ -353,10 +353,10 @@ public final class CpuState extends MmiState {
 				cpuTestOverflow(i);
 			}
 
-			if (!(gates & (1 << i)))
-				continue;
-			if ((!!counters[i].mode.GateSource) != isVblank)
-				continue;
+//			if (!(gates & (1 << i)))
+//				continue;
+//			if ((!!counters[i].mode.GateSource) != isVblank)
+//				continue;
 
 			switch (counters[i].mode.getGateMode()) {
 				case 0x0: // Count When Signal is low (off)
@@ -405,10 +405,10 @@ public final class CpuState extends MmiState {
 		int i;
 
 		for (i = 0; i <= 3; i++) { // Gates for counters
-			if (!(gates & (1 << i)))
-				continue;
-			if ((!!counters[i].mode.getGateSource()) != isVblank)
-				continue;
+//			if (!(gates & (1 << i)))
+//				continue;
+//			if ((!!counters[i].mode.getGateSource()) != isVblank)
+//				continue;
 
 			switch (counters[i].mode.getGateMode()) {
 				case 0x0: // Count When Signal is low (off)
@@ -481,31 +481,31 @@ public final class CpuState extends MmiState {
 		if (diff < vSyncCounter.cycleT) {
 			return;
 		}
-		if (vSyncCounter.mode == EESyncCounter.MODE_VSYNC) {
-
-			VSyncEnd(vSyncCounter.sCycle);
-
-			vSyncCounter.sCycle += vSyncInfo.Blank;
-			vSyncCounter.cycleT = vSyncInfo.Render;
-			vSyncCounter.mode = EESyncCounter.MODE_VRENDER;
-		} else {
-			// VSYNC end / VRENDER begin
-			VSyncStart(vSyncCounter.sCycle);
-
-			vSyncCounter.sCycle += vSyncInfo.Render;
-			vSyncCounter.cycleT = vSyncInfo.Blank;
-			vSyncCounter.mode = EESyncCounter.MODE_VSYNC;
-
-			// Accumulate hsync rounding errors:
-			hSyncCounter.sCycle += vSyncInfo.hSyncError;
-
-			if (CHECK_MICROVU0) {
-				vsyncVUrec(0);
-			}
-			if (CHECK_MICROVU1) {
-				vsyncVUrec(1);
-			}
-		}
+//		if (vSyncCounter.mode == EESyncCounter.MODE_VSYNC) {
+//
+//			VSyncEnd(vSyncCounter.sCycle);
+//
+//			vSyncCounter.sCycle += vSyncInfo.Blank;
+//			vSyncCounter.cycleT = vSyncInfo.Render;
+//			vSyncCounter.mode = EESyncCounter.MODE_VRENDER;
+//		} else {
+//			// VSYNC end / VRENDER begin
+//			VSyncStart(vSyncCounter.sCycle);
+//
+//			vSyncCounter.sCycle += vSyncInfo.Render;
+//			vSyncCounter.cycleT = vSyncInfo.Blank;
+//			vSyncCounter.mode = EESyncCounter.MODE_VSYNC;
+//
+//			// Accumulate hsync rounding errors:
+//			hSyncCounter.sCycle += vSyncInfo.hSyncError;
+//
+//			if (CHECK_MICROVU0) {
+//				vsyncVUrec(0);
+//			}
+//			if (CHECK_MICROVU1) {
+//				vsyncVUrec(1);
+//			}
+//		}
 	}
 
 	final void cpuTestTarget(int i) {

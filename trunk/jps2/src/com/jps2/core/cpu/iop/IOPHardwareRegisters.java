@@ -17,13 +17,7 @@ public final class IOPHardwareRegisters extends FastMemory {
 	public static final int		HW_USB_START			= 0x1600;
 	public static final int		HW_USB_END				= 0x1700;
 	public static final int		HW_FW_START				= 0x8400;
-	public static final int		HW_FW_END				= 0x8550;										// end
-	// addr
-	// for
-	// FW
-	// is
-	// a
-	// guess...
+	public static final int		HW_FW_END				= 0x8550;// end addr for FW is a guess...
 	public static final int		HW_SPU2_START			= 0x1c00;
 	public static final int		HW_SPU2_END				= 0x1e00;
 

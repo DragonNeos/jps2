@@ -61,7 +61,7 @@ public class GeneralPorpuseRegister128bits implements Register128bits {
 				return doubleword;
 			}
 		} else {
-			return word;
+			return word & 0xFFFFFFFFL;
 		}
 	}
 

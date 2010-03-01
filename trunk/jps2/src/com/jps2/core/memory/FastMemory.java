@@ -214,7 +214,7 @@ public class FastMemory extends Memory {
 			address &= addressMask;
 			// all[(address / 4)] = (int) data;
 			// all[(address / 4) + 1] = (int) (data >> 32);
-			all[(address / 4)] = (int) (data >> 32);
+			all[(address / 4)] = (int) (data >> 32) ;
 			all[(address / 4) + 1] = (int) data;
 		} catch (final Exception e) {
 			invalidMemoryAddress(address, "write64", 0);
